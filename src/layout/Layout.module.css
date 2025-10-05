@@ -1,0 +1,23 @@
+.layout-container {
+  width: 100vw;
+  min-height: 100vh;
+  padding: 0.5rem;
+
+  display: grid;
+  grid-template-areas:
+    "header"
+    "content"
+    "footer";
+
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr auto;
+
+  overflow-y: auto;
+}
+
+.content-container {
+  grid-column: 1/7;
+  grid-row: 1/7;
+  justify-self: center;
+  align-self: start;
+}

@@ -1,0 +1,44 @@
+@media (max-width: 767px) {
+  .header-container {
+    grid-area: header;
+    position: sticky;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+
+    background: var(--zinc-100);
+  }
+
+  .header-logo {
+    display: flex;
+    align-items: center;
+    font-size: 1.5rem;
+  }
+
+  .header-form {
+    border-radius: 2rem;
+    padding: 0.5rem;
+    background-color: var(--zinc-200);
+    display: flex;
+    align-items: center;
+  }
+
+  .header-form__logo {
+    display: flex;
+    align-items: center;
+
+    width: auto;
+    height: auto;
+    font-size: 1rem;
+    margin-right: 0.5rem;
+  }
+
+  .header-form__input {
+    background-color: var(--zinc-200);
+    resize: none;
+    border: none;
+    font-size: 1rem;
+    line-height: 0;
+  }
+}
