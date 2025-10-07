@@ -1,132 +1,73 @@
-import { useState } from "react";
 import styles from "./Navbar.module.css";
-import Button from "../Button/Button";
-import { useThemeContext } from "../../context/ThemeContext";
-import { FaHome } from "react-icons/fa";
-import { FaUser } from "react-icons/fa";
-import { FaSearch } from "react-icons/fa";
-import { FaCompass } from "react-icons/fa";
-import { FaBell } from "react-icons/fa6";
+import { FaHome, FaUser } from "react-icons/fa";
+import { FaBell, FaMagnifyingGlass } from "react-icons/fa6";
 import { RiContactsBookUploadFill } from "react-icons/ri";
-import { FaMagnifyingGlass } from "react-icons/fa6";
+import { Link, useLocation } from "react-router-dom";
+
+type menuItems = "home" | "search" | "profile" | "notices" | "upload";
+
+const navItems = [
+  { path: "/", menu: "home", icon: FaHome, label: "Home" },
+  {
+    path: "/search",
+    menu: "search",
+    icon: FaMagnifyingGlass,
+    label: "Search",
+  },
+  {
+    path: "/upload",
+    menu: "upload",
+    icon: RiContactsBookUploadFill,
+    label: "Upload",
+  },
+  {
+    path: "/notices",
+    menu: "notices",
+    icon: FaBell,
+    label: "Notices",
+  },
+  { path: "/profile", menu: "profile", icon: FaUser, label: "Profile" },
+] as const;
 
 export const Navbar = () => {
-  const [collapse, setCollapse] = useState<boolean>(true);
-  const [currentMenu, setCurrentMenu] = useState<
-    "home" | "search" | "account" | "notifications" | "upload"
-  >("home");
-  // const { themeColor, updateTheme } = useThemeContext();
+  const location = useLocation();
+  const path = location.pathname;
+  let currentMenu: menuItems = "home";
+
+  if (path.startsWith("/search")) currentMenu = "search";
+  else if (path.startsWith("/profile")) currentMenu = "profile";
+  else if (path.startsWith("/notices")) currentMenu = "notices";
+  else if (path.startsWith("/upload")) currentMenu = "upload";
+
   return (
     <div className={styles["navbar-container"]}>
-      <button
-        className={styles["navbar-item"]}
-        onClick={() => {
-          setCurrentMenu("home");
-        }}
-      >
-        <div
-          className={`${styles["navbar-item__icon"]}  ${
-            styles[currentMenu === "home" ? "current" : ""]
-          }`}
-        >
-          <FaHome />
-        </div>
-        <div
-          className={`${styles["navbar-item__label"]} ${
-            styles[currentMenu === "home" ? "current" : ""]
-          }`}
-        >
-          Home
-        </div>
-      </button>
+      {navItems.map(({ path, menu, icon: Icon, label }) => {
+        const isActive = currentMenu === menu;
+        return (
+          <Link
+            to={path}
+            className={`${styles["navbar-item"]}  ${
+              styles[isActive ? "current" : ""]
+            }`}
+          >
+            <div
+              className={`${styles["navbar-item__icon"]}  ${
+                styles[isActive ? "current" : ""]
+              }`}
+            >
+              <Icon />
+            </div>
 
-      <button
-        className={styles["navbar-item"]}
-        onClick={() => {
-          setCurrentMenu("search");
-        }}
-      >
-        <div
-          className={`${styles["navbar-item__icon"]}  ${
-            styles[currentMenu === "search" ? "current" : ""]
-          }`}
-        >
-          <FaMagnifyingGlass />
-        </div>
-        <div
-          className={`${styles["navbar-item__label"]} ${
-            styles[currentMenu === "search" ? "current" : ""]
-          }`}
-        >
-          Search
-        </div>
-      </button>
-
-      <button
-        className={styles["navbar-item"]}
-        onClick={() => {
-          setCurrentMenu("upload");
-        }}
-      >
-        <div
-          className={`${styles["navbar-item__icon"]}  ${
-            styles[currentMenu === "upload" ? "current" : ""]
-          }`}
-        >
-          <RiContactsBookUploadFill />
-        </div>
-        <div
-          className={`${styles["navbar-item__label"]} ${
-            styles[currentMenu === "upload" ? "current" : ""]
-          }`}
-        >
-          Upload
-        </div>
-      </button>
-
-      <button
-        className={styles["navbar-item"]}
-        onClick={() => {
-          setCurrentMenu("notifications");
-        }}
-      >
-        <div
-          className={`${styles["navbar-item__icon"]}  ${
-            styles[currentMenu === "notifications" ? "current" : ""]
-          }`}
-        >
-          <FaBell />
-        </div>
-        <div
-          className={`${styles["navbar-item__label"]} ${
-            styles[currentMenu === "notifications" ? "current" : ""]
-          }`}
-        >
-          Notifications
-        </div>
-      </button>
-
-      <button
-        className={styles["navbar-item"]}
-        onClick={() => {
-          setCurrentMenu("account");
-        }}
-      >
-        <div
-          className={`${styles["navbar-item__icon"]}  ${
-            styles[currentMenu === "account" ? "current" : ""]
-          }`}
-        >
-          <FaUser />
-        </div>
-        <div
-          className={`${styles["navbar-item__label"]} ${
-            styles[currentMenu === "account" ? "current" : ""]
-          }`}
-        >
-          Account
-        </div>
-      </button>
+            <div
+              className={`${styles["navbar-item__label"]} ${
+                styles[isActive ? "current" : ""]
+              }`}
+            >
+              {label}
+            </div>
+          </Link>
+        );
+      })}
     </div>
   );
 };
