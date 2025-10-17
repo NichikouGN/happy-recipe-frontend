@@ -3,6 +3,7 @@ import { FaHome, FaUser } from "react-icons/fa";
 import { FaBell, FaMagnifyingGlass } from "react-icons/fa6";
 import { RiContactsBookUploadFill } from "react-icons/ri";
 import { Link, useLocation } from "react-router-dom";
+import { useAuthContext } from "../../context/AuthContext";
 
 type menuItems = "home" | "search" | "profile" | "notices" | "upload";
 
@@ -29,7 +30,10 @@ const navItems = [
   { path: "/profile", menu: "profile", icon: FaUser, label: "Profile" },
 ] as const;
 
+const restricted = ["upload", "notices"];
+
 export const Navbar = () => {
+  const { isAuthorized } = useAuthContext();
   const location = useLocation();
   const path = location.pathname;
   let currentMenu: menuItems = "home";
@@ -41,33 +45,39 @@ export const Navbar = () => {
 
   return (
     <div className={styles["navbar-container"]}>
-      {navItems.map(({ path, menu, icon: Icon, label }) => {
-        const isActive = currentMenu === menu;
-        return (
-          <Link
-            to={path}
-            className={`${styles["navbar-item"]}  ${
-              styles[isActive ? "current" : ""]
-            }`}
-          >
-            <div
-              className={`${styles["navbar-item__icon"]}  ${
+      {navItems
+        .filter((item) => isAuthorized || !restricted.includes(item.menu))
+        .map(({ path, menu, icon: Icon, label }) => {
+          if (!isAuthorized) {
+            if (menu === "upload" || menu === "notices") {
+            }
+          }
+          const isActive = currentMenu === menu;
+          return (
+            <Link
+              to={path}
+              className={`${styles["navbar-item"]}  ${
                 styles[isActive ? "current" : ""]
               }`}
             >
-              <Icon />
-            </div>
+              <div
+                className={`${styles["navbar-item__icon"]}  ${
+                  styles[isActive ? "current" : ""]
+                }`}
+              >
+                <Icon />
+              </div>
 
-            <div
-              className={`${styles["navbar-item__label"]} ${
-                styles[isActive ? "current" : ""]
-              }`}
-            >
-              {label}
-            </div>
-          </Link>
-        );
-      })}
+              <div
+                className={`${styles["navbar-item__label"]} ${
+                  styles[isActive ? "current" : ""]
+                }`}
+              >
+                {label}
+              </div>
+            </Link>
+          );
+        })}
     </div>
   );
 };

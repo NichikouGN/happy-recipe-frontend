@@ -9,7 +9,7 @@
     "footer";
 
   grid-template-columns: 1fr;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto auto auto;
 
   overflow-y: auto;
 }

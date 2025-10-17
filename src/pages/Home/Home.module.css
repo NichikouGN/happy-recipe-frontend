@@ -1,4 +1,4 @@
-@media (max-width: 767px) {
+@media (max-width: 1023px) {
   .header {
     grid-area: "header";
 
@@ -8,29 +8,20 @@
     position: relative;
     top: 0;
     width: 100vw;
-    height: 40vh;
-    padding: 1rem;
+    height: max-content;
   }
 
   .header-image {
-    position: absolute;
+    position: relative;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
 
+    aspect-ratio: 2/1;
+
     object-fit: cover;
-    filter: brightness(60%);
-    /* -webkit-mask-image: linear-gradient(
-      rgb(0 0 0 / 1),
-      rgb(0 0 0 / 0.5) 70%,
-      rgb(0 0 0 / 0) 100%
-    );
-    mask-image: linear-gradient(
-      rgb(0 0 0 / 1),
-      rgb(0 0 0 / 0.5) 70%,
-      rgb(0 0 0 / 0) 100%
-    ); */
+    filter: brightness(75%);
   }
 
   .header-label-wrapper {
@@ -39,22 +30,23 @@
     gap: 0.5rem;
 
     position: absolute;
+    padding: 1rem;
   }
 
   .header-quote {
-    color: rgba(255, 255, 255, 0.75);
-    font-size: 3rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: clamp(2.25rem, 7.5vw, 5rem);
     font-weight: 700;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 1);
+    text-shadow: 8px 8px 16px rgba(0, 0, 0, 1);
   }
 
   .header-link {
     width: max-content;
-    padding: 1rem;
+    padding: 0.75rem;
 
     background: rgba(0, 0, 0, 0.25);
     color: rgba(255, 255, 255, 0.75);
-    font-size: 1rem;
+    font-size: 0.75 rem;
     font-weight: 600;
     border-radius: 0.25rem;
     cursor: pointer;
@@ -88,83 +80,147 @@
     padding: 1rem;
   }
 
-  .chef-group {
-  }
+  .recommendation {
+    .recommendation-title {
+      font-size: clamp(0.75rem, 5vw, 1.5rem);
+      text-align: center;
+    }
 
-  .chef-group__title {
-    font-size: 1.25rem;
-    text-align: center;
-  }
+    .recommendation-card-container {
+      display: grid;
+      grid-template-columns: repeat(
+        auto-fill,
+        minmax(clamp(8rem, 25vw, 20rem), 1fr)
+      );
+      gap: 1rem;
 
-  .chef-group__card-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
-    gap: 1rem;
+      margin-top: 1rem;
 
-    margin-top: 1rem;
-  }
+      .card-item {
+        display: flex;
+        flex-direction: column;
 
-  .card-item {
-    display: flex;
-    flex-direction: column;
+        border-radius: 0.5rem;
+        overflow: hidden;
+        cursor: pointer;
 
-    border-radius: 1rem;
-    overflow: hidden;
-    cursor: pointer;
+        box-shadow: -4px -4px 8px rgba(255, 255, 255, 0.75),
+          4px 4px 8px rgba(0, 0, 0, 0.25);
+        z-index: 1;
 
-    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.15);
-  }
+        .card-image {
+          width: 100%;
+          height: auto;
 
-  .card-item:active {
-    filter: brightness(90%);
-    background: rgba(255, 255, 255, 0.9);
-  }
+          aspect-ratio: 2.3/1;
+          object-fit: cover;
 
-  .card-item__image {
-    width: 100%;
-    height: auto;
+          filter: brightness(90%);
 
-    aspect-ratio: 2.3/1;
-    object-fit: cover;
+          user-select: none;
+          -webkit-user-select: none;
+          -webkit-user-drag: none;
+          -webkit-touch-callout: none;
+          -webkit-mask-image: linear-gradient(
+            to bottom right,
+            rgb(0 0 0 / 0.75),
+            rgb(0 0 0 / 1)
+          );
+          mask-image: linear-gradient(
+            to bottom right,
+            rgb(0 0 0 / 0.75),
+            rgb(0 0 0 / 1)
+          );
+        }
 
-    user-select: none;
-    -webkit-user-select: none;
-    -webkit-user-drag: none;
-    -webkit-touch-callout: none;
-  }
+        .card-details {
+          display: flex;
+          flex-direction: column;
 
-  .card-item__info-group {
-    display: flex;
-    flex-direction: column;
+          width: 100%;
+          padding: 0.25rem 0.5rem;
 
-    width: 100%;
-    padding: 0.25rem 0.5rem;
-  }
+          .card-title {
+            font-size: clamp(0.9rem, 5vw, 1.25rem);
+            font-weight: 700;
+            text-align: left;
+          }
 
-  .info-group__label {
-    font-size: clamp(0.9rem, 4vw, 1.25rem);
-    font-weight: 700;
-    text-align: left;
-  }
+          .card-author {
+            font-size: 0.75rem;
+            margin-bottom: 0.25rem;
+          }
 
-  .time {
-    display: flex;
-    align-items: center;
-    margin-top: 0.1rem;
-  }
+          .card-info-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
 
-  .time-icon {
-    font-size: 0.75rem;
-    color: rgba(0, 0, 0, 0.4);
-    margin-right: 0.25rem;
-  }
+            .card-info {
+              display: flex;
+              align-items: center;
+              margin-top: 0.1rem;
 
-  .time-label {
-    font-size: 0.75rem;
-    color: rgba(0, 0, 0, 0.6);
+              .card-info__icon {
+                font-size: 0.75rem;
+                color: rgba(0, 0, 0, 0.4);
+                margin-right: 0.25rem;
+              }
+
+              .card-info__label {
+                font-size: 0.75rem;
+                color: rgba(0, 0, 0, 0.6);
+              }
+            }
+
+            .card-bookmark {
+              cursor: pointer;
+              outline: none;
+              background: none;
+              border: none;
+
+              color: var(--red-600);
+              font-size: clamp(0.75rem, 5vw, 1.25rem);
+              z-index: 2;
+            }
+          }
+        }
+      }
+
+      .see-more {
+        outline: none;
+        justify-content: center;
+        align-items: center;
+
+        border: none;
+      }
+    }
   }
 
   .footer {
     grid-area: "footer";
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    position: relative;
+
+    padding: 0.5rem 1rem;
+
+    .footer-logo {
+    }
+
+    .footer-title {
+      margin-top: 1rem;
+      text-align: center;
+      font-weight: 700;
+      font-size: 1.25rem;
+    }
+
+    .footer-item {
+      text-align: center;
+    }
   }
 }

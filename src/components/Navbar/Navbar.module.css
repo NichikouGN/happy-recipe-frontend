@@ -6,7 +6,7 @@
   z-index: 999999;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .navbar-container {
     height: 100%;
     left: 0;
@@ -31,7 +31,7 @@
   }
 }
 
-@media (max-width: 767px) {
+@media (max-width: 575px) {
   .navbar-container {
     grid-column: 1/7;
     grid-row: 8;
@@ -50,9 +50,9 @@
     padding: 0.5rem;
 
     background: linear-gradient(
-      to bottom,
-      rgba(var(--theme-body-bg-rgb), 0.1),
-      rgba(var(--theme-body-text-rgb), 0.1)
+      to right,
+      rgba(var(--theme-body-bg-rgb), 0.5),
+      rgba(var(--theme-body-bg-rgb), 0.25)
     );
 
     backdrop-filter: blur(8px);
@@ -83,7 +83,77 @@
   .navbar-item__icon {
     font-size: 1.25rem;
     margin: 0;
-    color: rgba(var(--theme-body-text-rgb), 0.9);
+    color: rgba(var(--theme-body-text-rgb), 1);
+  }
+
+  .navbar-item__label {
+    margin: 0;
+
+    font-size: 0.7rem;
+    line-height: 0.5rem;
+    font-weight: 700;
+    color: rgba(var(--theme-body-text-rgb), 1);
+  }
+
+  .current {
+    transform: scale(1.1);
+    color: var(--red-600);
+  }
+
+  .collapse-btn {
+    display: none;
+  }
+}
+
+@media (min-width: 576px) and (max-width: 1023px) {
+  .navbar-container {
+    grid-column: 1/7;
+    grid-row: 8;
+    justify-self: center;
+    align-self: center;
+
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+
+    position: fixed;
+    width: 50%;
+    height: auto;
+    left: 25%;
+    bottom: 1rem;
+    padding: 0.5rem;
+
+    background: rgba(255, 255, 255, 1);
+
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-top: 1px solid rgba(var(--theme-body-bg-rgb), 0.2);
+    border-bottom: 1px solid rgba(var(--theme-body-text-rgb), 0.2);
+    border-radius: 2rem;
+    box-shadow: 0 4px 16px rgba(var(--theme-body-text-rgb), 0.4);
+  }
+
+  .navbar-item {
+    -webkit-tap-highlight-color: transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    border-radius: 0.5rem;
+    font-size: 1rem;
+
+    cursor: pointer;
+    border: none;
+    outline: none;
+    background: transparent;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+
+  .navbar-item__icon {
+    font-size: 1.25rem;
+    margin: 0;
+    color: rgba(var(--theme-body-text-rgb), 1);
   }
 
   .navbar-item__label {
@@ -92,7 +162,7 @@
     font-size: 0.6rem;
     line-height: 0.5rem;
     font-weight: 500;
-    color: rgba(var(--theme-body-text-rgb), 0.9);
+    color: rgba(var(--theme-body-text-rgb), 1);
   }
 
   .current {

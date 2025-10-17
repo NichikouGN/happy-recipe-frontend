@@ -1,21 +1,24 @@
 import styles from "./Home.module.css";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaClock, FaFireFlameCurved } from "react-icons/fa6";
-import { FaRegBookmark, FaBookmark } from "react-icons/fa";
 
+import Card from "../../components/Card/Card";
+
+//Dummy Data
 const data = [
-  { title: "Zesty Curry", time: "17 min", difficulty: "medium" },
-  { title: "Sweet Burger", time: "43 min", difficulty: "hard" },
-  { title: "Crispy Salad", time: "25 min", difficulty: "easy" },
-  { title: "Hearty Soup", time: "9 min", difficulty: "medium" },
-  { title: "Tangy Sandwich", time: "32 min", difficulty: "hard" },
-  { title: "Spicy Pasta", time: "6 min", difficulty: "easy" },
+  { id: "01", title: "Zesty Curry", author: "Alan", time: "17 min" },
+  { id: "02", title: "Sweet Burger", author: "Bella", time: "43 min" },
+  { id: "03", title: "Crispy Salad", author: "Chris", time: "25 min" },
+  { id: "04", title: "Hearty Soup", author: "Dyson", time: "9 min" },
+  { id: "05", title: "Tangy Sandwich", author: "Eve", time: "32 min" },
 ];
+
 const Home = () => {
-  const [scrollY, setScrollY] = useState<number>(0);
+  const [bookmarked, setBookmarked] = useState<boolean>(true);
+  const [scrollY, setScrollY] = useState<number>(0); //Parallax Var
   const navigate = useNavigate();
 
+  //update Scroll position
   useEffect(() => {
     const handleScroll = () => {
       setScrollY(window.scrollY);
@@ -26,7 +29,8 @@ const Home = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const margin_top = scrollY * 0.2;
+  const margin_top = scrollY * 0.25; //Transform Translate
+
   return (
     <>
       <div
@@ -40,7 +44,11 @@ const Home = () => {
         />
         <div className={styles["header-label-wrapper"]}>
           <div className={styles["header-quote"]}>
-            Bring joy to your cooking
+            Bring&nbsp;
+            <span style={{ color: "#ef4444", textDecoration: "underline" }}>
+              joy
+            </span>
+            &nbsp;to your cooking
           </div>
           <button
             className={styles["header-link"]}
@@ -54,51 +62,65 @@ const Home = () => {
       </div>
 
       <main className={styles["content"]}>
-        <div className={styles["chef-group"]}>
-          <div className={styles["chef-group__title"]}>
-            - Recipes from our professional chefs -
-          </div>
+        <section className={styles["recommendation"]}>
+          <h2 className={styles["recommendation-title"]}>
+            Recipes from our professional chefs
+          </h2>
 
-          <div className={styles["chef-group__card-container"]}>
-            {data.map(({ title, time, difficulty }) => {
+          <div className={styles["recommendation-card-container"]}>
+            {data.map(({ id, title, author, time }) => {
               return (
-                <div className={styles["card-item"]}>
-                  <img
-                    src="/src/assets/home-image.png"
-                    className={styles["card-item__image"]}
-                  />
-
-                  <div className={styles["card-item__info-group"]}>
-                    <div className={styles["info-group__label"]}>{title}</div>
-                    <div className={styles["info-group__wrapper"]}>
-                      <div className={styles["time"]}>
-                        <FaClock className={styles["time-icon"]} />
-                        <div className={styles["time-label"]}>{time}</div>
-                      </div>
-
-                      <div className={styles["time"]}>
-                        <FaFireFlameCurved className={styles["time-icon"]} />
-                        <div className={styles["time-label"]}>{difficulty}</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <Card
+                  id={id}
+                  onClick={() => {
+                    navigate(`/${id}`);
+                  }}
+                  image="/src/assets/home-image.png"
+                  title={title}
+                  author={author}
+                  time={time}
+                  useLike={true}
+                  Like={bookmarked}
+                  onLike={(e) => {
+                    e.stopPropagation();
+                    setBookmarked(!bookmarked);
+                  }}
+                />
               );
             })}
 
             <button
-              className={styles["see-more"]}
+              className={`${styles["card-item"]} ${styles["see-more"]}`}
               onClick={() => {
                 navigate("xdd");
               }}
             >
-              -- Explore More Recipe --
+              More Recipe
             </button>
           </div>
-        </div>
+        </section>
       </main>
 
-      <div className={styles["footer"]}></div>
+      <div className={styles["footer"]}>
+        <img
+          className={styles["footer-logo"]}
+          src="/src/assets/happy-recipe-logo.png"
+          width="100px"
+        />
+        <div className={styles["footer-details"]}>
+          <div className={styles["footer-title"]}>Learn More</div>
+          <div className={styles["footer-item"]}>About us</div>
+          <div className={styles["footer-title"]}>Contacts</div>
+          <div className={styles["footer-item"]}>A</div>
+          <div className={styles["footer-item"]}>B</div>
+        </div>
+
+        <img
+          className={styles["footer-logo"]}
+          src="/src/assets/happy-recipe-logo.png"
+          width="100px"
+        />
+      </div>
     </>
   );
 };
