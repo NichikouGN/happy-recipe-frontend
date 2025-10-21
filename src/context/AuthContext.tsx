@@ -30,34 +30,36 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   //Login method
   const login = useCallback((name: string, password: string) => {
-    const loginFetch = async () => {
-      try {
-        const res = await fetch("http://localhost:4000/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username: name, password: password }),
-        });
+    // const loginFetch = async () => {
+    //   try {
+    //     const res = await fetch("http://localhost:4000/login", {
+    //       method: "POST",
+    //       headers: { "Content-Type": "application/json" },
+    //       body: JSON.stringify({ username: name, password: password }),
+    //     });
 
-        if (!res.ok) {
-          const errText = await res.text();
-          throw new Error(`Error ${res.status}: ${errText}`);
-        }
+    //     if (!res.ok) {
+    //       const errText = await res.text();
+    //       throw new Error(`Error ${res.status}: ${errText}`);
+    //     }
 
-        const data = await res.json();
-        setAccessToken(data.accessToken);
-        setRefreshToken(data.refreshToken);
-        setUsername(data.username);
-        setIsAuthorized(true);
-      } catch (error: any) {
-        if (error.message.includes(401)) {
-          alert("Your username or password is incorrect");
-        } else if (error.message === "Failed to fetch") {
-          alert("Unable to connect to server");
-        }
-      }
-    };
+    //     const data = await res.json();
+    //     setAccessToken(data.accessToken);
+    //     setRefreshToken(data.refreshToken);
+    //     setUsername(data.username);
+    //     setIsAuthorized(true);
+    //   } catch (error: any) {
+    //     if (error.message.includes(401)) {
+    //       alert("Your username or password is incorrect");
+    //     } else if (error.message === "Failed to fetch") {
+    //       alert("Unable to connect to server");
+    //     }
+    //   }
+    // };
 
-    loginFetch();
+    // loginFetch();
+
+    setIsAuthorized(true);
   }, []);
 
   const validate = useCallback(() => {}, []);

@@ -1,35 +1,15 @@
-import styles from "./LogInScreen.module.css";
 import { FaUser, FaLock, FaEye, FaEyeSlash, FaRegMoon } from "react-icons/fa";
-import { IoSunnySharp } from "react-icons/io5";
 import { useCallback, useState, type ChangeEvent, type FormEvent } from "react";
-import { motion, AnimatePresence, type Transition } from "framer-motion";
 import { useAuthContext } from "../../context/AuthContext";
-import { useThemeContext } from "../../context/ThemeContext";
+import { IoClose } from "react-icons/io5";
+import styles from "./Login.module.css";
+import Button from "../../components/Button/Button";
+import { useNavigate } from "react-router-dom";
 
-const iconVariants = {
-  initial: {
-    x: 50,
-    y: 50,
-  },
-  animate: {
-    x: 0,
-    y: 0,
-  },
-  exit: {
-    x: -50,
-    y: 50,
-  },
-};
-
-const iconTransition: Transition = {
-  duration: 0.3,
-  ease: "easeInOut",
-};
-
-const LogInScreen = () => {
+const Login = () => {
+  const navigate = useNavigate();
   //Hooks
   const { login } = useAuthContext();
-  const { themeColor, updateTheme } = useThemeContext();
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -60,55 +40,35 @@ const LogInScreen = () => {
     (event: FormEvent) => {
       event.preventDefault();
       login(username, password);
-
-      setUsername("");
-      setPassword("");
     },
     [username, password]
   );
 
   return (
-    <>
-      {/*Background Image*/}
-      <img
-        src="https://chicom.vn/static/media/Homebg.5e211af7.png"
-        className={styles["bg-img"]}
-      />
+    <div className={styles["login-container"]}>
+      <div className={styles["return"]}>
+        <IoClose
+          className={styles["return-icon"]}
+          onClick={() => {
+            navigate("/");
+          }}
+        />
+      </div>
 
-      {/*Light/Dark Mode Switch*/}
-      <button
-        className={styles["theme-toggle-container"]}
-        onClick={updateTheme}
-      >
-        <AnimatePresence>
-          {" "}
-          {/*Animation for the 2 icons*/}
-          <motion.div
-            key={themeColor}
-            variants={iconVariants}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-            transition={iconTransition}
-            className={styles["theme-toggle-wrapper"]}
-          >
-            {themeColor === "dark" ? (
-              <FaRegMoon className={styles["theme-toggle-icon"]} />
-            ) : (
-              <IoSunnySharp className={styles["theme-toggle-icon"]} />
-            )}
-          </motion.div>
-        </AnimatePresence>
-      </button>
+      <div className={styles["title"]}>
+        <img
+          src="/src/assets/happy-recipe-logo-text.png"
+          className={styles["title-logo"]}
+        />
+        <div className={styles["title-text"]}>Happy Recipe</div>
+      </div>
 
-      {/*Login Menu*/}
+      <div className={styles["quote"]}>
+        Login or Sign up to join our community of passionate chefs all around
+        the world
+      </div>
+
       <div className={styles["log-in-menu"]}>
-        <header>
-          <h2>
-            <img src="https://chicom.vn/favicon.ico" />
-            <br /> Admin Dashboard
-          </h2>
-        </header>
         <form
           onSubmit={(event) => {
             handleSubmission(event);
@@ -157,18 +117,23 @@ const LogInScreen = () => {
           </div>
 
           {/*Submit*/}
-          <button
+          <Button
+            variant="primary"
+            size="small"
             type="submit"
-            className={`${styles["submit-button"]} ${
-              styles[username && password && "active"]
-            }`}
+            style={{ width: "100%" }}
           >
-            <p>Log In</p>
-          </button>
+            Log In
+          </Button>
         </form>
+
+        <div className={styles["signup-quote"]}>
+          New to Happy Recipe? <a className={styles["signup-btn"]}>Sign up</a>{" "}
+          today
+        </div>
       </div>
-    </>
+    </div>
   );
 };
 
-export default LogInScreen;
+export default Login;
