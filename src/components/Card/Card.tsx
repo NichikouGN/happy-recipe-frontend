@@ -26,7 +26,7 @@ const Card = ({
   onClick,
 }: CardProps) => {
   return (
-    <div id={id} className={styles["card-item"]} onClick={onClick}>
+    <div key={id} id={id} className={styles["card-item"]} onClick={onClick}>
       {image && <img src={image} className={styles["card-image"]} />}
 
       <div className={styles["card-details"]}>

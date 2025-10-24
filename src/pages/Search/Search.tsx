@@ -1,6 +1,5 @@
 import styles from "./Search.module.css";
-import Card from "../../components/Card/Card";
-import { FaPlus, FaMagnifyingGlass } from "react-icons/fa6";
+import { FaPlus } from "react-icons/fa6";
 
 const Search = () => {
   return (

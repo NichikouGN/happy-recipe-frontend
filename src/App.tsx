@@ -8,6 +8,7 @@ import Profile from "./pages/Profile/Profile";
 import NotFound from "./pages/NotFound/NotFound";
 import Login from "./pages/Login/Login";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
+import TwoFactorAuth from "./pages/TwoFactorAuth/TwoFactorAuth";
 
 const App = () => {
   //const { themeColor, updateTheme } = useThemeContext();
@@ -15,6 +16,14 @@ const App = () => {
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route
+          path="/authentication"
+          element={
+            <ProtectedRoute requireAuthoriazation="2FA">
+              <TwoFactorAuth />
+            </ProtectedRoute>
+          }
+        />
 
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
@@ -25,7 +34,7 @@ const App = () => {
           <Route
             path="/profile"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute requireAuthoriazation="authorized">
                 <Profile />
               </ProtectedRoute>
             }

@@ -33,7 +33,7 @@ const navItems = [
 const restricted = ["upload", "notices"];
 
 export const Navbar = () => {
-  const { isAuthorized } = useAuthContext();
+  const { loginState } = useAuthContext();
   const location = useLocation();
   const path = location.pathname;
   let currentMenu: menuItems = "home";
@@ -46,9 +46,12 @@ export const Navbar = () => {
   return (
     <div className={styles["navbar-container"]}>
       {navItems
-        .filter((item) => isAuthorized || !restricted.includes(item.menu))
+        .filter(
+          (item) =>
+            loginState === "authorized" || !restricted.includes(item.menu)
+        )
         .map(({ path, menu, icon: Icon, label }) => {
-          if (!isAuthorized) {
+          if (loginState !== "authorized") {
             if (menu === "upload" || menu === "notices") {
             }
           }
@@ -59,6 +62,7 @@ export const Navbar = () => {
               className={`${styles["navbar-item"]}  ${
                 styles[isActive ? "current" : ""]
               }`}
+              key={menu}
             >
               <div
                 className={`${styles["navbar-item__icon"]}  ${

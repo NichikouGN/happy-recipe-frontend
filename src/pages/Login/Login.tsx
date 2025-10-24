@@ -1,5 +1,11 @@
-import { FaUser, FaLock, FaEye, FaEyeSlash, FaRegMoon } from "react-icons/fa";
-import { useCallback, useState, type ChangeEvent, type FormEvent } from "react";
+import { FaUser, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
+import {
+  useCallback,
+  useEffect,
+  useState,
+  type ChangeEvent,
+  type FormEvent,
+} from "react";
 import { useAuthContext } from "../../context/AuthContext";
 import { IoClose } from "react-icons/io5";
 import styles from "./Login.module.css";
@@ -9,9 +15,9 @@ import { useNavigate } from "react-router-dom";
 const Login = () => {
   const navigate = useNavigate();
   //Hooks
-  const { login } = useAuthContext();
+  const { login, loginState } = useAuthContext();
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [username, setUsername] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
   //Toggle password show/hide
@@ -22,7 +28,7 @@ const Login = () => {
   //Update username hook
   const handleUsernameChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
-      setUsername(event.target.value);
+      setEmail(event.target.value);
     },
     []
   );
@@ -36,13 +42,23 @@ const Login = () => {
   );
 
   //Handle submission
-  const handleSubmission = useCallback(
-    (event: FormEvent) => {
-      event.preventDefault();
-      login(username, password);
-    },
-    [username, password]
-  );
+  const handleSubmission = async (event: FormEvent) => {
+    event.preventDefault();
+
+    if (!email || !password) {
+      alert("Email and password are required");
+    }
+
+    if (email === "admin" && password === "123") login(email, password);
+  };
+
+  useEffect(() => {
+    if (loginState === "2FA") {
+      navigate("/authentication");
+    } else if (loginState === "authorized") {
+      navigate(-1);
+    }
+  }, [loginState, navigate]);
 
   return (
     <div className={styles["login-container"]}>
@@ -81,7 +97,7 @@ const Login = () => {
             <input
               type="text"
               placeholder="Enter your username"
-              value={username}
+              value={email}
               alt="Enter your username"
               autoComplete="off"
               className={styles["input-field"]}

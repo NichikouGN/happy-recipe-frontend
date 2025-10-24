@@ -71,6 +71,7 @@ const Home = () => {
             {data.map(({ id, title, author, time }) => {
               return (
                 <Card
+                  key={id}
                   id={id}
                   onClick={() => {
                     navigate(`/${id}`);

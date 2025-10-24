@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useState } from "react";
 import styles from "./Header.module.css";
 import { FaPlateWheat } from "react-icons/fa6";
 import { FaMagnifyingGlass } from "react-icons/fa6";
