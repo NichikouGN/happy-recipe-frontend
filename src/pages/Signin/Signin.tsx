@@ -8,14 +8,14 @@ import {
 } from "react";
 import { useAuthContext } from "../../context/AuthContext";
 import { IoClose } from "react-icons/io5";
-import styles from "./Login.module.css";
+import styles from "./Signin.module.css";
 import Button from "../../components/Button/Button";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
-const Login = () => {
+const Signin = () => {
   const navigate = useNavigate();
   //Hooks
-  const { login, loginState } = useAuthContext();
+  const { signIn, signInState } = useAuthContext();
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -49,16 +49,16 @@ const Login = () => {
       alert("Email and password are required");
     }
 
-    if (email === "admin" && password === "123") login(email, password);
+    if (email === "admin" && password === "123") signIn(email, password);
   };
 
   useEffect(() => {
-    if (loginState === "2FA") {
+    if (signInState === "2FA") {
       navigate("/authentication");
-    } else if (loginState === "authorized") {
+    } else if (signInState === "authorized") {
       navigate(-1);
     }
-  }, [loginState, navigate]);
+  }, [signInState, navigate]);
 
   return (
     <div className={styles["login-container"]}>
@@ -80,8 +80,7 @@ const Login = () => {
       </div>
 
       <div className={styles["quote"]}>
-        Login or Sign up to join our community of passionate chefs all around
-        the world
+        Login to join our community of passionate chefs all around the world
       </div>
 
       <div className={styles["log-in-menu"]}>
@@ -144,12 +143,15 @@ const Login = () => {
         </form>
 
         <div className={styles["signup-quote"]}>
-          New to Happy Recipe? <a className={styles["signup-btn"]}>Sign up</a>{" "}
-          today
+          New to Happy Recipe?&nbsp;
+          <NavLink to="/sign-up" className={styles["signup-btn"]}>
+            Sign Up
+          </NavLink>
+          &nbsp;today
         </div>
       </div>
     </div>
   );
 };
 
-export default Login;
+export default Signin;

@@ -6,22 +6,25 @@ import Upload from "./pages/Upload/Upload";
 import Notifications from "./pages/Notifications/Notifications";
 import Profile from "./pages/Profile/Profile";
 import NotFound from "./pages/NotFound/NotFound";
-import Login from "./pages/Login/Login";
+import Signin from "./pages/Signin/Signin";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import TwoFactorAuth from "./pages/TwoFactorAuth/TwoFactorAuth";
+import Signup from "./pages/Signup/Signup";
 
 const App = () => {
   //const { themeColor, updateTheme } = useThemeContext();
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/login" element={<Login />} />
+        <Route path="/login" element={<Signin />} />
+        <Route path="/sign-up" element={<Signup />} />
         <Route
           path="/authentication"
           element={
-            <ProtectedRoute requireAuthoriazation="2FA">
-              <TwoFactorAuth />
-            </ProtectedRoute>
+            <TwoFactorAuth />
+            // <ProtectedRoute requireAuthoriazation="2FA">
+            //   <TwoFactorAuth />
+            // </ProtectedRoute>
           }
         />
 

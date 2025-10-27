@@ -161,10 +161,11 @@ form {
 
 .signup-quote {
   color: white;
-  margin-top: 0.25rem;
+  margin-top: 0.75rem;
 }
 
 .signup-btn {
   text-decoration: underline;
   font-weight: 600;
+  color: white;
 }

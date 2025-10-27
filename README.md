@@ -15,3 +15,9 @@ To execute the front end, type 'npm run dev' on the into the console and open an
 ## v0.1.0 (2025-10-14)
 - Added components to build the website such as Button, Card
 - Added the main menu page
+  
+## v0.2.0 (2025-10-24)
+- Authentication Context for Login and 2FA
+
+## v0.2.0 (2025-10-27)
+- Sign Up Page

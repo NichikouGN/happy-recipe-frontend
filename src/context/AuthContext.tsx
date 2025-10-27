@@ -26,17 +26,23 @@ const AuthContext = createContext<
       setAccessToken: (accessToken: string) => void;
       refreshToken: string;
       setRefreshToken: (refreshToken: string) => void;
-      loginState: "unauthorized" | "2FA" | "authorized";
-      login: (email: string, password: string) => Promise<void>;
+      signInState: "unauthorized" | "2FA" | "authorized";
+      signIn: (email: string, password: string) => Promise<void>;
+      signUp: (
+        firstName: string,
+        lastName: string,
+        email: string,
+        password: string
+      ) => Promise<boolean>;
       verify2FA: (code: string) => Promise<boolean>;
-      logout: () => void;
+      signOut: () => void;
     }
   | undefined
 >(undefined);
 
 export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [userID, setUsername] = useState<string>("");
-  const [loginState, setLoginState] = useState<
+  const [signInState, setSignInState] = useState<
     "unauthorized" | "2FA" | "authorized"
   >("unauthorized");
   const [accessToken, setAccessToken] = useState<string>("");
@@ -48,7 +54,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [tempToken, setTempToken] = useState<string>("");
 
   const resetToken = useCallback(() => {
-    setLoginState("unauthorized");
+    setSignInState("unauthorized");
     setAccessToken("");
 
     setRefreshToken("");
@@ -78,7 +84,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
       const refTok = data.refreshToken;
       setRefreshToken(refTok);
 
-      setLoginState("authorized");
+      setSignInState("authorized");
 
       return true;
     } catch (e) {
@@ -97,7 +103,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
       if (!res.ok) throw new Error("Access token expired");
 
-      setLoginState("authorized");
+      setSignInState("authorized");
 
       return true;
     } catch (e: any) {
@@ -122,7 +128,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
       return true;
     } catch (e) {
-      setLoginState("unauthorized");
+      setSignInState("unauthorized");
       setTempToken("");
       return false;
     }
@@ -150,7 +156,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setRefreshToken(data.accessToken);
         localStorage.setItem("refresh-token", data.accessToken);
 
-        setLoginState("authorized");
+        setSignInState("authorized");
         setTempToken("");
 
         return true;
@@ -162,7 +168,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
   );
 
   //Login method
-  const login = useCallback(async (email: string, password: string) => {
+  const signIn = useCallback(async (email: string, password: string) => {
     try {
       // const res = await fetch("http://localhost:4000/login", {
       //   method: "POST",
@@ -180,7 +186,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
       console.log(password);
       if (data.status === "require2FA") {
         setTempToken(data.tempToken);
-        setLoginState("2FA");
+        setSignInState("2FA");
       } else {
         setAccessToken(data.accessToken);
 
@@ -188,7 +194,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
         localStorage.setItem("refresh-token", data.refreshToken);
 
         setUsername(data.username);
-        setLoginState("authorized");
+        setSignInState("authorized");
       }
     } catch (error: any) {
       if (error.message.includes(401)) {
@@ -201,8 +207,41 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, []);
 
+  const signUp = useCallback(
+    async (
+      firstName: string,
+      lastName: string,
+      email: string,
+      password: string
+    ) => {
+      try {
+        const res = await fetch("http://localhost:4000/sign-up/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            password: password,
+          }),
+        });
+
+        if (!res.ok) return false;
+
+        const data = await res.json();
+        setAccessToken(data.accessToken);
+        setRefreshToken(data.refreshToken);
+        return true;
+      } catch (e) {
+        console.log(e);
+        return false;
+      }
+    },
+    [accessToken, refreshToken]
+  );
+
   //Logout method
-  const logout = useCallback(() => {
+  const signOut = useCallback(() => {
     resetToken();
     setTempToken("");
   }, []);
@@ -219,10 +258,11 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setAccessToken,
         refreshToken,
         setRefreshToken,
-        loginState,
-        login,
+        signInState,
+        signIn,
         verify2FA,
-        logout,
+        signUp,
+        signOut,
       }}
     >
       {children}
