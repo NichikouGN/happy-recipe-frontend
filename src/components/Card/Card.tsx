@@ -1,54 +1,97 @@
-import React from "react";
 import styles from "./Card.module.css";
-import { FaClock, FaRegHeart, FaHeart } from "react-icons/fa";
+import { FaClock, FaFire } from "react-icons/fa";
+import { MdDinnerDining } from "react-icons/md";
 
 interface CardProps {
-  id?: string;
-  image?: string;
-  title?: string;
+  postId: string;
+  postImg?: string;
+  title: string;
   author?: string;
   time?: string;
-  useLike: boolean;
-  Like?: boolean;
-  onLike?: (e: React.MouseEvent<HTMLButtonElement>) => void;
-  onClick?: () => void;
+  serving: string;
+  difficulty: string;
+  cardType: "post" | "food";
+  onClick: () => void;
 }
 
 const Card = ({
-  id,
-  image,
+  postId,
+  postImg,
   title,
   author,
   time,
-  useLike,
-  Like,
-  onLike,
+  serving,
+  difficulty,
+  cardType,
   onClick,
 }: CardProps) => {
   return (
-    <div key={id} id={id} className={styles["card-item"]} onClick={onClick}>
-      {image && <img src={image} className={styles["card-image"]} />}
-
-      <div className={styles["card-details"]}>
-        {title && <div className={styles["card-title"]}>{title}</div>}
-        {author && <div className={styles["card-author"]}>{author}</div>}
-
+    <div key={postId} className={styles["card-item"]} onClick={onClick}>
+      <div
+        style={{
+          backgroundImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0) 70%), url('${postImg}')`,
+        }}
+        className={styles["card-image"]}
+      >
         <div className={styles["card-info-wrapper"]}>
-          {time && (
-            <div className={styles["card-info"]}>
-              <FaClock className={styles["card-info__icon"]} />
-              <div className={styles["card-info__label"]}>{time}</div>
-            </div>
+          <div className={styles["card-info-blur"]} />
+          {cardType === "post" && (
+            <img
+              src="/src/assets/happy-recipe-logo-text.png"
+              className={styles["card-author-logo"]}
+            />
           )}
 
-          {useLike && (
-            <button className={styles["card-like"]} onClick={onLike}>
-              {Like ? <FaHeart /> : <FaRegHeart />}
-            </button>
-          )}
+          <div className={styles["card-details"]}>
+            <span
+              className={`${styles["card-title"]}  ${
+                cardType === "food" && styles["food"]
+              }`}
+            >
+              {title}
+            </span>
+
+            {cardType === "post" && (
+              <div className={styles["other-info-wrapper"]}>
+                <div className={styles["other-info-item"]}>{author}</div>
+                <div className={styles["other-info-item"]}>
+                  <FaClock /> <span>{time}</span>
+                </div>
+
+                <div className={styles["other-info-item"]}>
+                  <FaFire
+                    className={`${styles["diff-color"]} ${styles[difficulty]}`}
+                  />
+                  <span>{difficulty}</span>
+                </div>
+
+                <div className={styles["other-info-item"]}>
+                  <MdDinnerDining /> <span>{serving}</span>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
+
+    // <div key={postId} className={styles["card-item"]} onClick={onClick}>
+    //   {postImg && <img src={postImg} className={styles["card-image"]} />}
+
+    //   <div className={styles["card-details"]}>
+    //     {title && <div className={styles["card-title"]}>{title}</div>}
+    //     {author && <div className={styles["card-author"]}>{author}</div>}
+
+    //     <div className={styles["card-info-wrapper"]}>
+    //       {time && (
+    //         <div className={styles["card-info"]}>
+    //           <FaClock className={styles["card-info__icon"]} />
+    //           <div className={styles["card-info__label"]}>{time}</div>
+    //         </div>
+    //       )}
+    //     </div>
+    //   </div>
+    // </div>
   );
 };
 
