@@ -7,17 +7,17 @@ import {
   type ReactNode,
 } from "react";
 
-const data = {
-  status: "require2FA",
-  tempToken: "abc",
-  accessToken: "abc",
-  refreshToken: "abc",
-  username: "abc",
-};
+//Test Data for Sign in
+// const data = {
+//   status: "require2FA",
+//   tempToken: "abc",
+//   accessToken: "abc",
+//   refreshToken: "abc",
+//   username: "abc",
+// };
 
 const AuthContext = createContext<
   | {
-      userID: string;
       tempToken: string;
       validateTempToken: () => Promise<boolean>;
       accessToken: string;
@@ -29,6 +29,7 @@ const AuthContext = createContext<
       signInState: "unauthorized" | "2FA" | "authorized";
       signIn: (email: string, password: string) => Promise<void>;
       signUp: (
+        userName: string,
         firstName: string,
         lastName: string,
         email: string,
@@ -41,7 +42,6 @@ const AuthContext = createContext<
 >(undefined);
 
 export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const [userID, setUsername] = useState<string>("");
   const [signInState, setSignInState] = useState<
     "unauthorized" | "2FA" | "authorized"
   >("unauthorized");
@@ -51,20 +51,40 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
     if (!refreshTok) return "";
     return refreshTok;
   });
-  const [tempToken, setTempToken] = useState<string>("");
+  const [tempToken, setTempToken] = useState<string>(""); //2FA temporary token
 
-  const resetToken = useCallback(() => {
+  /**
+   * Help function that clear all access token and refresh token
+   */
+  const clearToken = useCallback(() => {
     setSignInState("unauthorized");
-    setAccessToken("");
 
+    setAccessToken("");
     setRefreshToken("");
+
     localStorage.removeItem("refresh-token");
+
     return false;
   }, []);
 
+  /**
+   * Helper function to return an error
+   */
+  const authError = useCallback((status: number) => {
+    const error: any = new Error("Failed to fetch");
+    error.status = status;
+    return error;
+  }, []);
+
+  /**
+   * Request Backend for a new access token
+   * Require an existing refresh token
+   *
+   * @returns Promise<boolean>
+   */
   const requestNewAccessToken = useCallback(async () => {
     try {
-      //if (!refreshToken) throw new Error("No refresh token found");
+      if (!refreshToken) throw new Error("No refresh token found");
 
       const res = await fetch("http://localhost:4000/validate/refresh-token", {
         method: "POST",
@@ -72,49 +92,55 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
           "Content-Type": "application/json",
           authorization: `Bearer ${refreshToken}`,
         },
-        body: JSON.stringify({ userID: userID ? userID : "" }),
       });
-      if (!res.ok) throw new Error("Access token expired/invalid");
+
+      if (!res.ok) throw authError(res.status);
 
       const data = await res.json();
 
-      const accTok = data.accessToken;
-      setAccessToken(accTok);
-
-      const refTok = data.refreshToken;
-      setRefreshToken(refTok);
-
+      setAccessToken(data.accessToken);
+      setRefreshToken(data.refreshToken);
       setSignInState("authorized");
 
       return true;
     } catch (e) {
-      return resetToken();
+      return clearToken();
     }
-  }, [userID, refreshToken]);
+  }, [refreshToken]);
 
+  /**
+   * Confirm the validity of the access token
+   *
+   * @returns Promise<boolean>
+   */
   const validateAccessToken = useCallback(async () => {
     try {
-      //if (!accessToken) throw new Error("No access token found");
-      //await new Promise((resolve) => setTimeout(resolve, 100));
+      if (!accessToken) throw new Error("No access token found");
+
       const res = await fetch("http://localhost:4000/validate/access-token", {
         method: "GET",
         headers: { authorization: `Bearer ${accessToken}` },
       });
 
-      if (!res.ok) throw new Error("Access token expired");
+      if (!res.ok) throw authError(res.status);
 
       setSignInState("authorized");
 
       return true;
     } catch (e: any) {
-      if (e.message.includes(401)) {
+      if (e.status === 401) {
         return requestNewAccessToken();
       } else {
-        return resetToken();
+        return clearToken();
       }
     }
   }, [accessToken, requestNewAccessToken]);
 
+  /**
+   * Confirm the validity of the temp token used for 2FA
+   *
+   * @returns Promise<boolean>
+   */
   const validateTempToken = useCallback(async () => {
     try {
       if (!tempToken) return false;
@@ -124,7 +150,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
         headers: { authorization: `Bearer ${tempToken}` },
       });
 
-      if (!res.ok) return false;
+      if (!res.ok) throw authError(res.status);
 
       return true;
     } catch (e) {
@@ -134,11 +160,16 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, [tempToken]);
 
+  /**
+   * Send the 2FA code along side the temp token to the backend
+   * Is used when 2FA is required when sign in
+   *
+   * @returns Promise<boolean>
+   */
   const verify2FA = useCallback(
     async (code: string) => {
       try {
-        const isValid = await validateTempToken();
-        if (!isValid) return false;
+        if (!tempToken) throw new Error("temp Token does not exist");
 
         const res = await fetch("http://localhost:4000/validate/2fa", {
           method: "POST",
@@ -148,13 +179,13 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
           },
           body: JSON.stringify({ code: code }),
         });
-        if (!res.ok) return false;
+        if (!res.ok) throw authError(res.status);
 
         const data = await res.json();
         setAccessToken(data.accessToken);
 
-        setRefreshToken(data.accessToken);
-        localStorage.setItem("refresh-token", data.accessToken);
+        setRefreshToken(data.refreshToken);
+        localStorage.setItem("refresh-token", data.refreshToken);
 
         setSignInState("authorized");
         setTempToken("");
@@ -167,23 +198,24 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
     [tempToken]
   );
 
-  //Login method
+  /**
+   * Send the email and password to the backend for sign in
+   *
+   * @param email - a valid email string
+   * @param password - password with at least 8 characters
+   */
   const signIn = useCallback(async (email: string, password: string) => {
     try {
-      // const res = await fetch("http://localhost:4000/login", {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify({ email: email, password: password }),
-      // });
+      const res = await fetch("http://localhost:4000/signin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email, password: password }),
+      });
 
-      // if (!res.ok) {
-      //   const errText = await res.text();
-      //   throw new Error(`Error ${res.status}: ${errText}`);
-      // }
+      if (!res.ok) throw authError(res.status);
 
-      //const data = await res.json();
-      console.log(email);
-      console.log(password);
+      const data = await res.json();
+
       if (data.status === "require2FA") {
         setTempToken(data.tempToken);
         setSignInState("2FA");
@@ -193,32 +225,42 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setRefreshToken(data.refreshToken);
         localStorage.setItem("refresh-token", data.refreshToken);
 
-        setUsername(data.username);
         setSignInState("authorized");
       }
     } catch (error: any) {
-      if (error.message.includes(401)) {
+      if (error.status === 401) {
         alert("Your username or password is incorrect");
-      } else if (error.message === "Failed to fetch") {
-        alert("Unable to connect to server");
       } else {
         alert("500 Internal Server Error");
       }
     }
   }, []);
 
+  /**
+   * Send the sign up info to the back end
+   *
+   * @param userName - the username of the user
+   * @param firstName - first name
+   * @param lastName - last name
+   * @param email - a valid email string
+   * @param password - password with at least 8 characters
+   *
+   * @returns Promise<boolean>
+   */
   const signUp = useCallback(
     async (
+      userName: string,
       firstName: string,
       lastName: string,
       email: string,
       password: string
     ) => {
       try {
-        const res = await fetch("http://localhost:4000/sign-up/", {
+        const res = await fetch("http://localhost:4000/signup/", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
+            userName: userName,
             firstName: firstName,
             lastName: lastName,
             email: email,
@@ -229,27 +271,31 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
         if (!res.ok) return false;
 
         const data = await res.json();
+
         setAccessToken(data.accessToken);
         setRefreshToken(data.refreshToken);
+        setSignInState("authorized");
+
         return true;
       } catch (e) {
-        console.log(e);
         return false;
       }
     },
     [accessToken, refreshToken]
   );
 
-  //Logout method
+  /**
+   * Log the user out of their account
+   * Remove all tokens
+   */
   const signOut = useCallback(() => {
-    resetToken();
+    clearToken();
     setTempToken("");
   }, []);
 
   return (
     <AuthContext.Provider
       value={{
-        userID,
         tempToken,
         validateTempToken,
         accessToken,

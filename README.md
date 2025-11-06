@@ -21,3 +21,11 @@ To execute the front end, type 'npm run dev' on the into the console and open an
 
 ## v0.2.0 (2025-10-27)
 - Sign Up Page
+
+## v0.3.0 (2025-11-06)
+- Added discover page with support for infinite scrolling
+- When the enter the discover page, front end will request 10 items from back end using the api call '/discover?page='. Every new fetch the page value is increased by 1.
+- Backend needs to response with the structure defined in DiscoverContext.tsx.
+- Change the component "login" to "signin" to match with "signup"
+- Change api call to back end from '/login' to '/signin', '/sign-up' to '/signup
+- Added more comments to make code clearer

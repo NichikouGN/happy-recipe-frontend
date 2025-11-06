@@ -2,6 +2,7 @@
   padding: 0;
   margin: 0;
   box-sizing: border-box;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 :root {
@@ -70,6 +71,8 @@ body {
   background-color: var(--theme-body-bg);
   color: var(--theme-body-text);
   transition: background-color 0.2s ease;
+  overscroll-behavior-y: none;
+  overflow-x: hidden;
 }
 
 :root[app-theme="light"] {

@@ -3,6 +3,7 @@
   flex-direction: column;
 
   width: 100%;
+  margin: 0.625rem 0;
 
   border-radius: 0.5rem;
   overflow: hidden;
@@ -11,6 +12,8 @@
   box-shadow: -4px -4px 8px rgba(255, 255, 255, 0.9),
     4px 4px 8px rgba(0, 0, 0, 0.4);
   z-index: 1;
+
+  overflow: hidden;
 }
 
 .card-image {
@@ -18,11 +21,34 @@
   height: auto;
   aspect-ratio: 18/9;
 
-  border-radius: 0.5rem;
   background-blend-mode: multiply;
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
+
+  overflow: hidden;
+  will-change: background-position;
+}
+
+.card-image.loading {
+  background: linear-gradient(
+    to bottom,
+    rgb(225, 225, 225),
+    rgb(200, 200, 200),
+    rgb(225, 225, 225)
+  );
+
+  background-size: 100% 200%;
+  animation: gradient-shift 1.5s linear infinite;
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 0 -200%;
+  }
 }
 
 .card-info-wrapper {
@@ -32,7 +58,6 @@
   position: relative;
   width: 100%;
   padding: 0.5rem;
-  background: transparent;
 
   color: white;
 }
@@ -104,6 +129,10 @@
 .other-info-item:not(:last-child)::after {
   content: "•";
   margin: 0 0.25rem;
+}
+
+.other-info-item span {
+  text-transform: capitalize;
 }
 
 .diff-color.easy {

@@ -1,31 +1,25 @@
 import styles from "./Navbar.module.css";
 import { FaHome, FaUser } from "react-icons/fa";
-import { FaBell, FaMagnifyingGlass } from "react-icons/fa6";
+import { FaGlobe } from "react-icons/fa6";
 import { RiContactsBookUploadFill } from "react-icons/ri";
 import { Link, useLocation } from "react-router-dom";
 import { useAuthContext } from "../../context/AuthContext";
 
-type menuItems = "home" | "search" | "profile" | "notices" | "upload";
+type menuItems = "home" | "discover" | "profile" | "upload";
 
 const navItems = [
   { path: "/", menu: "home", icon: FaHome, label: "Home" },
   {
-    path: "/search",
-    menu: "search",
-    icon: FaMagnifyingGlass,
-    label: "Search",
+    path: "/discover",
+    menu: "discover",
+    icon: FaGlobe,
+    label: "Discover",
   },
   {
     path: "/upload",
     menu: "upload",
     icon: RiContactsBookUploadFill,
     label: "Upload",
-  },
-  {
-    path: "/notices",
-    menu: "notices",
-    icon: FaBell,
-    label: "Notices",
   },
   { path: "/profile", menu: "profile", icon: FaUser, label: "Profile" },
 ] as const;
@@ -34,13 +28,14 @@ const restricted = ["upload", "notices"];
 
 export const Navbar = () => {
   const { signInState } = useAuthContext();
+
   const location = useLocation();
   const path = location.pathname;
   let currentMenu: menuItems = "home";
 
-  if (path.startsWith("/search")) currentMenu = "search";
+  //Sync navbar with url
+  if (path.startsWith("/discover")) currentMenu = "discover";
   else if (path.startsWith("/profile")) currentMenu = "profile";
-  else if (path.startsWith("/notices")) currentMenu = "notices";
   else if (path.startsWith("/upload")) currentMenu = "upload";
 
   return (
@@ -52,7 +47,7 @@ export const Navbar = () => {
         )
         .map(({ path, menu, icon: Icon, label }) => {
           if (signInState !== "authorized") {
-            if (menu === "upload" || menu === "notices") {
+            if (menu === "upload") {
             }
           }
           const isActive = currentMenu === menu;

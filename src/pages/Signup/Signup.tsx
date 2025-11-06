@@ -31,12 +31,12 @@ const Signup = () => {
     setShowPassword(!showPassword);
   }, [showPassword]);
 
-  //Toggle password show/hide
+  //Toggle confirm password show/hide
   const toggleConfirmPasswordVisibility = useCallback(() => {
     setShowConfirmPassword(!showConfirmPassword);
   }, [showConfirmPassword]);
 
-  //Update first name hook
+  //Update first name in real time
   const handleFirstNameChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
       setFirstName(event.target.value);
@@ -44,7 +44,7 @@ const Signup = () => {
     []
   );
 
-  //Update first name hook
+  //Update last name in real time
   const handleLastNameChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
       setLastName(event.target.value);
@@ -52,7 +52,7 @@ const Signup = () => {
     []
   );
 
-  //Update username hook
+  //Update email in real time
   const handleUsernameChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
       setEmail(event.target.value);
@@ -60,7 +60,7 @@ const Signup = () => {
     []
   );
 
-  //Update password hook
+  //Update password in real time
   const handlePasswordChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
       setPassword(event.target.value);
@@ -68,7 +68,7 @@ const Signup = () => {
     []
   );
 
-  //Update password hook
+  //Update confirm password in real time
   const handleConfirmPasswordChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
       setConfirmPassword(event.target.value);
@@ -91,9 +91,10 @@ const Signup = () => {
     }
 
     if (email === "admin" && password === "123")
-      signUp(firstName, lastName, email, password);
+      signUp("abc", firstName, lastName, email, password);
   };
 
+  //Reroute base on singin state
   useEffect(() => {
     if (signInState === "2FA") {
       navigate("/authentication");

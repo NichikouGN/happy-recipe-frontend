@@ -18,7 +18,7 @@ const TwoFactorAuth = () => {
   const { verify2FA, signInState } = useAuthContext();
   const [twoFactor, setTwoFactor] = useState<string>("");
 
-  //Update username hook
+  //Update 2FA in real time
   const handleTwoFactorChanges = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
       setTwoFactor(event.target.value);
@@ -34,6 +34,7 @@ const TwoFactorAuth = () => {
     }
   };
 
+  //Reroute base on signin state
   useEffect(() => {
     if (signInState === "authorized") {
       navigate("/");

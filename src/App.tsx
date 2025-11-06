@@ -1,7 +1,6 @@
 import { Route, Routes, BrowserRouter } from "react-router-dom";
 import { Layout } from "./layout/Layout";
 import Home from "./pages/Home/Home";
-import Search from "./pages/Search/Search";
 import Upload from "./pages/Upload/Upload";
 import Notifications from "./pages/Notifications/Notifications";
 import Profile from "./pages/Profile/Profile";
@@ -10,6 +9,7 @@ import Signin from "./pages/Signin/Signin";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import TwoFactorAuth from "./pages/TwoFactorAuth/TwoFactorAuth";
 import Signup from "./pages/Signup/Signup";
+import Discover from "./pages/Discover/Discover";
 
 const App = () => {
   //const { themeColor, updateTheme } = useThemeContext();
@@ -30,7 +30,7 @@ const App = () => {
 
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
-          <Route path="/search" element={<Search />} />
+          <Route path="/discover" element={<Discover />} />
           <Route path="/upload" element={<Upload />} />
           <Route path="/notices" element={<Notifications />} />
 

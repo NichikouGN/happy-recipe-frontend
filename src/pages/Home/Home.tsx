@@ -4,88 +4,77 @@ import { useNavigate } from "react-router-dom";
 import { FaSquareFacebook, FaSquareGithub, FaYoutube } from "react-icons/fa6";
 import Card from "../../components/Card/Card";
 
+//Dummy structure
+interface postStructure {
+  id: string;
+  title: string;
+  author: string;
+  time: number;
+  serving: number;
+  difficulty: "easy" | "medium" | "hard";
+}
+
 //Dummy Data
-const data = [
+const data: postStructure[] = [
   {
     id: "01",
     title: "Zesty Curry",
     author: "Alan",
-    time: "17 min",
+    time: 17,
     difficulty: "easy",
-    serving: "2-4",
+    serving: 2,
   },
   {
     id: "02",
     title: "Sweet Burger",
     author: "Bella",
-    time: "43 min",
+    time: 43,
     difficulty: "hard",
-    serving: "2-4",
+    serving: 5,
   },
   {
     id: "03",
     title: "Crispy Salad",
     author: "Chris",
-    time: "25 min",
+    time: 25,
     difficulty: "medium",
-    serving: "2-4",
+    serving: 4,
   },
   {
     id: "04",
     title: "Hearty Soup",
     author: "Dyson",
-    time: "9 min",
+    time: 9,
     difficulty: "easy",
-    serving: "2-4",
+    serving: 3,
   },
   {
     id: "05",
     title: "Tangy Sandwich",
     author: "Eve",
-    time: "32 min",
+    time: 32,
     difficulty: "easy",
-    serving: "2-4",
-  },
-];
-
-const chefList = [
-  {
-    id: "1",
-    name: "Nichikou",
-    description: "Head chef at ABC",
-  },
-  {
-    id: "2",
-    name: "Hanami",
-    description: "Cheft at ABC",
-  },
-  {
-    id: "3",
-    name: "Haruki",
-    description: "HR",
-  },
-
-  {
-    id: "4",
-    name: "Haruki",
-    description: "HR",
-  },
-
-  {
-    id: "5",
-    name: "Haruki",
-    description: "HR",
+    serving: 2,
   },
 ];
 
 const Home = () => {
   const [scrollY, setScrollY] = useState<number>(0); //Parallax Var
+  const [headerHeight, setHeaderHeight] = useState<number>(0);
+
   const navigate = useNavigate();
 
-  //update Scroll position
+  /**
+   * Get the header height
+   * Add an event listener for scroll, update scrollY position
+   */
   useEffect(() => {
+    setHeaderHeight(
+      document.getElementsByClassName(styles.header)[0].clientHeight
+    );
+
     const handleScroll = () => {
-      setScrollY(window.scrollY);
+      setScrollY(Math.min(Math.max(0, window.scrollY)));
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -93,14 +82,15 @@ const Home = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const margin_top = scrollY * 0.25; //Transform Translate
+  //Transform translate value with hard limit tie to the header height
+  const translateVal = Math.min(headerHeight / 4, scrollY / 4);
 
   return (
     <>
-      {/*Banner Image*/}
+      {/*Banner Image with parallax inline styling*/}
       <header
         className={styles["header"]}
-        style={{ transform: `translateY(${margin_top}px)` }}
+        style={{ transform: `translateY(${translateVal}px)` }}
       >
         <div className={styles["header-title"]}>
           Bring&nbsp;
@@ -122,11 +112,11 @@ const Home = () => {
               return (
                 <Card
                   key={id}
-                  postId={id}
                   onClick={() => {
                     navigate(`/post/${id}`);
                   }}
                   cardType="post"
+                  cardLoaded={true}
                   postImg={`/src/assets/Food_thumb_${id}.jpg`}
                   title={title}
                   author={author}
@@ -164,59 +154,7 @@ const Home = () => {
             We believe that cooking is meant to be a joyful time and hope to
             bring that vision to life.
           </p>
-
-          <div className={styles["chef-card-container"]}>
-            {chefList.map(({ id, name, description }) => {
-              return (
-                <div key={id} className={styles["chef-card-item"]}>
-                  <img
-                    src="/src/assets/home-image.png"
-                    width={"100px"}
-                    className={styles["chef-profile-image"]}
-                  />
-                  <div className={styles["chef-name"]}>{name}</div>
-                  <div className={styles["chef-description"]}>
-                    {description}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
         </section>
-        {/* <section className={styles["chef-recommendation"]}>
-          <h2 className={styles["recommendation-title"]}>
-            Recipes from our professional chefs
-          </h2>
-
-          <div className={styles["recommendation-card-container"]}>
-            {data.map(({ id, title, author, time, serving, difficulty }) => {
-              return (
-                <Card
-                  key={id}
-                  postId={id}
-                  onClick={() => {
-                    navigate(`/post/${id}`);
-                  }}
-                  postImg={`/src/assets/Food_thumb_${id}.jpg`}
-                  title={title}
-                  author={author}
-                  time={time}
-                  difficulty={difficulty}
-                  serving={serving}
-                />
-              );
-            })}
-
-            <button
-              className={`${styles["card-item"]} ${styles["see-more"]}`}
-              onClick={() => {
-                navigate("xdd");
-              }}
-            >
-              More Recipe
-            </button>
-          </div>
-        </section> */}
       </main>
 
       <footer className={styles["footer"]}>

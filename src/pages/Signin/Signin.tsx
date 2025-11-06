@@ -25,7 +25,7 @@ const Signin = () => {
     setShowPassword(!showPassword);
   }, [showPassword]);
 
-  //Update username hook
+  //Update email field in real time
   const handleUsernameChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
       setEmail(event.target.value);
@@ -33,7 +33,7 @@ const Signin = () => {
     []
   );
 
-  //Update password hook
+  //Update password field in real time
   const handlePasswordChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
       setPassword(event.target.value);
@@ -44,14 +44,14 @@ const Signin = () => {
   //Handle submission
   const handleSubmission = async (event: FormEvent) => {
     event.preventDefault();
-
-    if (!email || !password) {
-      alert("Email and password are required");
+    if (password.length < 8) {
+      alert("Emails or password are incorrect");
     }
 
-    if (email === "admin" && password === "123") signIn(email, password);
+    signIn(email, password);
   };
 
+  //Forward to page passed on signin state
   useEffect(() => {
     if (signInState === "2FA") {
       navigate("/authentication");
@@ -61,7 +61,7 @@ const Signin = () => {
   }, [signInState, navigate]);
 
   return (
-    <div className={styles["login-container"]}>
+    <div className={styles["signin-container"]}>
       <div className={styles["return"]}>
         <IoClose
           className={styles["return-icon"]}
@@ -80,7 +80,7 @@ const Signin = () => {
       </div>
 
       <div className={styles["quote"]}>
-        Login to join our community of passionate chefs all around the world
+        Sign in to join our community of passionate chefs all around the world
       </div>
 
       <div className={styles["log-in-menu"]}>
@@ -89,8 +89,7 @@ const Signin = () => {
             handleSubmission(event);
           }}
         >
-          {/*Username Input*/}
-
+          {/*Email Input*/}
           <div className={styles["input-wrapper"]}>
             <FaUser className={styles["input-icon"]} />
             <input
@@ -103,6 +102,7 @@ const Signin = () => {
               onChange={(event) => {
                 handleUsernameChange(event);
               }}
+              // required
             ></input>
           </div>
 
@@ -119,6 +119,7 @@ const Signin = () => {
               onChange={(event) => {
                 handlePasswordChange(event);
               }}
+              // required
             ></input>
 
             {/* Show/Hide password*/}
@@ -138,7 +139,7 @@ const Signin = () => {
             type="submit"
             style={{ width: "100%" }}
           >
-            Log In
+            Sign In
           </Button>
         </form>
 

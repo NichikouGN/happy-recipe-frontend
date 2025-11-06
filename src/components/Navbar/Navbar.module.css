@@ -97,7 +97,7 @@
 
   .current {
     transform: scale(1.1);
-    color: var(--red-600);
+    color: var(--red-500);
   }
 
   .collapse-btn {
