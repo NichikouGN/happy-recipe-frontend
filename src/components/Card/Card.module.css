@@ -3,14 +3,14 @@
   flex-direction: column;
 
   width: 100%;
-  margin: 0.625rem 0;
+  /* margin: 0.625rem 0; */
 
-  border-radius: 0.5rem;
+  /* border-radius: 0.5rem; */
   overflow: hidden;
   cursor: pointer;
 
-  box-shadow: -4px -4px 8px rgba(255, 255, 255, 0.9),
-    4px 4px 8px rgba(0, 0, 0, 0.4);
+  /* box-shadow: -4px -4px 8px rgba(255, 255, 255, 0.9),
+    4px 4px 8px rgba(0, 0, 0, 0.4); */
   z-index: 1;
 
   overflow: hidden;
@@ -145,4 +145,66 @@
 
 .diff-color.hard {
   color: var(--red-400);
+}
+
+.reaction-wrapper {
+  display: flex;
+  gap: 0.75rem;
+
+  padding: 0.5rem 0.5rem 1rem;
+}
+
+.reaction-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.25rem;
+
+  padding: 0.25rem;
+
+  border-radius: 0.5rem;
+  outline: none;
+  border: none;
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.75),
+    -1px -1px 2px rgba(255, 255, 255, 1);
+}
+
+.hide-reaction {
+  opacity: 0%;
+}
+
+.like {
+  background: var(--zinc-100);
+}
+
+.heart {
+  background: var(--red-100);
+}
+
+.dislike {
+  background: var(--zinc-300);
+}
+
+.like-icon {
+  color: var(--yellow-500);
+  font-size: 1.1rem;
+}
+
+.heart-icon {
+  color: var(--red-500);
+  font-size: 1.1rem;
+}
+
+.dislike-icon {
+  color: var(--zinc-800);
+  font-size: 1.1rem;
+}
+
+.bookmark {
+  box-shadow: none;
+  background: inherit;
+}
+
+.bookmark-icon {
+  font-size: 1.1rem;
 }

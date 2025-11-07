@@ -37,6 +37,7 @@ export const Navbar = () => {
   if (path.startsWith("/discover")) currentMenu = "discover";
   else if (path.startsWith("/profile")) currentMenu = "profile";
   else if (path.startsWith("/upload")) currentMenu = "upload";
+  else if (path.startsWith("/search")) currentMenu = "discover";
 
   return (
     <div className={styles["navbar-container"]}>

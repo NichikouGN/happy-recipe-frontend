@@ -4,12 +4,14 @@ import { FaArrowRotateRight } from "react-icons/fa6";
 import { useDiscoveryContext } from "../../context/DiscoveryContext";
 import DiscoverSkeleton from "./DiscoverSkeleton";
 import DiscoverContent from "./DiscoverContent";
+import { useNavigate } from "react-router-dom";
 
 const Discover = () => {
   const { postList, loadState, fetchPost, scrollY, setScrollY } =
     useDiscoveryContext();
   const [topBarPos, setTopBarPos] = useState<number>(0);
   const [lastScrollY, setLastScrollY] = useState<number>(0);
+  const navigate = useNavigate();
 
   //Top bar parallax
   useEffect(() => {
@@ -71,7 +73,14 @@ const Discover = () => {
         <div className={`${styles["header-item"]} ${styles["current"]}`}>
           Discover
         </div>
-        <div className={styles["header-item"]}>Search</div>
+        <div
+          className={styles["header-item"]}
+          onClick={() => {
+            navigate("/search");
+          }}
+        >
+          Search
+        </div>
       </div>
       <div className={styles["content"]}>
         <div className={styles["recommendation-card-container"]}>

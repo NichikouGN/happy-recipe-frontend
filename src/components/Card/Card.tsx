@@ -1,8 +1,9 @@
 import styles from "./Card.module.css";
-import { FaClock, FaFire } from "react-icons/fa";
+import { FaClock, FaFire, FaBookmark, FaRegBookmark } from "react-icons/fa";
 import { MdDinnerDining } from "react-icons/md";
-import { FaCircleUser } from "react-icons/fa6";
+import { FaCircleUser, FaHeart } from "react-icons/fa6";
 import { LuText } from "react-icons/lu";
+import { AiFillLike, AiFillDislike } from "react-icons/ai";
 
 interface CardProps {
   postImg?: string;
@@ -12,7 +13,11 @@ interface CardProps {
   serving: number;
   difficulty: "easy" | "medium" | "hard";
   cardType: "post" | "food";
+  likeCount: number;
+  heartCount: number;
+  dislikeCount: number;
   cardLoaded: boolean;
+  isBookmarked: boolean;
   fetchRef?: null;
   onClick: () => void;
 }
@@ -32,12 +37,16 @@ const Card = ({
   serving,
   difficulty,
   cardType,
+  likeCount,
+  heartCount,
+  dislikeCount,
   cardLoaded,
+  isBookmarked,
   fetchRef,
   onClick,
 }: CardProps) => {
   return (
-    <div ref={fetchRef} className={styles["card-item"]} onClick={onClick}>
+    <div ref={fetchRef} className={styles["card-item"]}>
       <div
         style={
           cardLoaded
@@ -49,6 +58,7 @@ const Card = ({
         className={`${styles["card-image"]} ${
           !cardLoaded && styles["loading"]
         }`}
+        onClick={onClick}
       >
         <div className={styles["card-info-wrapper"]}>
           <div className={styles["card-info-blur"]} />
@@ -111,6 +121,33 @@ const Card = ({
             )}
           </div>
         </div>
+      </div>
+      <div
+        className={`${styles["reaction-wrapper"]} ${
+          !cardLoaded && styles["hide-reaction"]
+        }`}
+      >
+        <button className={`${styles["reaction-item"]} ${styles["like"]}`}>
+          <AiFillLike className={styles["like-icon"]} />
+          {likeCount}
+        </button>
+        <button className={`${styles["reaction-item"]} ${styles["heart"]}`}>
+          <FaHeart className={styles["heart-icon"]} />
+          {heartCount}
+        </button>
+        <button className={`${styles["reaction-item"]} ${styles["dislike"]}`}>
+          <AiFillDislike className={styles["dislike-icon"]} />
+          {dislikeCount}
+        </button>
+
+        <div style={{ flexGrow: "1" }}></div>
+
+        <button className={`${styles["reaction-item"]} ${styles["bookmark"]}`}>
+          {isBookmarked && <FaBookmark className={styles["bookmark-icon"]} />}
+          {!isBookmarked && (
+            <FaRegBookmark className={styles["bookmark-icon"]} />
+          )}
+        </button>
       </div>
     </div>
 

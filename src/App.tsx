@@ -10,6 +10,7 @@ import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import TwoFactorAuth from "./pages/TwoFactorAuth/TwoFactorAuth";
 import Signup from "./pages/Signup/Signup";
 import Discover from "./pages/Discover/Discover";
+import Search from "./pages/Search/Search";
 
 const App = () => {
   //const { themeColor, updateTheme } = useThemeContext();
@@ -31,6 +32,7 @@ const App = () => {
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
           <Route path="/discover" element={<Discover />} />
+          <Route path="/search" element={<Search />} />
           <Route path="/upload" element={<Upload />} />
           <Route path="/notices" element={<Notifications />} />
 

@@ -1,33 +1,56 @@
+import { useState, useEffect } from "react";
 import styles from "./Search.module.css";
-import { FaPlus } from "react-icons/fa6";
+import { useNavigate } from "react-router-dom";
 
 const Search = () => {
+  const [topBarPos, setTopBarPos] = useState<number>(0);
+  const [lastScrollY, setLastScrollY] = useState<number>(0);
+  const navigate = useNavigate();
+
+  //Top bar parallax
+  useEffect(() => {
+    //Retrieve height of the top bar
+    const topBarHeight = document.getElementsByClassName(styles.header)[0]
+      .clientHeight;
+
+    //Calculate parallax on scroll
+    const handleScroll = () => {
+      let delta = 0;
+      let currentScrollY = Math.max(0, window.scrollY);
+
+      delta = currentScrollY - lastScrollY;
+
+      setTopBarPos(Math.max(-topBarHeight, Math.min(0, topBarPos - delta)));
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [lastScrollY]);
+
   return (
     <>
-      <div className={styles["header"]}>
-        <img
-          className={styles["header-image"]}
-          src="/src/assets/search-menu.jpg"
-        />
-        <div className={styles["search-bar-container"]}>
-          <p>What do you feel like ?</p>
-          <div className={styles["search-bar-wrapper"]}>
-            <form className={styles["search-bar-input"]}>
-              <input
-                className={styles["search-bar-input"]}
-                type="text"
-                placeholder="Search something "
-              />
-            </form>
-
-            <div className={styles["search-bar-filter-wrapper"]}>
-              <FaPlus className={styles["search-bar-filter"]} />
-            </div>
-          </div>
+      <header
+        className={styles["header"]}
+        style={{ transform: `translateY(${topBarPos}px)` }}
+      >
+        <div
+          className={styles["header-item"]}
+          onClick={() => {
+            navigate("/discover");
+          }}
+        >
+          Discover
         </div>
-      </div>
-      <div className={styles["content"]}></div>
-      <div className={styles["footer"]}>GHJ</div>
+        <div className={`${styles["header-item"]} ${styles["current"]}`}>
+          Search
+        </div>
+      </header>
+      <main className={styles["content"]}></main>
+      <footer className={styles["footer"]}></footer>
     </>
   );
 };

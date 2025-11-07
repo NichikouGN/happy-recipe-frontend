@@ -17,6 +17,9 @@ interface postStructure {
   servings: number;
   difficulty: "easy" | "medium" | "hard";
   coverImageURL: string;
+  likeCount: number;
+  heartCount: number;
+  dislikeCount: number;
 }
 
 const DiscoveryContext = createContext<
@@ -49,6 +52,7 @@ export const DiscoveryProvider: FC<{ children: ReactNode }> = ({
   const fetchPost = async () => {
     try {
       if (isFetching) return;
+
       const res = await fetch(`http://localhost:4000/discover?page=${page}`, {
         method: "GET",
       });
@@ -62,6 +66,7 @@ export const DiscoveryProvider: FC<{ children: ReactNode }> = ({
       setPage(page + 1);
 
       setLoadState("loaded");
+      setIsFetching(true);
     } catch (e: any) {
       console.log(e);
     } finally {

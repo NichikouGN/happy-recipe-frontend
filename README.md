@@ -29,3 +29,6 @@ To execute the front end, type 'npm run dev' on the into the console and open an
 - Change the component "login" to "signin" to match with "signup"
 - Change api call to back end from '/login' to '/signin', '/sign-up' to '/signup
 - Added more comments to make code clearer
+
+## v0.3.1 (2025-11-07)
+- Fix a small bug thats causing multiple fetch on discover page.

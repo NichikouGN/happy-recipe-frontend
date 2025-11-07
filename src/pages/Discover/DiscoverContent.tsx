@@ -15,6 +15,8 @@ const DiscoverContent = () => {
         const target = entries[0];
 
         if (target.isIntersecting) {
+          console.log("fetch");
+          observer.disconnect();
           fetchPost();
         }
       },
@@ -24,9 +26,9 @@ const DiscoverContent = () => {
     if (fetchTrigger.current) observer.observe(fetchTrigger.current);
 
     return () => {
-      observer.disconnect();
+      if (observer) observer.disconnect();
     };
-  }, [postList, fetchPost]);
+  }, [postList]);
 
   return postList.map(
     (
@@ -38,6 +40,9 @@ const DiscoverContent = () => {
         servings,
         difficulty,
         coverImageURL,
+        likeCount,
+        heartCount,
+        dislikeCount,
       },
       index
     ) => {
@@ -56,6 +61,10 @@ const DiscoverContent = () => {
             time={cookTime}
             difficulty={difficulty}
             serving={servings}
+            likeCount={likeCount}
+            heartCount={heartCount}
+            dislikeCount={dislikeCount}
+            isBookmarked={false}
           />
           {index === 10 * (page - 1) + 7 ? (
             <div ref={fetchTrigger} style={{ lineHeight: "0" }}></div>

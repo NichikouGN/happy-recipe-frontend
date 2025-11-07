@@ -15,6 +15,10 @@ const DiscoverSkeleton = () => {
         time={0}
         difficulty="medium"
         serving={0}
+        likeCount={0}
+        heartCount={0}
+        dislikeCount={0}
+        isBookmarked={false}
       />
     );
   });
