@@ -130,6 +130,7 @@ const Home = () => {
               return (
                 <Card
                   key={id}
+                  postID={id}
                   onClick={() => {
                     navigate(`/post/${id}`);
                   }}
@@ -141,9 +142,8 @@ const Home = () => {
                   time={time}
                   difficulty={difficulty}
                   serving={serving}
-                  likeCount={0}
-                  heartCount={0}
-                  dislikeCount={0}
+                  reactions={{ like: 0, heart: 0, yum: 0 }}
+                  userReaction=""
                   isBookmarked={false}
                 />
               );

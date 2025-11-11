@@ -5,6 +5,7 @@ const DiscoverSkeleton = () => {
   return Array.from({ length: 4 }).map((_, i) => {
     return (
       <Card
+        postID=""
         key={i.toString()}
         onClick={() => {}}
         cardType="post"
@@ -15,9 +16,7 @@ const DiscoverSkeleton = () => {
         time={0}
         difficulty="medium"
         serving={0}
-        likeCount={0}
-        heartCount={0}
-        dislikeCount={0}
+        reactions={{ like: 0, heart: 0, dislike: 0 }}
         isBookmarked={false}
       />
     );

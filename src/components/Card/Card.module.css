@@ -177,12 +177,24 @@
   background: var(--zinc-100);
 }
 
+.like-highlight {
+  background: var(--yellow-400);
+}
+
 .heart {
   background: var(--red-100);
 }
 
-.dislike {
+.heart-highlight {
+  background: var(--red-400);
+}
+
+.yum {
   background: var(--zinc-300);
+}
+
+.yum-highlight {
+  background: var(--zinc-400);
 }
 
 .like-icon {

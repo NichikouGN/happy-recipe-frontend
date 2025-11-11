@@ -1,10 +1,10 @@
 import styles from "./Discover.module.css";
 import { useState, useEffect } from "react";
-import { FaArrowRotateRight } from "react-icons/fa6";
 import { useDiscoveryContext } from "../../context/DiscoveryContext";
 import DiscoverSkeleton from "./DiscoverSkeleton";
 import DiscoverContent from "./DiscoverContent";
 import { useNavigate } from "react-router-dom";
+import { FaArrowRotateRight } from "react-icons/fa6";
 
 const Discover = () => {
   const { postList, loadState, fetchPost, scrollY, setScrollY } =
@@ -43,25 +43,11 @@ const Discover = () => {
     if (postList.length === 0) fetchPost();
   }, []);
 
-  //Stop Scrolling during fetch
+  //Remember where the user was on the discover page
   useEffect(() => {
-    if (loadState === "loading") {
-      document.body.style.position = "fixed";
-      document.body.style.top = "0%";
-      document.body.style.left = "0%";
-      document.documentElement.style.overflow = "hidden";
-      document.body.style.overflow = "hidden";
-      window.scrollTo(0, 0);
-    }
+    if (loadState === "loading") window.scrollTo(0, 0);
 
-    return () => {
-      document.body.style.position = "";
-      document.body.style.top = "";
-      document.body.style.left = "";
-      document.documentElement.style.overflow = "auto";
-      document.body.style.overflow = "auto";
-      window.scrollTo(0, scrollY);
-    };
+    return () => window.scrollTo(0, scrollY);
   }, [loadState]);
 
   return (

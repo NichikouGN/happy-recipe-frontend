@@ -32,3 +32,9 @@ To execute the front end, type 'npm run dev' on the into the console and open an
 
 ## v0.3.1 (2025-11-07)
 - Fix a small bug thats causing multiple fetch on discover page.
+  
+## v0.4.0 (2025-11-11)
+- Updated the UI of the discover page
+- Added the ability to react, bookmark a given post
+- Upon reaction, front end sends a request to backend with the access token, type of reaction (isbookmarked for bookmark), postid
+  

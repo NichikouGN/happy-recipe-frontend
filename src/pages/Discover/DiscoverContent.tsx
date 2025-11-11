@@ -4,7 +4,7 @@ import Card from "../../components/Card/Card";
 import { useEffect, useRef } from "react";
 
 const DiscoverContent = () => {
-  const { page, postList, fetchPost } = useDiscoveryContext();
+  const { postList, fetchPost } = useDiscoveryContext();
   const fetchTrigger = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
 
@@ -40,9 +40,9 @@ const DiscoverContent = () => {
         servings,
         difficulty,
         coverImageURL,
-        likeCount,
-        heartCount,
-        dislikeCount,
+        reactions,
+        userReaction,
+        userBookmark,
       },
       index
     ) => {
@@ -50,6 +50,7 @@ const DiscoverContent = () => {
         <>
           <Card
             key={postID}
+            postID={postID}
             onClick={() => {
               navigate(`/post/${postID}`);
             }}
@@ -61,12 +62,11 @@ const DiscoverContent = () => {
             time={cookTime}
             difficulty={difficulty}
             serving={servings}
-            likeCount={likeCount}
-            heartCount={heartCount}
-            dislikeCount={dislikeCount}
-            isBookmarked={false}
+            reactions={reactions}
+            userReaction={userReaction}
+            isBookmarked={userBookmark}
           />
-          {index === 10 * (page - 1) + 7 ? (
+          {index === postList.length - 4 ? (
             <div ref={fetchTrigger} style={{ lineHeight: "0" }}></div>
           ) : undefined}
           {/*Set the fetch trigger to the 3rd element from the bottom up */}

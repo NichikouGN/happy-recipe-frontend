@@ -3,9 +3,12 @@ import { FaClock, FaFire, FaBookmark, FaRegBookmark } from "react-icons/fa";
 import { MdDinnerDining } from "react-icons/md";
 import { FaCircleUser, FaHeart } from "react-icons/fa6";
 import { LuText } from "react-icons/lu";
-import { AiFillLike, AiFillDislike } from "react-icons/ai";
+import { AiFillLike } from "react-icons/ai";
+import { GiForkKnifeSpoon } from "react-icons/gi";
+import { useDiscoveryContext } from "../../context/DiscoveryContext";
 
 interface CardProps {
+  postID: string;
   postImg?: string;
   title: string;
   author?: string;
@@ -13,14 +16,19 @@ interface CardProps {
   serving: number;
   difficulty: "easy" | "medium" | "hard";
   cardType: "post" | "food";
-  likeCount: number;
-  heartCount: number;
-  dislikeCount: number;
+  reactions: { like: number; heart: number; yum: number };
   cardLoaded: boolean;
+  userReaction?: "like" | "heart" | "yum" | "";
   isBookmarked: boolean;
   fetchRef?: null;
   onClick: () => void;
 }
+
+const reactionType = [
+  { reactionType: "like", icon: AiFillLike },
+  { reactionType: "heart", icon: FaHeart },
+  { reactionType: "yum", icon: GiForkKnifeSpoon },
+] as const;
 
 /**
  * This components take in all the info to construct a card
@@ -30,6 +38,7 @@ interface CardProps {
  * @returns Card
  */
 const Card = ({
+  postID,
   postImg,
   title,
   author,
@@ -37,14 +46,14 @@ const Card = ({
   serving,
   difficulty,
   cardType,
-  likeCount,
-  heartCount,
-  dislikeCount,
+  reactions,
   cardLoaded,
+  userReaction,
   isBookmarked,
   fetchRef,
   onClick,
 }: CardProps) => {
+  const { handleUserReaction, handleUserBookmark } = useDiscoveryContext();
   return (
     <div ref={fetchRef} className={styles["card-item"]}>
       <div
@@ -122,27 +131,33 @@ const Card = ({
           </div>
         </div>
       </div>
+
       <div
         className={`${styles["reaction-wrapper"]} ${
           !cardLoaded && styles["hide-reaction"]
         }`}
       >
-        <button className={`${styles["reaction-item"]} ${styles["like"]}`}>
-          <AiFillLike className={styles["like-icon"]} />
-          {likeCount}
-        </button>
-        <button className={`${styles["reaction-item"]} ${styles["heart"]}`}>
-          <FaHeart className={styles["heart-icon"]} />
-          {heartCount}
-        </button>
-        <button className={`${styles["reaction-item"]} ${styles["dislike"]}`}>
-          <AiFillDislike className={styles["dislike-icon"]} />
-          {dislikeCount}
-        </button>
+        {reactionType.map(({ reactionType, icon: Icon }) => {
+          return (
+            <button
+              className={`${styles["reaction-item"]} ${styles[reactionType]} ${
+                userReaction === reactionType &&
+                styles[`${reactionType}-highlight`]
+              }`}
+              onClick={() => handleUserReaction(postID, reactionType)}
+            >
+              <Icon className={styles[`${reactionType}-icon`]} />
+              {reactions[reactionType]}
+            </button>
+          );
+        })}
 
         <div style={{ flexGrow: "1" }}></div>
 
-        <button className={`${styles["reaction-item"]} ${styles["bookmark"]}`}>
+        <button
+          className={`${styles["reaction-item"]} ${styles["bookmark"]}`}
+          onClick={() => handleUserBookmark(postID, !isBookmarked)}
+        >
           {isBookmarked && <FaBookmark className={styles["bookmark-icon"]} />}
           {!isBookmarked && (
             <FaRegBookmark className={styles["bookmark-icon"]} />
@@ -150,24 +165,6 @@ const Card = ({
         </button>
       </div>
     </div>
-
-    // <div key={postId} className={styles["card-item"]} onClick={onClick}>
-    //   {postImg && <img src={postImg} className={styles["card-image"]} />}
-
-    //   <div className={styles["card-details"]}>
-    //     {title && <div className={styles["card-title"]}>{title}</div>}
-    //     {author && <div className={styles["card-author"]}>{author}</div>}
-
-    //     <div className={styles["card-info-wrapper"]}>
-    //       {time && (
-    //         <div className={styles["card-info"]}>
-    //           <FaClock className={styles["card-info__icon"]} />
-    //           <div className={styles["card-info__label"]}>{time}</div>
-    //         </div>
-    //       )}
-    //     </div>
-    //   </div>
-    // </div>
   );
 };
 

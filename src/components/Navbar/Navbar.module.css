@@ -50,9 +50,9 @@
     padding: 0.5rem;
 
     background: linear-gradient(
-      to right,
-      rgba(var(--theme-body-bg-rgb), 0.5),
-      rgba(var(--theme-body-bg-rgb), 0.25)
+      to top,
+      rgba(var(--theme-body-bg-rgb), 0.75),
+      rgba(var(--theme-body-bg-rgb), 0.5)
     );
 
     backdrop-filter: blur(8px);
