@@ -5,7 +5,11 @@ import { FaCircleUser, FaHeart } from "react-icons/fa6";
 import { LuText } from "react-icons/lu";
 import { AiFillLike } from "react-icons/ai";
 import { GiForkKnifeSpoon } from "react-icons/gi";
-import { useDiscoveryContext } from "../../context/DiscoveryContext";
+import {
+  usePosts,
+  type Reaction,
+  type UserActions,
+} from "../../context/PostContext";
 
 interface CardProps {
   postID: string;
@@ -13,15 +17,15 @@ interface CardProps {
   title: string;
   author?: string;
   time?: number;
-  serving: number;
-  difficulty: "easy" | "medium" | "hard";
+  serving?: number;
+  difficulty?: "easy" | "medium" | "hard";
   cardType: "post" | "food";
-  reactions: { like: number; heart: number; yum: number };
+  reactions?: Reaction;
   cardLoaded: boolean;
-  userReaction?: "like" | "heart" | "yum" | "";
-  isBookmarked: boolean;
+  userActions?: UserActions;
   fetchRef?: null;
-  onClick: () => void;
+  rounded?: boolean;
+  onClick?: () => void;
 }
 
 const reactionType = [
@@ -39,23 +43,28 @@ const reactionType = [
  */
 const Card = ({
   postID,
-  postImg,
-  title,
-  author,
-  time,
-  serving,
-  difficulty,
+  postImg = "",
+  title = "",
+  author = "",
+  time = 0,
+  serving = 0,
+  difficulty = "easy",
   cardType,
-  reactions,
+  reactions = { like: 0, heart: 0, yum: 0 },
   cardLoaded,
-  userReaction,
-  isBookmarked,
+  userActions = { userReaction: null, userBookmark: false },
   fetchRef,
+  rounded = false,
   onClick,
 }: CardProps) => {
-  const { handleUserReaction, handleUserBookmark } = useDiscoveryContext();
+  const { handleUserReaction, handleUserBookmark } = usePosts();
+
   return (
-    <div ref={fetchRef} className={styles["card-item"]}>
+    <div
+      ref={fetchRef}
+      className={styles["card-item"]}
+      style={{ borderRadius: `${rounded ? "0.5rem" : "0"}` }}
+    >
       <div
         style={
           cardLoaded
@@ -66,7 +75,7 @@ const Card = ({
         }
         className={`${styles["card-image"]} ${
           !cardLoaded && styles["loading"]
-        }`}
+        } ${cardType === "food" && styles["food"]}`}
         onClick={onClick}
       >
         <div className={styles["card-info-wrapper"]}>
@@ -89,13 +98,7 @@ const Card = ({
           <div className={styles["card-details"]}>
             {cardLoaded && (
               <>
-                <span
-                  className={`${styles["card-title"]}  ${
-                    cardType === "food" && styles["food"]
-                  }`}
-                >
-                  {title}
-                </span>
+                <span className={styles["card-title"]}>{title}</span>
 
                 {cardType === "post" && (
                   <div className={styles["other-info-wrapper"]}>
@@ -132,38 +135,45 @@ const Card = ({
         </div>
       </div>
 
-      <div
-        className={`${styles["reaction-wrapper"]} ${
-          !cardLoaded && styles["hide-reaction"]
-        }`}
-      >
-        {reactionType.map(({ reactionType, icon: Icon }) => {
-          return (
-            <button
-              className={`${styles["reaction-item"]} ${styles[reactionType]} ${
-                userReaction === reactionType &&
-                styles[`${reactionType}-highlight`]
-              }`}
-              onClick={() => handleUserReaction(postID, reactionType)}
-            >
-              <Icon className={styles[`${reactionType}-icon`]} />
-              {reactions[reactionType]}
-            </button>
-          );
-        })}
-
-        <div style={{ flexGrow: "1" }}></div>
-
-        <button
-          className={`${styles["reaction-item"]} ${styles["bookmark"]}`}
-          onClick={() => handleUserBookmark(postID, !isBookmarked)}
+      {cardType === "post" && (
+        <div
+          className={`${styles["reaction-wrapper"]} ${
+            !cardLoaded && styles["hide-reaction"]
+          }`}
         >
-          {isBookmarked && <FaBookmark className={styles["bookmark-icon"]} />}
-          {!isBookmarked && (
-            <FaRegBookmark className={styles["bookmark-icon"]} />
-          )}
-        </button>
-      </div>
+          {reactionType.map(({ reactionType, icon: Icon }) => {
+            return (
+              <button
+                key={reactionType}
+                className={`${styles["reaction-item"]} ${
+                  styles[reactionType]
+                } ${
+                  userActions.userReaction === reactionType &&
+                  styles[`${reactionType}-highlight`]
+                }`}
+                onClick={() => handleUserReaction(postID, reactionType)}
+              >
+                <Icon className={styles[`${reactionType}-icon`]} />
+                {reactions[reactionType]}
+              </button>
+            );
+          })}
+
+          <div style={{ flexGrow: "1" }}></div>
+
+          <button
+            className={`${styles["reaction-item"]} ${styles["bookmark"]}`}
+            onClick={() => handleUserBookmark(postID)}
+          >
+            {userActions.userBookmark && (
+              <FaBookmark className={styles["bookmark-icon"]} />
+            )}
+            {!userActions.userBookmark && (
+              <FaRegBookmark className={styles["bookmark-icon"]} />
+            )}
+          </button>
+        </div>
+      )}
     </div>
   );
 };

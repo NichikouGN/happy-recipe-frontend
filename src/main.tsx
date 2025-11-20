@@ -5,18 +5,25 @@ import App from "./App.tsx";
 import { ThemeProvider } from "./context/ThemeContext.tsx";
 import { AuthProvider } from "./context/AuthContext.tsx";
 import { UserProvider } from "./context/userContext.tsx";
-import { DiscoveryProvider } from "./context/DiscoveryContext.tsx";
+import { PostProvider } from "./context/PostContext.tsx";
+import { ToastContextProvider } from "./context/ToastContext.tsx";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
+const queryClient = new QueryClient();
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <AuthProvider>
-      <UserProvider>
-        <ThemeProvider>
-          <DiscoveryProvider>
-            <App></App>
-          </DiscoveryProvider>
-        </ThemeProvider>
-      </UserProvider>
-    </AuthProvider>
+    <QueryClientProvider client={queryClient}>
+      <ToastContextProvider>
+        <AuthProvider>
+          <UserProvider>
+            <ThemeProvider>
+              <PostProvider>
+                <App></App>
+              </PostProvider>
+            </ThemeProvider>
+          </UserProvider>
+        </AuthProvider>
+      </ToastContextProvider>
+    </QueryClientProvider>
   </StrictMode>
 );

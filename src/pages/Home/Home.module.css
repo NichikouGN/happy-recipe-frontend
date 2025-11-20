@@ -1,4 +1,4 @@
-@media (max-width: 1023px) {
+@media (max-width: 767px) {
   /*Header*/
   .header {
     grid-area: "header";
@@ -34,24 +34,6 @@
     text-shadow: 8px 8px 16px rgba(0, 0, 0, 1);
   }
 
-  .header-link {
-    width: max-content;
-    padding: 0.75rem;
-    margin-top: 0.5rem;
-
-    background: rgba(0, 0, 0, 0.25);
-    border-radius: 0.25rem;
-    border: 1px solid white;
-    cursor: pointer;
-    outline: none;
-
-    transition: all 0.2s ease;
-
-    color: rgba(255, 255, 255, 0.75);
-    font-size: 1rem;
-    font-weight: 600;
-  }
-
   /*Content*/
   .content {
     grid-area: "content";
@@ -73,53 +55,13 @@
     margin-bottom: 1.5rem;
   }
 
-  .weekly-recommendation {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-
-  .recommendation-title {
-    font-size: clamp(1.5rem, 7.5vw, 2rem);
-    text-align: center;
-  }
-
-  .recommendation-card-container {
-    display: grid;
-    grid-template-columns: 1fr;
-
-    width: 100%;
-    margin: 1rem 0;
-  }
-
-  .discover-more {
-    text-align: center;
-    font-weight: normal;
-    font-size: 0.9rem;
-    text-decoration: underline;
-
-    outline: none;
-    border: none;
-    background: none;
-  }
-
-  .about h3 {
+  .about-us h3 {
+    font-size: 1.25rem;
     margin-bottom: 0.5rem;
   }
 
-  .about p {
-    color: black;
-    text-align: left;
+  .about-us p {
     font-size: 1rem;
-    font-weight: normal;
-    word-wrap: break-word;
-
-    padding: 0;
-    margin: 0;
-  }
-
-  .about p br {
-    margin-bottom: 0.25rem;
   }
 
   .footer {
@@ -130,13 +72,13 @@
     justify-content: center;
     align-items: center;
     gap: 1rem;
+    padding: 1rem;
 
     position: relative;
-
-    background: white;
+    border-top: 1px solid var(--neutral-500);
   }
 
-  .footer-info-wrapper {
+  .contacts {
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -144,7 +86,7 @@
     width: 100%;
   }
 
-  .footer-hyperlink {
+  .contacts-hyperlink {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -173,9 +115,9 @@
     text-align: center;
     text-decoration: underline;
   }
+}
 
-  .footer-banner {
-    width: 100%;
-    object-fit: cover;
-  }
+.footer-banner {
+  width: 100%;
+  object-fit: cover;
 }

@@ -19,7 +19,7 @@
 .card-image {
   width: 100%;
   height: auto;
-  aspect-ratio: 18/9;
+  aspect-ratio: 2/1;
 
   background-blend-mode: multiply;
   background-size: cover;
@@ -28,6 +28,10 @@
 
   overflow: hidden;
   will-change: background-position;
+}
+
+.card-image.food {
+  aspect-ratio: 3/2;
 }
 
 .card-image.loading {
@@ -102,10 +106,6 @@
   -webkit-box-orient: vertical;
 
   overflow: hidden;
-}
-
-.card-title.food {
-  font-size: clamp(1.5rem, 7.5vw, 2rem);
 }
 
 .other-info-wrapper {

@@ -1,86 +1,94 @@
 import styles from "./Home.module.css";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { FaSquareFacebook, FaSquareGithub, FaYoutube } from "react-icons/fa6";
+import { useToastContext } from "../../context/ToastContext";
 import Card from "../../components/Card/Card";
 
-//Dummy structure
-interface postStructure {
+interface popularDishStructure {
   id: string;
   title: string;
-  author: string;
-  time: number;
-  serving: number;
-  difficulty: "easy" | "medium" | "hard";
-  likeCount: number;
-  heartCount: number;
-  dislikeCount: number;
+  coverImg: string;
 }
 
-// Dummy Data
-const data: postStructure[] = [
+// const popularDish = [
+//   {
+//     id: "1",
+//     title: "Food",
+//     coverImg: "/src/assets/Food_thumb_01.jpg",
+//   },
+//   {
+//     id: "2",
+//     title: "Banana",
+//     coverImg: "/src/assets/Food_thumb_02.jpg",
+//   },
+//   {
+//     id: "3",
+//     title: "Pasta",
+//     coverImg: "/src/assets/Food_thumb_03.jpg",
+//   },
+//   {
+//     id: "4",
+//     title: "Burger",
+//     coverImg: "/src/assets/Food_thumb_04.jpg",
+//   },
+//   {
+//     id: "5",
+//     title: "Salad",
+//     coverImg: "/src/assets/Food_thumb_05.jpg",
+//   },
+//   {
+//     id: "6",
+//     title: "Pizza",
+//     coverImg: "/src/assets/Food_thumb_06.jpg",
+//   },
+//   {
+//     id: "7",
+//     title: "Sushi",
+//     coverImg: "/src/assets/Food_thumb_07.jpg",
+//   },
+//   {
+//     id: "8",
+//     title: "Steak",
+//     coverImg: "/src/assets/Food_thumb_08.jpg",
+//   },
+//   {
+//     id: "9",
+//     title: "Ice Cream",
+//     coverImg: "/src/assets/Food_thumb_09.jpg",
+//   },
+//   {
+//     id: "10",
+//     title: "Soup",
+//     coverImg: "/src/assets/Food_thumb_10.jpg",
+//   },
+// ];
+
+const contacts = [
   {
-    id: "01",
-    title: "Zesty Curry",
-    author: "Alan",
-    time: 17,
-    difficulty: "easy",
-    serving: 2,
-    likeCount: 240,
-    heartCount: 180,
-    dislikeCount: 8,
+    icon: FaSquareFacebook,
+    url: "https://facebook.com",
+    title: "Fb",
+  },
+
+  {
+    icon: FaYoutube,
+    url: "https://youtube.com",
+    title: "Ytb",
   },
   {
-    id: "02",
-    title: "Sweet Burger",
-    author: "Bella",
-    time: 43,
-    difficulty: "hard",
-    serving: 5,
-    likeCount: 320,
-    heartCount: 250,
-    dislikeCount: 14,
-  },
-  {
-    id: "03",
-    title: "Crispy Salad",
-    author: "Chris",
-    time: 25,
-    difficulty: "medium",
-    serving: 4,
-    likeCount: 180,
-    heartCount: 130,
-    dislikeCount: 5,
-  },
-  {
-    id: "04",
-    title: "Hearty Soup",
-    author: "Dyson",
-    time: 9,
-    difficulty: "easy",
-    serving: 3,
-    likeCount: 210,
-    heartCount: 160,
-    dislikeCount: 6,
-  },
-  {
-    id: "05",
-    title: "Tangy Sandwich",
-    author: "Eve",
-    time: 32,
-    difficulty: "easy",
-    serving: 2,
-    likeCount: 260,
-    heartCount: 200,
-    dislikeCount: 10,
+    icon: FaSquareGithub,
+    url: "https://github.com",
+    title: "Git",
   },
 ];
 
 const Home = () => {
   const [scrollY, setScrollY] = useState<number>(0); //Parallax Var
   const [headerHeight, setHeaderHeight] = useState<number>(0);
+  const [popularDish, setPopularDish] = useState<popularDishStructure[]>([]);
+  const [loaded, setLoaded] = useState<boolean>(false);
 
-  const navigate = useNavigate();
+  const { Toast } = useToastContext();
 
   /**
    * Get the header height
@@ -100,6 +108,28 @@ const Home = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const fetchPopularDish = async () => {
+    try {
+      const res = await fetch("http://localhost:4000/ranking/popular-dish");
+
+      if (!res.ok) throw new Error("xdd");
+
+      const data = await res.json();
+
+      setPopularDish(data.popularDish);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    fetchPopularDish();
+  }, []);
+
+  useEffect(() => {
+    popularDish.length !== 0 ? setLoaded(true) : setLoaded(false);
+  }, [popularDish]);
+
   //Transform translate value with hard limit tie to the header height
   const translateVal = Math.min(headerHeight / 4, scrollY / 4);
 
@@ -109,108 +139,120 @@ const Home = () => {
       <header
         className={styles["header"]}
         style={{ transform: `translateY(${translateVal}px)` }}
+        onClick={() =>
+          Toast({ type: "error", title: "Error", message: "Error message" })
+        }
       >
         <div className={styles["header-title"]}>
           Bring&nbsp;
-          <span style={{ color: "#ef4444", textDecoration: "underline" }}>
-            joy
-          </span>
+          <span style={{ color: "#ef4444", fontWeight: "900" }}>joy</span>
           &nbsp;to your cooking
         </div>
       </header>
 
       <main className={styles["content"]}>
-        <section className={styles["weekly-recommendation"]}>
-          <h2 className={styles["recommendation-title"]}>
-            This Week's Specials
-          </h2>
-
-          <div className={styles["recommendation-card-container"]}>
-            {data.map(({ id, title, author, time, serving, difficulty }) => {
-              return (
-                <Card
-                  key={id}
-                  postID={id}
-                  onClick={() => {
-                    navigate(`/post/${id}`);
-                  }}
-                  cardType="post"
-                  cardLoaded={true}
-                  postImg={`/src/assets/Food_thumb_${id}.jpg`}
-                  title={title}
-                  author={author}
-                  time={time}
-                  difficulty={difficulty}
-                  serving={serving}
-                  reactions={{ like: 0, heart: 0, yum: 0 }}
-                  userReaction=""
-                  isBookmarked={false}
-                />
-              );
-            })}
+        <section className={styles["popular-ingredients"]}>
+          <div
+            style={{
+              fontWeight: "bold",
+              fontSize: "1.2rem",
+              marginBottom: "1rem",
+            }}
+          >
+            Popular Dishes
           </div>
 
-          <button
-            onClick={() => {
-              navigate("/discover");
+          <div
+            style={{
+              display: "grid",
+              gap: "0.5rem",
+              gridTemplateColumns: "repeat(auto-fill, minmax(8rem, 1fr))",
             }}
-            className={styles["discover-more"]}
           >
-            Discover More
-          </button>
-        </section>
+            <>
+              {loaded &&
+                popularDish.map((item) => {
+                  return (
+                    <Card
+                      key={item.id}
+                      postID={item.id}
+                      title={item.title}
+                      cardType="food"
+                      postImg={item.coverImg}
+                      cardLoaded={true}
+                      rounded={true}
+                    />
+                  );
+                })}
 
-        <section className={styles["about"]}>
-          <h3>About Happy Recipe</h3>
-          <p>
-            Happy Recipe is a small and passionate project aimed at&nbsp;
-            <b>
-              bringing recipes from all around the world to the comfort of your
-              own kitchen
-            </b>
-            .
-            <br />
-            We provide a platform where passionate users and chefs can connect
-            and share their own culture through the lens of cuisine.
-            <br />
-            We believe that cooking is meant to be a joyful time and hope to
-            bring that vision to life.
-          </p>
+              {!loaded &&
+                Array.from({ length: 10 }).map((_, i) => {
+                  return (
+                    <Card
+                      key={i}
+                      postID={i.toString()}
+                      title={""}
+                      cardType="food"
+                      postImg={""}
+                      cardLoaded={false}
+                      rounded={true}
+                    />
+                  );
+                })}
+            </>
+          </div>
         </section>
       </main>
 
       <footer className={styles["footer"]}>
-        <section className={styles["footer-info-wrapper"]}>
+        <section className={styles["about-us"]}>
+          <h3>About us</h3>
+
+          <p>
+            Happy Recipe is a passionate project aimed at&nbsp;
+            <b>delivering joy and comfort to your own cooking</b>. We provide a
+            platform where users can connect and share fantastic cuisine from
+            all around the world. We believe that cooking is meant to be a
+            joyful time and we hope to bring that vision to life.
+          </p>
+        </section>
+        <section className={styles["contacts"]}>
           <img src="/src/assets/happy-recipe-logo.png" width="128px" />
 
-          <div className={styles["footer-hyperlink"]}>
+          <div className={styles["contacts-hyperlink"]}>
             <div className={styles["hyperlink-section"]}>
               <h3>Contacts</h3>
-              <div></div>
-              <FaSquareFacebook
-                className={`${styles["hyperlink-item"]} ${styles["contact-icon"]}`}
-                onClick={() => {
-                  window.open("https://facebook.com", "_blank");
-                }}
-              />
-              <FaYoutube
-                className={`${styles["hyperlink-item"]} ${styles["contact-icon"]}`}
-                onClick={() => {
-                  window.open("https://youtube.com", "_blank");
-                }}
-              />
-              <FaSquareGithub
-                className={`${styles["hyperlink-item"]} ${styles["contact-icon"]}`}
-                onClick={() => {
-                  window.open("https://github.com", "_blank");
-                }}
-              />
+
+              <ul style={{ listStyle: "none" }}>
+                {contacts.map((item) => {
+                  return (
+                    <li
+                      key={item.title}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.25rem",
+                      }}
+                      onClick={() => {
+                        window.open(item.url, "_blank");
+                      }}
+                    >
+                      <item.icon
+                        style={{ textAlign: "left" }}
+                        className={`${styles["hyperlink-item"]} ${styles["contact-icon"]}`}
+                      />
+
+                      <span>{item.title}</span>
+                    </li>
+                  );
+                })}
+              </ul>
             </div>
           </div>
         </section>
-
-        <img className={styles["footer-banner"]} src="/src/assets/Footer.jpg" />
       </footer>
+
+      <img className={styles["footer-banner"]} src="/src/assets/Footer.jpg" />
     </>
   );
 };

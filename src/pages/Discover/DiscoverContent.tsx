@@ -1,10 +1,11 @@
 import { useNavigate } from "react-router-dom";
-import { useDiscoveryContext } from "../../context/DiscoveryContext";
 import Card from "../../components/Card/Card";
-import { useEffect, useRef } from "react";
+import { Fragment, useEffect, useRef } from "react";
+import { usePosts } from "../../context/PostContext";
 
 const DiscoverContent = () => {
-  const { postList, fetchPost } = useDiscoveryContext();
+  // const { postList, fetchPost } = useDiscoveryContext();
+  const { postList, fetchNextPage } = usePosts();
   const fetchTrigger = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
 
@@ -17,7 +18,7 @@ const DiscoverContent = () => {
         if (target.isIntersecting) {
           console.log("fetch");
           observer.disconnect();
-          fetchPost();
+          fetchNextPage();
         }
       },
       { threshold: 0.5 } //half of the reference is needed to trigger observer
@@ -30,6 +31,10 @@ const DiscoverContent = () => {
     };
   }, [postList]);
 
+  useEffect(() => {
+    console.log(postList);
+  }, [postList]);
+
   return postList.map(
     (
       {
@@ -39,15 +44,14 @@ const DiscoverContent = () => {
         cookTime,
         servings,
         difficulty,
-        coverImageURL,
+        coverImgURL,
         reactions,
-        userReaction,
-        userBookmark,
+        userActions,
       },
       index
     ) => {
       return (
-        <>
+        <Fragment key={postID}>
           <Card
             key={postID}
             postID={postID}
@@ -56,21 +60,20 @@ const DiscoverContent = () => {
             }}
             cardType="post"
             cardLoaded={true}
-            postImg={coverImageURL}
+            postImg={coverImgURL}
             title={title}
             author={authorName}
             time={cookTime}
             difficulty={difficulty}
             serving={servings}
             reactions={reactions}
-            userReaction={userReaction}
-            isBookmarked={userBookmark}
+            userActions={userActions}
           />
           {index === postList.length - 4 ? (
             <div ref={fetchTrigger} style={{ lineHeight: "0" }}></div>
           ) : undefined}
           {/*Set the fetch trigger to the 3rd element from the bottom up */}
-        </>
+        </Fragment>
       );
     }
   );

@@ -37,4 +37,9 @@ To execute the front end, type 'npm run dev' on the into the console and open an
 - Updated the UI of the discover page
 - Added the ability to react, bookmark a given post
 - Upon reaction, front end sends a request to backend with the access token, type of reaction (isbookmarked for bookmark), postid
+
+## v0.4.1 (2025-11-20)
+- Moved the manual user reactions and bookmark to using tanstack query.
+- Changed the navbar to take up full width of the screen.
+- Change the homepage to showing a list of popular dishes instead of ranked post.
   

@@ -7,22 +7,13 @@ import {
   type ReactNode,
 } from "react";
 
-//Test Data for Sign in
-// const data = {
-//   status: "require2FA",
-//   tempToken: "abc",
-//   accessToken: "abc",
-//   refreshToken: "abc",
-//   username: "abc",
-// };
-
 const AuthContext = createContext<
   | {
       tempToken: string;
       validateTempToken: () => Promise<boolean>;
       accessToken: string;
       validateAccessToken: () => Promise<boolean>;
-      requestNewAccessToken: () => Promise<boolean>;
+      requestNewAccessToken: () => Promise<string>;
       setAccessToken: (accessToken: string) => void;
       refreshToken: string;
       setRefreshToken: (refreshToken: string) => void;
@@ -102,7 +93,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
       setRefreshToken(data.refreshToken);
       setSignInState("authorized");
 
-      return true;
+      return data.accessToken;
     } catch (e) {
       return clearToken();
     }
