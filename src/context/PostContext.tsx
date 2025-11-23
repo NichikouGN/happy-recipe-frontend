@@ -2,7 +2,10 @@
 import {
   useInfiniteQuery,
   useMutation,
+  useQuery,
   useQueryClient,
+  type QueryFunction,
+  type UseQueryResult,
 } from "@tanstack/react-query";
 
 import {
@@ -44,15 +47,29 @@ export interface PostStructure {
   userActions: UserActions;
 }
 
+export interface FullPostStructure extends PostStructure {
+  description: string;
+  steps: [
+    {
+      stepNum: number;
+      stepDesc: string;
+    }
+  ];
+}
+
 /**
  * fetcher functions for tanstack useInfiniteQuery()
  * @param pageParam
- * @returns a posts object with a nextPage cursor
+ * @returns a posts object with a nextPage cursor`
  */
-const fetchPosts = async ({
-  pageParam = 1,
-}): Promise<{ posts: PostStructure[]; nextPage: number | undefined }> => {
-  const res = await fetch(`http://192.168.1.9:4000/discover?page=${pageParam}`);
+const fetchPosts: QueryFunction<
+  { posts: PostStructure[]; nextPage: number | undefined },
+  [string],
+  number
+> = async ({ pageParam = 1 }) => {
+  const res = await fetch(
+    `http://${import.meta.env.VITE_API_URL}:4000/discover?page=${pageParam}`
+  );
 
   if (!res.ok) throw new Error("Failed to fetch posts");
 
@@ -77,15 +94,18 @@ const uploadUserAction = async (
       : JSON.stringify({ bookmark: newBookmark, postID });
 
   // Use your actual endpoint and token logic
-  const res = await fetch(`http://192.168.1.9:4000/${action}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      authorization: `Bearer ${accessToken}`,
-    },
-    body: body,
-    signal: controller.signal,
-  });
+  const res = await fetch(
+    `http://${import.meta.env.VITE_API_URL}:4000/${action}`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${accessToken}`,
+      },
+      body: body,
+      signal: controller.signal,
+    }
+  );
 
   if (!res.ok) throw new Error("Action failed");
 };
@@ -102,6 +122,7 @@ interface PostContextType {
   isLoading: boolean; // Init state
   isFetchingNextPage: boolean; // Fetching state
   fetchNextPage: () => void;
+  useDetailedPost: (postID: string) => UseQueryResult<FullPostStructure>;
   handleUserReaction: (sourcePost: string, newReaction: ReactionType) => void;
   handleUserBookmark: (sourcePost: string) => void;
 }
@@ -112,8 +133,24 @@ export const PostProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const queryClient = useQueryClient();
   const { Toast } = useToastContext();
   const { accessToken, requestNewAccessToken } = useAuthContext(); // Assuming access token logic
-
   const pendingMutation = useRef<Set<string>>(new Set());
+
+  const fetchDetailedPost: QueryFunction<
+    FullPostStructure,
+    [string, string]
+  > = async ({ queryKey }) => {
+    const [, postID] = queryKey;
+    const res = await fetch(
+      `http://${import.meta.env.VITE_API_URL}:4000/post?id=${postID}`
+    );
+
+    if (!res.ok) throw new Error("Failed to fetch posts");
+
+    const data = await res.json();
+    const detailedPost: FullPostStructure = data.post; //Retrieve the list
+
+    return detailedPost;
+  };
 
   /**
    * Function for tanstack useMutation()
@@ -174,12 +211,23 @@ export const PostProvider: FC<{ children: ReactNode }> = ({ children }) => {
     ? data.pages.flatMap((page) => page.posts)
     : [];
 
+  const useDetailedPost = (postID: string) => {
+    return useQuery({
+      queryKey: ["detailedPost", postID],
+      queryFn: fetchDetailedPost,
+      enabled: !!postID,
+    });
+  };
+
   //Mutation hooks
   const reactionMutation = useMutation<
     void,
     Error,
     ActionPayload,
-    { previousPosts: unknown }
+    {
+      previousPosts: unknown;
+      previousDetailedPost: FullPostStructure | undefined;
+    }
   >({
     mutationFn: (payload: ActionPayload) => confirmUserAction(payload),
 
@@ -189,6 +237,34 @@ export const PostProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
       // Store the previous value
       const previousPosts = queryClient.getQueryData(["discoverPosts"]);
+      const previousDetailedPost = queryClient.getQueryData<FullPostStructure>([
+        "detailedPost",
+      ]);
+
+      queryClient.setQueryData(["detailedPost"], (oldData: any) => {
+        if (!oldData) return oldData;
+
+        const oldUserReaction = oldData.userActions.userReaction;
+        let newReactions = { ...oldData.reactions };
+        let newUserReaction: ReactionType | null = newAction.newReaction!;
+
+        if (oldUserReaction === newAction.newReaction) {
+          newReactions[newAction.newReaction!] -= 1;
+          newUserReaction = null;
+        } else {
+          if (oldUserReaction) newReactions[oldUserReaction] -= 1;
+          newReactions[newAction.newReaction!] += 1;
+        }
+
+        return {
+          ...oldData,
+          reactions: newReactions,
+          userActions: {
+            ...oldData.userActions,
+            userReaction: newUserReaction,
+          },
+        };
+      });
 
       // Update the list
       queryClient.setQueryData(["discoverPosts"], (oldData: any) => {
@@ -233,7 +309,7 @@ export const PostProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
       // Return the previous value so it can be used
       // in case of an error
-      return { previousPosts };
+      return { previousPosts, previousDetailedPost };
     },
 
     // If the mutation fails, rollback
@@ -276,7 +352,9 @@ export const PostProvider: FC<{ children: ReactNode }> = ({ children }) => {
     void,
     Error,
     ActionPayload,
-    { previousPosts: unknown }
+    {
+      previousPosts: unknown;
+    }
   >({
     mutationFn: (payload: ActionPayload) => confirmUserAction(payload),
 
@@ -360,6 +438,7 @@ export const PostProvider: FC<{ children: ReactNode }> = ({ children }) => {
     postList,
     isLoading,
     isFetchingNextPage,
+    useDetailedPost,
     fetchNextPage,
     handleUserReaction,
     handleUserBookmark,

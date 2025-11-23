@@ -56,7 +56,7 @@ const DiscoverContent = () => {
             key={postID}
             postID={postID}
             onClick={() => {
-              navigate(`/post/${postID}`);
+              navigate(`/post?id=${postID}`);
             }}
             cardType="post"
             cardLoaded={true}

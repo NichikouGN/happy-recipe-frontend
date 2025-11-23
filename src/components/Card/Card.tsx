@@ -14,12 +14,12 @@ import {
 interface CardProps {
   postID: string;
   postImg?: string;
-  title: string;
+  title?: string;
   author?: string;
   time?: number;
   serving?: number;
   difficulty?: "easy" | "medium" | "hard";
-  cardType: "post" | "food";
+  cardType: "post" | "ingredients";
   reactions?: Reaction;
   cardLoaded: boolean;
   userActions?: UserActions;
@@ -59,66 +59,85 @@ const Card = ({
 }: CardProps) => {
   const { handleUserReaction, handleUserBookmark } = usePosts();
 
-  return (
-    <div
-      ref={fetchRef}
-      className={styles["card-item"]}
-      style={{ borderRadius: `${rounded ? "0.5rem" : "0"}` }}
-    >
+  if (cardType === "ingredients") {
+    return (
       <div
+        style={{
+          borderRadius: `${rounded ? "0.5rem" : "0"}`,
+          backgroundImage: cardLoaded
+            ? `linear-gradient(to bottom, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0) 70%), url('${postImg}')`
+            : "",
+        }}
+        className={`${styles["card-item"]} ${styles["food"]} ${
+          !cardLoaded && styles["loading"]
+        } `}
+        onClick={onClick}
+      >
+        {cardLoaded ? (
+          <span className={styles["card-title"]}>{title}</span>
+        ) : (
+          <LuText
+            style={{
+              fontSize: "clamp(2.5rem, 10vw, 5rem",
+              color: "rgba(255,255,255,0.5)",
+              fontWeight: "bold",
+            }}
+          />
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <div
+        ref={fetchRef}
         style={
           cardLoaded
             ? {
                 backgroundImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0) 70%), url('${postImg}')`,
               }
-            : {}
+            : { backgroundImage: "" }
         }
-        className={`${styles["card-image"]} ${
-          !cardLoaded && styles["loading"]
-        } ${cardType === "food" && styles["food"]}`}
+        className={`${styles["card-item"]} ${!cardLoaded && styles["loading"]}`}
         onClick={onClick}
       >
         <div className={styles["card-info-wrapper"]}>
-          <div className={styles["card-info-blur"]} />
-          {cardType === "post" && (
-            <>
-              {cardLoaded && (
-                <img
-                  src="/src/assets/happy-recipe-logo-text.png"
-                  className={styles["card-author-logo"]}
-                />
-              )}
+          <>
+            {cardLoaded && (
+              <img
+                src="/src/assets/happy-recipe-logo-text.png"
+                className={styles["card-author-logo"]}
+              />
+            )}
 
-              {!cardLoaded && (
-                <FaCircleUser className={styles["card-author-logo"]} />
-              )}
-            </>
-          )}
+            {!cardLoaded && (
+              <FaCircleUser className={styles["card-author-logo"]} />
+            )}
+          </>
 
           <div className={styles["card-details"]}>
             {cardLoaded && (
               <>
                 <span className={styles["card-title"]}>{title}</span>
 
-                {cardType === "post" && (
-                  <div className={styles["other-info-wrapper"]}>
-                    <div className={styles["other-info-item"]}>{author}</div>
-                    <div className={styles["other-info-item"]}>
-                      <FaClock /> <span>{time}</span>
-                    </div>
-
-                    <div className={styles["other-info-item"]}>
-                      <FaFire
-                        className={`${styles["diff-color"]} ${styles[difficulty]}`}
-                      />
-                      <span>{difficulty}</span>
-                    </div>
-
-                    <div className={styles["other-info-item"]}>
-                      <MdDinnerDining /> <span>{serving}</span>
-                    </div>
+                <div className={styles["other-info-wrapper"]}>
+                  <div className={styles["other-info-item"]}>{author}</div>
+                  <div className={styles["other-info-item"]}>
+                    <FaClock /> <span>{time}</span>
                   </div>
-                )}
+
+                  <div className={styles["other-info-item"]}>
+                    <FaFire
+                      className={`${styles["diff-color"]} ${styles[difficulty]}`}
+                    />
+                    <span>{difficulty}</span>
+                  </div>
+
+                  <div className={styles["other-info-item"]}>
+                    <MdDinnerDining /> <span>{serving}</span>
+                  </div>
+                </div>
               </>
             )}
 
@@ -135,46 +154,42 @@ const Card = ({
         </div>
       </div>
 
-      {cardType === "post" && (
-        <div
-          className={`${styles["reaction-wrapper"]} ${
-            !cardLoaded && styles["hide-reaction"]
-          }`}
+      <div
+        className={`${styles["reaction-wrapper"]} ${
+          !cardLoaded && styles["hide-reaction"]
+        }`}
+      >
+        {reactionType.map(({ reactionType, icon: Icon }) => {
+          return (
+            <button
+              key={reactionType}
+              className={`${styles["reaction-item"]} ${styles[reactionType]} ${
+                userActions.userReaction === reactionType &&
+                styles[`${reactionType}-highlight`]
+              }`}
+              onClick={() => handleUserReaction(postID, reactionType)}
+            >
+              <Icon className={styles[`${reactionType}-icon`]} />
+              {reactions[reactionType]}
+            </button>
+          );
+        })}
+
+        <div style={{ flexGrow: "1" }}></div>
+
+        <button
+          className={`${styles["reaction-item"]} ${styles["bookmark"]}`}
+          onClick={() => handleUserBookmark(postID)}
         >
-          {reactionType.map(({ reactionType, icon: Icon }) => {
-            return (
-              <button
-                key={reactionType}
-                className={`${styles["reaction-item"]} ${
-                  styles[reactionType]
-                } ${
-                  userActions.userReaction === reactionType &&
-                  styles[`${reactionType}-highlight`]
-                }`}
-                onClick={() => handleUserReaction(postID, reactionType)}
-              >
-                <Icon className={styles[`${reactionType}-icon`]} />
-                {reactions[reactionType]}
-              </button>
-            );
-          })}
-
-          <div style={{ flexGrow: "1" }}></div>
-
-          <button
-            className={`${styles["reaction-item"]} ${styles["bookmark"]}`}
-            onClick={() => handleUserBookmark(postID)}
-          >
-            {userActions.userBookmark && (
-              <FaBookmark className={styles["bookmark-icon"]} />
-            )}
-            {!userActions.userBookmark && (
-              <FaRegBookmark className={styles["bookmark-icon"]} />
-            )}
-          </button>
-        </div>
-      )}
-    </div>
+          {userActions.userBookmark && (
+            <FaBookmark className={styles["bookmark-icon"]} />
+          )}
+          {!userActions.userBookmark && (
+            <FaRegBookmark className={styles["bookmark-icon"]} />
+          )}
+        </button>
+      </div>
+    </>
   );
 };
 

@@ -43,8 +43,24 @@
 
     position: relative;
     padding: 1rem;
+    margin-top: -5vh;
 
+    border-radius: 20px 20px 0 0 / 16px 16px 0 0;
     background-color: var(--theme-body-bg);
+
+    overflow: hidden;
+    will-change: transform;
+    animation: content-animation 1s ease;
+  }
+
+  @keyframes content-animation {
+    0% {
+      transform: translateY(2.5vh);
+    }
+
+    100% {
+      transform: translateY(0);
+    }
   }
 
   .content section {

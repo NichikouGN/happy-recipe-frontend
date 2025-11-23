@@ -40,10 +40,13 @@ export const UserProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const fetchUserInfo = async () => {
       try {
         if (signInState === "authorized" && accessToken) {
-          const res = await fetch("http://localhost:4000/user/user-info", {
-            method: "GET",
-            headers: { authorization: `Bearer ${accessToken}` },
-          });
+          const res = await fetch(
+            `http://${import.meta.env.VITE_API_URL}:4000/user/user-info`,
+            {
+              method: "GET",
+              headers: { authorization: `Bearer ${accessToken}` },
+            }
+          );
 
           //If access token is invalid or expired request a new one
           if (res.status === 401) {

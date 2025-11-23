@@ -77,13 +77,16 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
     try {
       if (!refreshToken) throw new Error("No refresh token found");
 
-      const res = await fetch("http://localhost:4000/validate/refresh-token", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${refreshToken}`,
-        },
-      });
+      const res = await fetch(
+        `http://${import.meta.env.VITE_API_URL}:4000/validate/refresh-token`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${refreshToken}`,
+          },
+        }
+      );
 
       if (!res.ok) throw authError(res.status);
 
@@ -108,10 +111,13 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
     try {
       if (!accessToken) throw new Error("No access token found");
 
-      const res = await fetch("http://localhost:4000/validate/access-token", {
-        method: "GET",
-        headers: { authorization: `Bearer ${accessToken}` },
-      });
+      const res = await fetch(
+        `http://${import.meta.env.VITE_API_URL}:4000/validate/access-token`,
+        {
+          method: "GET",
+          headers: { authorization: `Bearer ${accessToken}` },
+        }
+      );
 
       if (!res.ok) throw authError(res.status);
 
@@ -136,10 +142,13 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
     try {
       if (!tempToken) return false;
 
-      const res = await fetch("http://localhost:4000/validate/temp-token", {
-        method: "GET",
-        headers: { authorization: `Bearer ${tempToken}` },
-      });
+      const res = await fetch(
+        `http://${import.meta.env.VITE_API_URL}:4000/validate/temp-token`,
+        {
+          method: "GET",
+          headers: { authorization: `Bearer ${tempToken}` },
+        }
+      );
 
       if (!res.ok) throw authError(res.status);
 
@@ -162,14 +171,17 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
       try {
         if (!tempToken) throw new Error("temp Token does not exist");
 
-        const res = await fetch("http://localhost:4000/validate/2fa", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            authorization: `Bearer ${tempToken}`,
-          },
-          body: JSON.stringify({ code: code }),
-        });
+        const res = await fetch(
+          `http://${import.meta.env.VITE_API_URL}:4000/validate/2fa`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              authorization: `Bearer ${tempToken}`,
+            },
+            body: JSON.stringify({ code: code }),
+          }
+        );
         if (!res.ok) throw authError(res.status);
 
         const data = await res.json();
@@ -197,11 +209,14 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
    */
   const signIn = useCallback(async (email: string, password: string) => {
     try {
-      const res = await fetch("http://localhost:4000/signin", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email, password: password }),
-      });
+      const res = await fetch(
+        `http://${import.meta.env.VITE_API_URL}:4000/signin`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: email, password: password }),
+        }
+      );
 
       if (!res.ok) throw authError(res.status);
 
@@ -247,17 +262,20 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
       password: string
     ) => {
       try {
-        const res = await fetch("http://localhost:4000/signup/", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            userName: userName,
-            firstName: firstName,
-            lastName: lastName,
-            email: email,
-            password: password,
-          }),
-        });
+        const res = await fetch(
+          `http://${import.meta.env.VITE_API_URL}:4000/signup/`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              userName: userName,
+              firstName: firstName,
+              lastName: lastName,
+              email: email,
+              password: password,
+            }),
+          }
+        );
 
         if (!res.ok) return false;
 

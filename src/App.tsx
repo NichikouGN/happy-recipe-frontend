@@ -11,12 +11,14 @@ import TwoFactorAuth from "./pages/TwoFactorAuth/TwoFactorAuth";
 import Signup from "./pages/Signup/Signup";
 import Discover from "./pages/Discover/Discover";
 import Search from "./pages/Search/Search";
+import Post from "./pages/Post/Post";
 
 const App = () => {
   //const { themeColor, updateTheme } = useThemeContext();
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/post" element={<Post />} />
         <Route path="/login" element={<Signin />} />
         <Route path="/sign-up" element={<Signup />} />
         <Route
