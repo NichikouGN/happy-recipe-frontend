@@ -49,12 +49,10 @@ export interface PostStructure {
 
 export interface FullPostStructure extends PostStructure {
   description: string;
-  steps: [
-    {
-      stepNum: number;
-      stepDesc: string;
-    }
-  ];
+  steps: {
+    stepNum: number;
+    stepDesc: string;
+  }[];
 }
 
 /**
@@ -90,8 +88,8 @@ const uploadUserAction = async (
   // Implement token logic here if needed, or get token outside the function
   const body =
     action === "reaction"
-      ? JSON.stringify({ reaction: newReaction, postID })
-      : JSON.stringify({ bookmark: newBookmark, postID });
+      ? JSON.stringify({ reaction: newReaction, postID: postID })
+      : JSON.stringify({ bookmark: newBookmark, postID: postID });
 
   // Use your actual endpoint and token logic
   const res = await fetch(
@@ -124,7 +122,7 @@ interface PostContextType {
   fetchNextPage: () => void;
   useDetailedPost: (postID: string) => UseQueryResult<FullPostStructure>;
   handleUserReaction: (sourcePost: string, newReaction: ReactionType) => void;
-  handleUserBookmark: (sourcePost: string) => void;
+  handleUserBookmark: (sourcePost: string, newBookmark: boolean) => void;
 }
 
 const PostContext = createContext<PostContextType | undefined>(undefined);
@@ -158,15 +156,15 @@ export const PostProvider: FC<{ children: ReactNode }> = ({ children }) => {
    */
   const confirmUserAction = useCallback(
     async ({ action, postID, newReaction, newBookmark }: ActionPayload) => {
-      if (!accessToken) {
-        Toast({
-          type: "error",
-          title: "Authentication Error",
-          message: "Please sign in to react to the post",
-        });
+      // if (!accessToken) {
+      //   Toast({
+      //     type: "error",
+      //     title: "Authentication Error",
+      //     message: "Please sign in to react to the post",
+      //   });
 
-        return;
-      }
+      //   return;
+      // }
 
       const controller = new AbortController();
       const id = setTimeout(() => controller.abort(), 2000);
@@ -187,7 +185,9 @@ export const PostProvider: FC<{ children: ReactNode }> = ({ children }) => {
             newReaction,
             newBookmark,
           });
-        } catch (e) {}
+        } catch (e) {
+          console.log(e);
+        }
       } finally {
         clearTimeout(id);
       }
@@ -234,6 +234,9 @@ export const PostProvider: FC<{ children: ReactNode }> = ({ children }) => {
     onMutate: async (newAction) => {
       // Cancel current query to prevent overwritting
       await queryClient.cancelQueries({ queryKey: ["discoverPosts"] });
+      await queryClient.cancelQueries({
+        queryKey: ["detailedPost", newAction.postID],
+      });
 
       // Store the previous value
       const previousPosts = queryClient.getQueryData(["discoverPosts"]);
@@ -241,30 +244,33 @@ export const PostProvider: FC<{ children: ReactNode }> = ({ children }) => {
         "detailedPost",
       ]);
 
-      queryClient.setQueryData(["detailedPost"], (oldData: any) => {
-        if (!oldData) return oldData;
+      queryClient.setQueryData(
+        ["detailedPost", newAction.postID],
+        (oldData: any) => {
+          if (!oldData) return oldData;
 
-        const oldUserReaction = oldData.userActions.userReaction;
-        let newReactions = { ...oldData.reactions };
-        let newUserReaction: ReactionType | null = newAction.newReaction!;
+          const oldUserReaction = oldData.userActions.userReaction;
+          let newReactions = { ...oldData.reactions };
+          let newUserReaction: ReactionType | null = newAction.newReaction!;
 
-        if (oldUserReaction === newAction.newReaction) {
-          newReactions[newAction.newReaction!] -= 1;
-          newUserReaction = null;
-        } else {
-          if (oldUserReaction) newReactions[oldUserReaction] -= 1;
-          newReactions[newAction.newReaction!] += 1;
+          if (oldUserReaction === newAction.newReaction) {
+            newReactions[newAction.newReaction!] -= 1;
+            newUserReaction = null;
+          } else {
+            if (oldUserReaction) newReactions[oldUserReaction] -= 1;
+            newReactions[newAction.newReaction!] += 1;
+          }
+
+          return {
+            ...oldData,
+            reactions: newReactions,
+            userActions: {
+              ...oldData.userActions,
+              userReaction: newUserReaction,
+            },
+          };
         }
-
-        return {
-          ...oldData,
-          reactions: newReactions,
-          userActions: {
-            ...oldData.userActions,
-            userReaction: newUserReaction,
-          },
-        };
-      });
+      );
 
       // Update the list
       queryClient.setQueryData(["discoverPosts"], (oldData: any) => {
@@ -313,7 +319,7 @@ export const PostProvider: FC<{ children: ReactNode }> = ({ children }) => {
     },
 
     // If the mutation fails, rollback
-    onError: (err, _, context) => {
+    onError: (err, variables, context) => {
       Toast({
         type: "error",
         title: err.name,
@@ -323,12 +329,22 @@ export const PostProvider: FC<{ children: ReactNode }> = ({ children }) => {
       if (context?.previousPosts) {
         queryClient.setQueryData(["discoverPosts"], context.previousPosts);
       }
+
+      if (context?.previousDetailedPost) {
+        queryClient.setQueryData(
+          ["detailedPost", variables.postID],
+          context.previousDetailedPost
+        );
+      }
     },
 
     // Refetch data to make sure its in sync
     onSettled: (_, __, variables) => {
       pendingMutation.current.delete(variables.postID);
       queryClient.invalidateQueries({ queryKey: ["discoverPosts"] });
+      // queryClient.invalidateQueries({
+      //   queryKey: ["detailedPost", variables.postID],
+      // });
     },
   });
 
@@ -354,6 +370,7 @@ export const PostProvider: FC<{ children: ReactNode }> = ({ children }) => {
     ActionPayload,
     {
       previousPosts: unknown;
+      previousDetailedPost: FullPostStructure | undefined;
     }
   >({
     mutationFn: (payload: ActionPayload) => confirmUserAction(payload),
@@ -362,9 +379,31 @@ export const PostProvider: FC<{ children: ReactNode }> = ({ children }) => {
     onMutate: async (newAction) => {
       // 1. Cancel any outgoing refetches (so they don't overwrite our optimistic update)
       await queryClient.cancelQueries({ queryKey: ["discoverPosts"] });
+      await queryClient.cancelQueries({ queryKey: ["detailedPost"] });
 
       // 2. Snapshot the previous value
       const previousPosts = queryClient.getQueryData(["discoverPosts"]);
+      const previousDetailedPost = queryClient.getQueryData<FullPostStructure>([
+        "detailedPost",
+        newAction.postID,
+      ]);
+
+      // 3. Optimistically update the cache
+      queryClient.setQueryData(
+        ["detailedPost", newAction.postID],
+        (oldData: any) => {
+          if (!oldData) return oldData;
+
+          const oldBookmark = oldData.userActions.userBookmark;
+          const newBookmark = !oldBookmark;
+          const newUserActions = {
+            ...oldData.userActions,
+            userBookmark: newBookmark,
+          };
+
+          return { ...oldData, userActions: newUserActions };
+        }
+      );
 
       // 3. Optimistically update the cache
       queryClient.setQueryData(["discoverPosts"], (oldData: any) => {
@@ -399,19 +438,26 @@ export const PostProvider: FC<{ children: ReactNode }> = ({ children }) => {
       });
 
       // 4. Return the snapshot so we can use it on error
-      return { previousPosts };
+      return { previousPosts, previousDetailedPost };
     },
 
     // If the mutation fails, use the context returned from onMutate to roll back
-    onError: (err, _, context) => {
+    onError: (err, variables, context) => {
       Toast({
         type: "error",
         title: err.name,
         message: err.message,
       });
-      // Rollback to the previous state
+
       if (context?.previousPosts) {
         queryClient.setQueryData(["discoverPosts"], context.previousPosts);
+      }
+
+      if (context?.previousDetailedPost) {
+        queryClient.setQueryData(
+          ["detailedPost", variables.postID],
+          context.previousDetailedPost
+        );
       }
     },
 
@@ -419,33 +465,42 @@ export const PostProvider: FC<{ children: ReactNode }> = ({ children }) => {
     onSettled: (_, __, variables) => {
       pendingMutation.current.delete(variables.postID);
       queryClient.invalidateQueries({ queryKey: ["discoverPosts"] });
+      // queryClient.invalidateQueries({
+      //   queryKey: ["detailedPost", variables.postID],
+      // });
     },
   });
 
-  const handleUserBookmark = useCallback((sourcePost: string) => {
-    // Trigger the mutation hook
-    if (pendingMutation.current.has(sourcePost)) return;
+  const handleUserBookmark = useCallback(
+    (sourcePost: string, newBookmark: boolean) => {
+      // Trigger the mutation hook
+      if (pendingMutation.current.has(sourcePost)) return;
 
-    pendingMutation.current.add(sourcePost);
+      pendingMutation.current.add(sourcePost);
 
-    bookMarkMutation.mutate({
-      action: "bookmark",
-      postID: sourcePost,
-    });
-  }, []);
-
-  const contextValue: PostContextType = {
-    postList,
-    isLoading,
-    isFetchingNextPage,
-    useDetailedPost,
-    fetchNextPage,
-    handleUserReaction,
-    handleUserBookmark,
-  };
+      bookMarkMutation.mutate({
+        action: "bookmark",
+        postID: sourcePost,
+        newBookmark: newBookmark,
+      });
+    },
+    []
+  );
 
   return (
-    <PostContext.Provider value={contextValue}>{children}</PostContext.Provider>
+    <PostContext.Provider
+      value={{
+        postList,
+        isLoading,
+        isFetchingNextPage,
+        useDetailedPost,
+        fetchNextPage,
+        handleUserReaction,
+        handleUserBookmark,
+      }}
+    >
+      {children}
+    </PostContext.Provider>
   );
 };
 

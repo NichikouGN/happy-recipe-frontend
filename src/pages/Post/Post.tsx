@@ -15,16 +15,12 @@ const Post = () => {
     return <>No Args</>;
   }
 
-  const { data: detailedPost, isFetching, isFetched } = useDetailedPost(postID);
-
-  if (!detailedPost) {
-    return <PostSkeleton />;
-  }
+  const { data: detailedPost, isFetching } = useDetailedPost(postID);
 
   return (
     <>
-      {isFetching && <PostSkeleton />}
-      {!isFetching && isFetched && <PostContent detailedPost={detailedPost} />}
+      {isFetching && !detailedPost && <PostSkeleton />}
+      {detailedPost && <PostContent detailedPost={detailedPost} />}
     </>
   );
 };

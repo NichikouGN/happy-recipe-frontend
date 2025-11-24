@@ -164,42 +164,54 @@
 }
 
 .like {
-  background: var(--zinc-100);
+  background: var(--neutral-100);
 }
 
 .like-highlight {
-  background: var(--yellow-400);
+  background: var(--sky-200);
 }
 
 .heart {
-  background: var(--red-100);
+  background: var(--neutral-100);
 }
 
 .heart-highlight {
-  background: var(--red-400);
+  background: var(--red-200);
 }
 
 .yum {
-  background: var(--zinc-300);
+  background: var(--neutral-100);
 }
 
 .yum-highlight {
-  background: var(--zinc-400);
+  background: var(--yellow-200);
 }
 
 .like-icon {
-  color: var(--yellow-500);
+  color: var(--neutral-400);
   font-size: 1.1rem;
+}
+
+.like-icon.like-highlight {
+  color: var(--sky-500);
 }
 
 .heart-icon {
-  color: var(--red-500);
+  color: var(--neutral-400);
+
   font-size: 1.1rem;
 }
+.heart-icon.heart-highlight {
+  color: var(--red-500);
+}
 
-.dislike-icon {
-  color: var(--zinc-800);
+.yum-icon {
+  color: var(--neutral-400);
+
   font-size: 1.1rem;
+}
+.yum-icon.yum-highlight {
+  color: var(--yellow-500);
 }
 
 .bookmark {

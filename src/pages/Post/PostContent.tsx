@@ -1,16 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { FullPostStructure } from "../../context/PostContext";
+import { usePosts, type FullPostStructure } from "../../context/PostContext";
 import styles from "./Post.module.css";
 import { IoClose } from "react-icons/io5";
 import { IoIosShareAlt } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { useToastContext } from "../../context/ToastContext";
-import { FaClock, FaFire, FaBookmark, FaRegBookmark } from "react-icons/fa";
-import { MdDinnerDining } from "react-icons/md";
-import { FaCircleUser, FaHeart } from "react-icons/fa6";
-import { LuText } from "react-icons/lu";
-import { AiFillLike } from "react-icons/ai";
-import { GiForkKnifeSpoon } from "react-icons/gi";
+import { FaBookmark, FaRegBookmark } from "react-icons/fa";
+import { reactionType } from "../../components/Card/Card";
 
 interface POST_CONTENT_PROPS {
   detailedPost: FullPostStructure;
@@ -63,6 +59,7 @@ const Donut = ({ size = 120, strokeWidth = 10, progress = 30, text = "" }) => {
 };
 
 const PostContent = ({ detailedPost }: POST_CONTENT_PROPS) => {
+  const { handleUserBookmark, handleUserReaction } = usePosts();
   const { Toast } = useToastContext();
   const [isCollapsed, setIsCollapsed] = useState(
     Array(detailedPost.steps.length + 1).fill(false)
@@ -156,6 +153,24 @@ const PostContent = ({ detailedPost }: POST_CONTENT_PROPS) => {
             }}
           >
             <IoIosShareAlt />
+          </button>
+        </div>
+
+        <div className={`${styles["action-bar"]} ${styles["bookmark-bar"]}`}>
+          <button
+            className={styles["action-btn"]}
+            onClick={() => {
+              handleUserBookmark(
+                detailedPost.postID,
+                !detailedPost.userActions.userBookmark
+              );
+            }}
+          >
+            {detailedPost.userActions.userBookmark ? (
+              <FaBookmark />
+            ) : (
+              <FaRegBookmark />
+            )}
           </button>
         </div>
       </header>
@@ -281,6 +296,33 @@ const PostContent = ({ detailedPost }: POST_CONTENT_PROPS) => {
                   </div>
                 </div>
               </div>
+            );
+          })}
+        </section>
+
+        <section className={styles["reaction-wrapper"]}>
+          {reactionType.map(({ reactionType, icon: Icon }) => {
+            return (
+              <button
+                key={reactionType}
+                className={`${styles["reaction-item"]} ${
+                  styles[reactionType]
+                } ${
+                  detailedPost.userActions.userReaction === reactionType &&
+                  styles[`${reactionType}-highlight`]
+                }`}
+                onClick={() =>
+                  handleUserReaction(detailedPost.postID, reactionType)
+                }
+              >
+                <Icon
+                  className={`${styles[`${reactionType}-icon`]} ${
+                    detailedPost.userActions.userReaction === reactionType &&
+                    styles[`${reactionType}-highlight`]
+                  }`}
+                />
+                {detailedPost.reactions[reactionType]}
+              </button>
             );
           })}
         </section>

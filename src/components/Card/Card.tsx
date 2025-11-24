@@ -28,7 +28,7 @@ interface CardProps {
   onClick?: () => void;
 }
 
-const reactionType = [
+export const reactionType = [
   { reactionType: "like", icon: AiFillLike },
   { reactionType: "heart", icon: FaHeart },
   { reactionType: "yum", icon: GiForkKnifeSpoon },
@@ -169,7 +169,12 @@ const Card = ({
               }`}
               onClick={() => handleUserReaction(postID, reactionType)}
             >
-              <Icon className={styles[`${reactionType}-icon`]} />
+              <Icon
+                className={`${styles[`${reactionType}-icon`]} ${
+                  userActions.userReaction === reactionType &&
+                  styles[`${reactionType}-highlight`]
+                }`}
+              />
               {reactions[reactionType]}
             </button>
           );
@@ -179,7 +184,7 @@ const Card = ({
 
         <button
           className={`${styles["reaction-item"]} ${styles["bookmark"]}`}
-          onClick={() => handleUserBookmark(postID)}
+          onClick={() => handleUserBookmark(postID, !userActions.userBookmark)}
         >
           {userActions.userBookmark && (
             <FaBookmark className={styles["bookmark-icon"]} />

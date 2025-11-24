@@ -48,4 +48,8 @@ To execute the front end, type 'npm run dev' on the into the console and open an
 - Support post sharing function via URL
 - Display all the post information including the description and steps
 - Added animation for /home and /post page.
+- 
+## v0.5.1 (2025-11-25)
+- Added bookmark and reactions to the /post page
+- Data now synced between /discover page and /post page
   
