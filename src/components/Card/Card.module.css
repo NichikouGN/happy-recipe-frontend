@@ -29,6 +29,17 @@
   cursor: pointer;
   overflow: hidden;
   z-index: 1;
+
+  animation: card-intro 0.5s ease-in-out;
+}
+
+@keyframes card-intro {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 .card-item.food {

@@ -7,7 +7,7 @@ import { FaArrowRotateRight } from "react-icons/fa6";
 import { usePosts } from "../../context/PostContext";
 
 const Discover = () => {
-  const { postList, isFetchingNextPage } = usePosts();
+  const { postList, isFetchingNextPage, discoverScrollY } = usePosts();
 
   const [topBarPos, setTopBarPos] = useState<number>(0);
   const [lastScrollY, setLastScrollY] = useState<number>(0);
@@ -37,6 +37,11 @@ const Discover = () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, [lastScrollY]);
+
+  useEffect(() => {
+    //Restore scroll position when navigating back to discover page
+    window.scrollTo(0, discoverScrollY.current);
+  }, []);
 
   return (
     <>

@@ -133,12 +133,7 @@ const Signin = () => {
           </div>
 
           {/*Submit*/}
-          <Button
-            variant="primary"
-            size="small"
-            type="submit"
-            style={{ width: "100%" }}
-          >
+          <Button variant="primary" size="small" type="submit" fullWidth={true}>
             Sign In
           </Button>
         </form>

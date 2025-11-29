@@ -1,4 +1,4 @@
-import { useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { usePosts } from "../../context/PostContext";
 
 import PostSkeleton from "./PostSkeleton";
@@ -6,10 +6,7 @@ import PostContent from "./PostContent";
 
 const Post = () => {
   const { useDetailedPost } = usePosts();
-
-  const { search } = useLocation();
-  const query = new URLSearchParams(search);
-  const postID = query.get("id");
+  const { postID } = useParams();
 
   if (!postID) {
     return <>No Args</>;

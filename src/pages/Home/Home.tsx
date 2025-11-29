@@ -54,7 +54,12 @@ const Home = () => {
   const fetchPopularDish = async () => {
     try {
       const res = await fetch(
-        `http://${import.meta.env.VITE_API_URL}:4000/ranking/popular-dish`
+        `${import.meta.env.VITE_API_URL}/ranking/popular-dish`,
+        {
+          headers: {
+            "ngrok-skip-browser-warning": "true",
+          },
+        }
       );
 
       if (!res.ok) throw new Error("xdd");
@@ -63,6 +68,7 @@ const Home = () => {
 
       setPopularDish(data.popularDish);
     } catch (e) {
+      console.log(`${import.meta.env.VITE_API_URL}/ranking/popular-dish`);
       console.log(e);
     }
   };

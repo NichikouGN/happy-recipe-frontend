@@ -1,5 +1,11 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { usePosts, type FullPostStructure } from "../../context/PostContext";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
+import { usePosts } from "../../context/PostContext";
 import styles from "./Post.module.css";
 import { IoClose } from "react-icons/io5";
 import { IoIosShareAlt } from "react-icons/io";
@@ -7,10 +13,9 @@ import { useNavigate } from "react-router-dom";
 import { useToastContext } from "../../context/ToastContext";
 import { FaBookmark, FaRegBookmark } from "react-icons/fa";
 import { reactionType } from "../../components/Card/Card";
-
-interface POST_CONTENT_PROPS {
-  detailedPost: FullPostStructure;
-}
+import type { CommentStructure, FullPostStructure } from "../../types/PostType";
+import Button from "../../components/Button/Button";
+import Comments from "../../components/Comments/Comments";
 
 const Donut = ({ size = 120, strokeWidth = 10, progress = 30, text = "" }) => {
   const radius = (size - strokeWidth) / 2;
@@ -58,9 +63,14 @@ const Donut = ({ size = 120, strokeWidth = 10, progress = 30, text = "" }) => {
   );
 };
 
-const PostContent = ({ detailedPost }: POST_CONTENT_PROPS) => {
+const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
   const { handleUserBookmark, handleUserReaction } = usePosts();
   const { Toast } = useToastContext();
+
+  const [commentPage, setCommentPage] = useState<number>(1);
+  const [comments, SetComments] = useState<CommentStructure[]>([]);
+  const [commentInitialized, setCommentInitialized] = useState<boolean>(false);
+
   const [isCollapsed, setIsCollapsed] = useState(
     Array(detailedPost.steps.length + 1).fill(false)
   );
@@ -68,11 +78,109 @@ const PostContent = ({ detailedPost }: POST_CONTENT_PROPS) => {
   const [headerHeight, setHeaderHeight] = useState<number>(0);
 
   const navigate = useNavigate();
+
   const headerRef = useRef<HTMLHeadingElement | null>(null);
   const heightRef = useRef<(HTMLDivElement | null)[]>([]);
+  const fetchTrigger = useRef<HTMLDivElement | null>(null);
 
-  <div></div>;
+  useLayoutEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
+  // Fetch comments
+  const fetchComments = async () => {
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/post/${
+          detailedPost.postID
+        }/comments?page=${commentPage}&limit=5`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "ngrok-skip-browser-warning": "true",
+          },
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch comments");
+      }
+
+      // Append new comments to existing list
+      const data = await res.json();
+
+      SetComments((prev) => [...prev, ...data.comments]);
+      setCommentPage((prev) => prev + 1);
+      setCommentInitialized(true);
+    } catch (error) {
+      console.error("Error fetching comments:", error);
+    }
+  };
+
+  /**
+   * Fetch replies for a specific parent comment
+   * @param parentCommentID The ID of the parent comment to fetch replies for
+   * @globals detailedPost, SetComments
+   */
+  const fetchReplies = async (parentCommentID: string) => {
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/post/${
+          detailedPost.postID
+        }/comments/${parentCommentID}/replies?page=1&limit=5`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "ngrok-skip-browser-warning": "true",
+          },
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch replies");
+      }
+
+      const data = await res.json();
+      SetComments((prev) => {
+        const curComments = prev.find((c) => c.commentID === parentCommentID);
+        if (curComments) {
+          curComments.replies = data.replies;
+          curComments.nextRepliesPage = data.nextRepliesPage;
+        }
+
+        return [...prev];
+      });
+    } catch (error) {
+      console.error("Error fetching replies:", error);
+    }
+  };
+
+  useEffect(() => {
+    console.log(comments);
+  }, [comments]);
+
+  // Intersection Observer to fetch comments when in view
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const target = entries[0];
+
+        if (target.isIntersecting) {
+          observer.disconnect();
+          fetchComments();
+        }
+      },
+      { threshold: 0.5 } //half of the reference is needed to trigger observer
+    );
+
+    if (fetchTrigger.current) observer.observe(fetchTrigger.current);
+
+    return () => {
+      if (observer) observer.disconnect();
+    };
+  }, []);
+
+  // Parallax effect for header
   useEffect(() => {
     if (headerRef.current) setHeaderHeight(headerRef.current.scrollHeight);
 
@@ -87,6 +195,10 @@ const PostContent = ({ detailedPost }: POST_CONTENT_PROPS) => {
 
   const translateVal = Math.min(headerHeight / 4, scrollY / 4);
 
+  /**
+   * Copy text to clipboard
+   * @param text The text to copy to the clipboard
+   */
   const copyToClipboard = (text: string) => {
     const textarea = document.createElement("textarea");
     textarea.value = text;
@@ -103,7 +215,29 @@ const PostContent = ({ detailedPost }: POST_CONTENT_PROPS) => {
     document.body.removeChild(textarea);
   };
 
-  const handleClick = useCallback(
+  // Handle share functionality
+  const handleShare = async () => {
+    if (!navigator.share) {
+      copyToClipboard(window.location.href);
+      Toast({
+        type: "info",
+        title: "Share",
+        message: "Copied link to clipboard",
+      });
+    } else {
+      navigator
+        .share({
+          title: detailedPost.title,
+          url: window.location.href,
+        })
+        .catch((error) => {
+          console.error("Error sharing:", error);
+        });
+    }
+  };
+
+  // Handle collapse/expand of card content
+  const handleCollapse = useCallback(
     (index: number) => {
       setIsCollapsed((prev) =>
         prev.map((state, i) => {
@@ -113,10 +247,6 @@ const PostContent = ({ detailedPost }: POST_CONTENT_PROPS) => {
     },
     [isCollapsed]
   );
-
-  useEffect(() => {
-    console.log(isCollapsed);
-  }, [isCollapsed]);
 
   return (
     <>
@@ -133,32 +263,23 @@ const PostContent = ({ detailedPost }: POST_CONTENT_PROPS) => {
         }}
       >
         <div className={styles["action-bar"]}>
-          <button
-            className={styles["action-btn"]}
-            onClick={() => {
-              navigate("/");
-            }}
+          <Button
+            variant="rounded"
+            size="medium"
+            onClick={() => navigate("/discover")}
           >
-            <IoClose />
-          </button>
-          <button
-            className={styles["action-btn"]}
-            onClick={() => {
-              copyToClipboard(window.location.href);
-              Toast({
-                type: "info",
-                title: "Share",
-                message: "Successfully copied link to clipboard",
-              });
-            }}
-          >
-            <IoIosShareAlt />
-          </button>
+            <IoClose className={styles["btn-icon"]} />
+          </Button>
+
+          <Button variant="rounded" size="medium" onClick={handleShare}>
+            <IoIosShareAlt className={styles["btn-icon"]} />
+          </Button>
         </div>
 
         <div className={`${styles["action-bar"]} ${styles["bookmark-bar"]}`}>
-          <button
-            className={styles["action-btn"]}
+          <Button
+            variant="rounded"
+            size="medium"
             onClick={() => {
               handleUserBookmark(
                 detailedPost.postID,
@@ -167,11 +288,11 @@ const PostContent = ({ detailedPost }: POST_CONTENT_PROPS) => {
             }}
           >
             {detailedPost.userActions.userBookmark ? (
-              <FaBookmark />
+              <FaBookmark className={styles["btn-icon"]} />
             ) : (
-              <FaRegBookmark />
+              <FaRegBookmark className={styles["btn-icon"]} />
             )}
-          </button>
+          </Button>
         </div>
       </header>
       <main className={styles["content"]}>
@@ -227,7 +348,7 @@ const PostContent = ({ detailedPost }: POST_CONTENT_PROPS) => {
             <button
               className={styles["card-title-group"]}
               onClick={() => {
-                handleClick(0);
+                handleCollapse(0);
               }}
             >
               <div className={styles["card-title"]}>Description</div>
@@ -262,7 +383,7 @@ const PostContent = ({ detailedPost }: POST_CONTENT_PROPS) => {
                 <button
                   className={styles["card-title-group"]}
                   onClick={() => {
-                    handleClick(index + 1);
+                    handleCollapse(index + 1);
                   }}
                 >
                   <div className={styles["card-title"]}>
@@ -325,6 +446,25 @@ const PostContent = ({ detailedPost }: POST_CONTENT_PROPS) => {
               </button>
             );
           })}
+        </section>
+
+        <section className={styles["comment-section"]} ref={fetchTrigger}>
+          <div className={styles["user-comments"]}>
+            <div></div>
+            <input
+              className={styles["comment-input"]}
+              placeholder="Add a comment..."
+            />
+          </div>
+
+          <div className={styles["comment-list"]}>
+            <Comments
+              comments={comments}
+              fetchReplies={fetchReplies}
+              commentInitialized={commentInitialized}
+              layer={0}
+            />
+          </div>
         </section>
       </main>
     </>

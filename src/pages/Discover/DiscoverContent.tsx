@@ -5,7 +5,7 @@ import { usePosts } from "../../context/PostContext";
 
 const DiscoverContent = () => {
   // const { postList, fetchPost } = useDiscoveryContext();
-  const { postList, fetchNextPage } = usePosts();
+  const { postList, fetchNextPage, discoverScrollY } = usePosts();
   const fetchTrigger = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
 
@@ -31,10 +31,6 @@ const DiscoverContent = () => {
     };
   }, [postList]);
 
-  useEffect(() => {
-    console.log(postList);
-  }, [postList]);
-
   return postList.map(
     (
       {
@@ -56,7 +52,8 @@ const DiscoverContent = () => {
             key={postID}
             postID={postID}
             onClick={() => {
-              navigate(`/post?id=${postID}`);
+              discoverScrollY.current = window.scrollY;
+              navigate(`/post/${postID}`);
             }}
             cardType="post"
             cardLoaded={true}

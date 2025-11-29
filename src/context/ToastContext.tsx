@@ -11,11 +11,12 @@ import styles from "../components/Toast/Toast.module.css";
 
 interface ToastStructure {
   id: string;
-  type: "error" | "warning" | "info";
+  type: "error" | "warning" | "info" | "success";
   title?: string;
   message?: string;
 }
 
+//Toast Context
 const ToastContext = createContext<
   | {
       Toast: (toast: Omit<ToastStructure, "id">) => void;
@@ -28,6 +29,10 @@ export const ToastContextProvider: FC<{ children: ReactNode }> = ({
 }) => {
   const [toastList, setToastList] = useState<ToastStructure[]>([]);
 
+  /**
+   * Function to show a toast notification
+   * @param {Omit<ToastStructure, "id">} param0 - The toast details excluding the id
+   */
   const Toast = useCallback(
     ({ type, title, message }: Omit<ToastStructure, "id">) => {
       const id = Math.random().toString(36).slice(2);

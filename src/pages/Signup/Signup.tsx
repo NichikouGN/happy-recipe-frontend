@@ -224,12 +224,7 @@ const Signup = () => {
           </div>
 
           {/*Submit*/}
-          <Button
-            variant="primary"
-            size="small"
-            type="submit"
-            style={{ width: "100%" }}
-          >
+          <Button variant="primary" size="small" type="submit" fullWidth={true}>
             Sign Up
           </Button>
         </form>

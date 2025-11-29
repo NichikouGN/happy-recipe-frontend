@@ -5,11 +5,8 @@ import { FaCircleUser, FaHeart } from "react-icons/fa6";
 import { LuText } from "react-icons/lu";
 import { AiFillLike } from "react-icons/ai";
 import { GiForkKnifeSpoon } from "react-icons/gi";
-import {
-  usePosts,
-  type Reaction,
-  type UserActions,
-} from "../../context/PostContext";
+import { usePosts } from "../../context/PostContext";
+import type { Reaction, UserActions } from "../../types/PostType";
 
 interface CardProps {
   postID: string;

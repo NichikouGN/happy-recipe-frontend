@@ -1,13 +1,12 @@
 //Tanstack
 import {
   useInfiniteQuery,
-  useMutation,
   useQuery,
   useQueryClient,
-  type QueryFunction,
   type UseQueryResult,
 } from "@tanstack/react-query";
 
+//React
 import {
   useContext,
   createContext,
@@ -21,172 +20,89 @@ import {
 import { useAuthContext } from "./AuthContext";
 import { useToastContext } from "./ToastContext";
 
-//Interfaces
-export interface Reaction {
-  like: number;
-  heart: number;
-  yum: number;
-}
-type ReactionType = "like" | "heart" | "yum";
+//Types
+import type {
+  ActionPayload,
+  FullPostStructure,
+  PostStructure,
+  ReactionType,
+} from "../types/PostType";
 
-export interface UserActions {
-  userReaction: ReactionType | null;
-  userBookmark: boolean;
-}
+//API & Hooks
+import { fetchDetailedPost, fetchPosts, uploadUserAction } from "../api/posts";
+import { useReactionMutation } from "../hooks/useReactionMutation";
+import { useBookMarkMutation } from "../hooks/useBookMarkMutation";
 
-export interface PostStructure {
-  postID: string;
-  title: string;
-  coverImgURL: string;
-  authorID: number;
-  authorName: string;
-  cookTime: number;
-  servings: number;
-  difficulty: "easy" | "medium" | "hard";
-  reactions: Reaction;
-  userActions: UserActions;
-}
-
-export interface FullPostStructure extends PostStructure {
-  description: string;
-  steps: {
-    stepNum: number;
-    stepDesc: string;
-  }[];
-}
-
-/**
- * fetcher functions for tanstack useInfiniteQuery()
- * @param pageParam
- * @returns a posts object with a nextPage cursor`
- */
-const fetchPosts: QueryFunction<
-  { posts: PostStructure[]; nextPage: number | undefined },
-  [string],
-  number
-> = async ({ pageParam = 1 }) => {
-  const res = await fetch(
-    `http://${import.meta.env.VITE_API_URL}:4000/discover?page=${pageParam}`
-  );
-
-  if (!res.ok) throw new Error("Failed to fetch posts");
-
-  const data = await res.json();
-  const newPosts: PostStructure[] = data.postList; //Retrieve the list
-
-  return {
-    posts: newPosts,
-    nextPage: pageParam + 1,
-  };
-};
-
-const uploadUserAction = async (
-  accessToken: string,
-  controller: AbortController,
-  { action, postID, newReaction, newBookmark }: ActionPayload
-) => {
-  // Implement token logic here if needed, or get token outside the function
-  const body =
-    action === "reaction"
-      ? JSON.stringify({ reaction: newReaction, postID: postID })
-      : JSON.stringify({ bookmark: newBookmark, postID: postID });
-
-  // Use your actual endpoint and token logic
-  const res = await fetch(
-    `http://${import.meta.env.VITE_API_URL}:4000/${action}`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        authorization: `Bearer ${accessToken}`,
-      },
-      body: body,
-      signal: controller.signal,
+//Create Post Context
+const PostContext = createContext<
+  | {
+      discoverScrollY: React.RefObject<number>;
+      postList: PostStructure[]; // The data object from useInfiniteQuery
+      isLoading: boolean; // Init state
+      isFetchingNextPage: boolean; // Fetching state
+      fetchNextPage: () => void;
+      useDetailedPost: (postID: string) => UseQueryResult<FullPostStructure>;
+      handleUserReaction: (
+        sourcePost: string,
+        newReaction: ReactionType
+      ) => void;
+      handleUserBookmark: (sourcePost: string, newBookmark: boolean) => void;
     }
-  );
-
-  if (!res.ok) throw new Error("Action failed");
-};
-
-interface ActionPayload {
-  action: "reaction" | "bookmark";
-  postID: string;
-  newReaction?: ReactionType;
-  newBookmark?: boolean;
-}
-
-interface PostContextType {
-  postList: PostStructure[]; // The data object from useInfiniteQuery
-  isLoading: boolean; // Init state
-  isFetchingNextPage: boolean; // Fetching state
-  fetchNextPage: () => void;
-  useDetailedPost: (postID: string) => UseQueryResult<FullPostStructure>;
-  handleUserReaction: (sourcePost: string, newReaction: ReactionType) => void;
-  handleUserBookmark: (sourcePost: string, newBookmark: boolean) => void;
-}
-
-const PostContext = createContext<PostContextType | undefined>(undefined);
+  | undefined
+>(undefined);
 
 export const PostProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  //Tanstack
   const queryClient = useQueryClient();
   const { Toast } = useToastContext();
+
   const { accessToken, requestNewAccessToken } = useAuthContext(); // Assuming access token logic
   const pendingMutation = useRef<Set<string>>(new Set());
-
-  const fetchDetailedPost: QueryFunction<
-    FullPostStructure,
-    [string, string]
-  > = async ({ queryKey }) => {
-    const [, postID] = queryKey;
-    const res = await fetch(
-      `http://${import.meta.env.VITE_API_URL}:4000/post?id=${postID}`
-    );
-
-    if (!res.ok) throw new Error("Failed to fetch posts");
-
-    const data = await res.json();
-    const detailedPost: FullPostStructure = data.post; //Retrieve the list
-
-    return detailedPost;
-  };
+  const discoverScrollY = useRef<number>(0);
 
   /**
    * Function for tanstack useMutation()
-   * @param ActionPayLoad
+   * @param { action, postID, newReaction, newBookmark } ActionPayload type of action , new reaction or bookmark state and postID
    */
   const confirmUserAction = useCallback(
     async ({ action, postID, newReaction, newBookmark }: ActionPayload) => {
-      // if (!accessToken) {
-      //   Toast({
-      //     type: "error",
-      //     title: "Authentication Error",
-      //     message: "Please sign in to react to the post",
-      //   });
+      if (!accessToken) {
+        Toast({
+          type: "error",
+          title: "Authentication Error",
+          message: "Please sign in to react to the post",
+        });
 
-      //   return;
-      // }
+        return;
+      }
 
       const controller = new AbortController();
       const id = setTimeout(() => controller.abort(), 2000);
 
       try {
-        uploadUserAction(accessToken, controller, {
+        await uploadUserAction(accessToken, controller, {
           action,
           postID,
           newReaction,
           newBookmark,
         });
       } catch (e) {
+        // Refresh token and retry again
         const updatedToken = await requestNewAccessToken();
         try {
-          uploadUserAction(updatedToken, controller, {
+          await uploadUserAction(updatedToken, controller, {
             action,
             postID,
             newReaction,
             newBookmark,
           });
         } catch (e) {
-          console.log(e);
+          // Final error toast
+          Toast({
+            type: "error",
+            title: "Action Failed",
+            message: "Unable to complete your action. Please try again later.",
+          });
         }
       } finally {
         clearTimeout(id);
@@ -195,6 +111,9 @@ export const PostProvider: FC<{ children: ReactNode }> = ({ children }) => {
     [accessToken, requestNewAccessToken]
   );
 
+  /**
+   * useInfiniteQuery hook to fetch posts for discovery feed
+   */
   const { data, isLoading, isFetchingNextPage, fetchNextPage } =
     useInfiniteQuery({
       queryKey: ["discoverPosts"],
@@ -211,6 +130,7 @@ export const PostProvider: FC<{ children: ReactNode }> = ({ children }) => {
     ? data.pages.flatMap((page) => page.posts)
     : [];
 
+  //Query hook for detailed post
   const useDetailedPost = (postID: string) => {
     return useQuery({
       queryKey: ["detailedPost", postID],
@@ -219,135 +139,20 @@ export const PostProvider: FC<{ children: ReactNode }> = ({ children }) => {
     });
   };
 
-  //Mutation hooks
-  const reactionMutation = useMutation<
-    void,
-    Error,
-    ActionPayload,
-    {
-      previousPosts: unknown;
-      previousDetailedPost: FullPostStructure | undefined;
-    }
-  >({
-    mutationFn: (payload: ActionPayload) => confirmUserAction(payload),
-
-    onMutate: async (newAction) => {
-      // Cancel current query to prevent overwritting
-      await queryClient.cancelQueries({ queryKey: ["discoverPosts"] });
-      await queryClient.cancelQueries({
-        queryKey: ["detailedPost", newAction.postID],
-      });
-
-      // Store the previous value
-      const previousPosts = queryClient.getQueryData(["discoverPosts"]);
-      const previousDetailedPost = queryClient.getQueryData<FullPostStructure>([
-        "detailedPost",
-      ]);
-
-      queryClient.setQueryData(
-        ["detailedPost", newAction.postID],
-        (oldData: any) => {
-          if (!oldData) return oldData;
-
-          const oldUserReaction = oldData.userActions.userReaction;
-          let newReactions = { ...oldData.reactions };
-          let newUserReaction: ReactionType | null = newAction.newReaction!;
-
-          if (oldUserReaction === newAction.newReaction) {
-            newReactions[newAction.newReaction!] -= 1;
-            newUserReaction = null;
-          } else {
-            if (oldUserReaction) newReactions[oldUserReaction] -= 1;
-            newReactions[newAction.newReaction!] += 1;
-          }
-
-          return {
-            ...oldData,
-            reactions: newReactions,
-            userActions: {
-              ...oldData.userActions,
-              userReaction: newUserReaction,
-            },
-          };
-        }
-      );
-
-      // Update the list
-      queryClient.setQueryData(["discoverPosts"], (oldData: any) => {
-        if (!oldData) return oldData;
-
-        const updatedPages = oldData.pages.map(
-          (page: { posts: PostStructure[] }) => ({
-            ...page,
-            posts: page.posts.map((post) => {
-              if (
-                post.postID !== newAction.postID ||
-                newAction.action !== "reaction"
-              )
-                return post;
-
-              const oldUserReaction = post.userActions.userReaction;
-              let newReactions = { ...post.reactions };
-              let newUserReaction: ReactionType | null = newAction.newReaction!;
-
-              if (oldUserReaction === newAction.newReaction) {
-                newReactions[newAction.newReaction!] -= 1;
-                newUserReaction = null;
-              } else {
-                if (oldUserReaction) newReactions[oldUserReaction] -= 1;
-                newReactions[newAction.newReaction!] += 1;
-              }
-
-              return {
-                ...post,
-                reactions: newReactions,
-                userActions: {
-                  ...post.userActions,
-                  userReaction: newUserReaction,
-                },
-              };
-            }),
-          })
-        );
-
-        return { ...oldData, pages: updatedPages };
-      });
-
-      // Return the previous value so it can be used
-      // in case of an error
-      return { previousPosts, previousDetailedPost };
-    },
-
-    // If the mutation fails, rollback
-    onError: (err, variables, context) => {
-      Toast({
-        type: "error",
-        title: err.name,
-        message: err.message,
-      });
-
-      if (context?.previousPosts) {
-        queryClient.setQueryData(["discoverPosts"], context.previousPosts);
-      }
-
-      if (context?.previousDetailedPost) {
-        queryClient.setQueryData(
-          ["detailedPost", variables.postID],
-          context.previousDetailedPost
-        );
-      }
-    },
-
-    // Refetch data to make sure its in sync
-    onSettled: (_, __, variables) => {
-      pendingMutation.current.delete(variables.postID);
-      queryClient.invalidateQueries({ queryKey: ["discoverPosts"] });
-      // queryClient.invalidateQueries({
-      //   queryKey: ["detailedPost", variables.postID],
-      // });
-    },
+  //Mutation hook for user reactions
+  const reactionMutation = useReactionMutation({
+    queryClient,
+    confirmUserAction,
+    Toast,
+    pendingMutation,
   });
 
+  /**
+   * Handle user reaction to a post
+   *
+   * @param sourcePost The ID of the post being reacted to
+   * @param newReaction The new reaction type
+   */
   const handleUserReaction = useCallback(
     (sourcePost: string, newReaction: ReactionType) => {
       // Trigger the mutation hook
@@ -364,113 +169,20 @@ export const PostProvider: FC<{ children: ReactNode }> = ({ children }) => {
     [reactionMutation, pendingMutation]
   );
 
-  const bookMarkMutation = useMutation<
-    void,
-    Error,
-    ActionPayload,
-    {
-      previousPosts: unknown;
-      previousDetailedPost: FullPostStructure | undefined;
-    }
-  >({
-    mutationFn: (payload: ActionPayload) => confirmUserAction(payload),
-
-    // Optimistic Update: runs before the server call
-    onMutate: async (newAction) => {
-      // 1. Cancel any outgoing refetches (so they don't overwrite our optimistic update)
-      await queryClient.cancelQueries({ queryKey: ["discoverPosts"] });
-      await queryClient.cancelQueries({ queryKey: ["detailedPost"] });
-
-      // 2. Snapshot the previous value
-      const previousPosts = queryClient.getQueryData(["discoverPosts"]);
-      const previousDetailedPost = queryClient.getQueryData<FullPostStructure>([
-        "detailedPost",
-        newAction.postID,
-      ]);
-
-      // 3. Optimistically update the cache
-      queryClient.setQueryData(
-        ["detailedPost", newAction.postID],
-        (oldData: any) => {
-          if (!oldData) return oldData;
-
-          const oldBookmark = oldData.userActions.userBookmark;
-          const newBookmark = !oldBookmark;
-          const newUserActions = {
-            ...oldData.userActions,
-            userBookmark: newBookmark,
-          };
-
-          return { ...oldData, userActions: newUserActions };
-        }
-      );
-
-      // 3. Optimistically update the cache
-      queryClient.setQueryData(["discoverPosts"], (oldData: any) => {
-        if (!oldData) return oldData;
-
-        // Find and update the specific post within the pages structure
-        const updatedPages = oldData.pages.map(
-          (page: { posts: PostStructure[] }) => ({
-            ...page,
-            posts: page.posts.map((post) => {
-              if (
-                post.postID !== newAction.postID ||
-                newAction.action !== "bookmark"
-              )
-                return post;
-
-              const oldBookmark = post.userActions.userBookmark;
-              const newBookmark = !oldBookmark;
-
-              return {
-                ...post,
-                userActions: {
-                  ...post.userActions,
-                  userBookmark: newBookmark,
-                },
-              };
-            }),
-          })
-        );
-
-        return { ...oldData, pages: updatedPages };
-      });
-
-      // 4. Return the snapshot so we can use it on error
-      return { previousPosts, previousDetailedPost };
-    },
-
-    // If the mutation fails, use the context returned from onMutate to roll back
-    onError: (err, variables, context) => {
-      Toast({
-        type: "error",
-        title: err.name,
-        message: err.message,
-      });
-
-      if (context?.previousPosts) {
-        queryClient.setQueryData(["discoverPosts"], context.previousPosts);
-      }
-
-      if (context?.previousDetailedPost) {
-        queryClient.setQueryData(
-          ["detailedPost", variables.postID],
-          context.previousDetailedPost
-        );
-      }
-    },
-
-    // Always refetch after error or success to ensure data is in sync
-    onSettled: (_, __, variables) => {
-      pendingMutation.current.delete(variables.postID);
-      queryClient.invalidateQueries({ queryKey: ["discoverPosts"] });
-      // queryClient.invalidateQueries({
-      //   queryKey: ["detailedPost", variables.postID],
-      // });
-    },
+  //Mutation hook for user bookmark
+  const bookMarkMutation = useBookMarkMutation({
+    queryClient,
+    confirmUserAction,
+    Toast,
+    pendingMutation,
   });
 
+  /**
+   * Handle user bookmark action
+   *
+   * @param sourcePost The ID of the post being bookmarked
+   * @param newBookmark The new bookmark state
+   */
   const handleUserBookmark = useCallback(
     (sourcePost: string, newBookmark: boolean) => {
       // Trigger the mutation hook
@@ -490,6 +202,7 @@ export const PostProvider: FC<{ children: ReactNode }> = ({ children }) => {
   return (
     <PostContext.Provider
       value={{
+        discoverScrollY,
         postList,
         isLoading,
         isFetchingNextPage,

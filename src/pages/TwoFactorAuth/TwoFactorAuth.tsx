@@ -88,12 +88,7 @@ const TwoFactorAuth = () => {
           </div>
 
           {/*Submit*/}
-          <Button
-            variant="primary"
-            size="small"
-            type="submit"
-            style={{ width: "100%" }}
-          >
+          <Button variant="primary" size="small" type="submit" fullWidth={true}>
             Log In
           </Button>
         </form>

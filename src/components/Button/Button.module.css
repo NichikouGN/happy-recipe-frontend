@@ -3,14 +3,15 @@
   justify-content: center;
   align-items: center;
 
-  outline: none;
-  border: none;
+  padding: 0.5rem;
+
   border-radius: 0.5rem;
+  border: none;
+  outline: none;
+  background: rgba(0, 0, 0, 0.2);
   cursor: pointer;
 
-  width: auto;
-  height: auto;
-
+  color: white;
   font-weight: 700;
   font-size: 1.5rem;
 
@@ -23,26 +24,14 @@
   color: white;
 }
 
-.primary:hover {
-  background-color: var(--btn-primary-hover);
-}
-
-.primary:active {
-  background-color: var(--btn-primary-active);
-}
-
 .secondary {
   border: 1px solid var(--btn-secondary-border);
   background: transparent;
   color: black;
 }
 
-.secondary:hover {
-  background: var(--btn-secondary-hover);
-}
-
-.secondary:active {
-  background: var(--btn-secondary-active);
+.rounded {
+  border-radius: 50px;
 }
 
 .small {

@@ -18,7 +18,7 @@ const App = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/post" element={<Post />} />
+        <Route path="/post/:postID" element={<Post />} />
         <Route path="/login" element={<Signin />} />
         <Route path="/sign-up" element={<Signup />} />
         <Route

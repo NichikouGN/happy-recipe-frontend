@@ -4,10 +4,9 @@ import styles from "./Button.module.css";
 interface ButtonProps {
   children: React.ReactNode;
   size?: "small" | "medium" | "large";
-  variant?: "primary" | "secondary" | "circular";
+  variant?: "primary" | "secondary" | "rounded";
   fullWidth?: boolean;
   type?: "submit" | "reset" | "button";
-  style?: React.CSSProperties;
   onClick?: () => void;
 }
 
@@ -17,7 +16,6 @@ const Button = ({
   variant = "primary",
   fullWidth = false,
   type = "button",
-  style,
   onClick,
 }: ButtonProps) => {
   return (
@@ -27,7 +25,6 @@ const Button = ({
         fullWidth ? styles.fullWidth : ""
       }`}
       onClick={onClick}
-      style={style}
     >
       {children}
     </button>

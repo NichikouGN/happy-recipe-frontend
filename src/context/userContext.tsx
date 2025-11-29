@@ -41,10 +41,14 @@ export const UserProvider: FC<{ children: ReactNode }> = ({ children }) => {
       try {
         if (signInState === "authorized" && accessToken) {
           const res = await fetch(
-            `http://${import.meta.env.VITE_API_URL}:4000/user/user-info`,
+            `${import.meta.env.VITE_API_URL}/user/user-info`,
             {
               method: "GET",
-              headers: { authorization: `Bearer ${accessToken}` },
+              headers: {
+                authorization: `Bearer ${accessToken}`,
+                "Content-Type": "application/json",
+                "ngrok-skip-browser-warning": "true",
+              },
             }
           );
 

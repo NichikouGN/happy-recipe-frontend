@@ -42,14 +42,17 @@ To execute the front end, type 'npm run dev' on the into the console and open an
 - Moved the manual user reactions and bookmark to using tanstack query.
 - Changed the navbar to take up full width of the screen.
 - Change the homepage to showing a list of popular dishes instead of ranked post.
-- 
+
 ## v0.5.0 (2025-11-23)
 - Added /post?id page to get a detailed view of the post
 - Support post sharing function via URL
 - Display all the post information including the description and steps
 - Added animation for /home and /post page.
-- 
+
 ## v0.5.1 (2025-11-25)
 - Added bookmark and reactions to the /post page
 - Data now synced between /discover page and /post page
+  
+## v0.5.2 (2025-11-30)
+- Added comments to the /post page with support for viewing replies.
   
