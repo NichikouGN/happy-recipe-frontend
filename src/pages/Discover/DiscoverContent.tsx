@@ -34,7 +34,7 @@ const DiscoverContent = () => {
   return postList.map(
     (
       {
-        postID,
+        postId,
         title,
         authorName,
         cookTime,
@@ -47,13 +47,13 @@ const DiscoverContent = () => {
       index
     ) => {
       return (
-        <Fragment key={postID}>
+        <Fragment key={postId}>
           <Card
-            key={postID}
-            postID={postID}
+            key={postId}
+            postId={postId}
             onClick={() => {
               discoverScrollY.current = window.scrollY;
-              navigate(`/post/${postID}`);
+              navigate(`/post/${postId}`);
             }}
             cardType="post"
             cardLoaded={true}

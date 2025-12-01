@@ -41,7 +41,7 @@ const PostContext = createContext<
       isLoading: boolean; // Init state
       isFetchingNextPage: boolean; // Fetching state
       fetchNextPage: () => void;
-      useDetailedPost: (postID: string) => UseQueryResult<FullPostStructure>;
+      useDetailedPost: (postId: string) => UseQueryResult<FullPostStructure>;
       handleUserReaction: (
         sourcePost: string,
         newReaction: ReactionType
@@ -62,10 +62,10 @@ export const PostProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   /**
    * Function for tanstack useMutation()
-   * @param { action, postID, newReaction, newBookmark } ActionPayload type of action , new reaction or bookmark state and postID
+   * @param { action, postId, newReaction, newBookmark } ActionPayload type of action , new reaction or bookmark state and postId
    */
   const confirmUserAction = useCallback(
-    async ({ action, postID, newReaction, newBookmark }: ActionPayload) => {
+    async ({ action, postId, newReaction, newBookmark }: ActionPayload) => {
       if (!accessToken) {
         Toast({
           type: "error",
@@ -82,7 +82,7 @@ export const PostProvider: FC<{ children: ReactNode }> = ({ children }) => {
       try {
         await uploadUserAction(accessToken, controller, {
           action,
-          postID,
+          postId,
           newReaction,
           newBookmark,
         });
@@ -92,7 +92,7 @@ export const PostProvider: FC<{ children: ReactNode }> = ({ children }) => {
         try {
           await uploadUserAction(updatedToken, controller, {
             action,
-            postID,
+            postId,
             newReaction,
             newBookmark,
           });
@@ -131,11 +131,11 @@ export const PostProvider: FC<{ children: ReactNode }> = ({ children }) => {
     : [];
 
   //Query hook for detailed post
-  const useDetailedPost = (postID: string) => {
+  const useDetailedPost = (postId: string) => {
     return useQuery({
-      queryKey: ["detailedPost", postID],
+      queryKey: ["detailedPost", postId],
       queryFn: fetchDetailedPost,
-      enabled: !!postID,
+      enabled: !!postId,
     });
   };
 
@@ -162,7 +162,7 @@ export const PostProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
       reactionMutation.mutate({
         action: "reaction",
-        postID: sourcePost,
+        postId: sourcePost,
         newReaction: newReaction,
       });
     },
@@ -192,7 +192,7 @@ export const PostProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
       bookMarkMutation.mutate({
         action: "bookmark",
-        postID: sourcePost,
+        postId: sourcePost,
         newBookmark: newBookmark,
       });
     },

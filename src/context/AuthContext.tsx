@@ -79,7 +79,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
       if (!refreshToken) throw new Error("No refresh token found");
 
       const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/validate/refresh-token`,
+        `${import.meta.env.VITE_API_URL}/api/auth/validate/refresh-token`,
         {
           method: "POST",
           headers: {
@@ -114,7 +114,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
       if (!accessToken) throw new Error("No access token found");
 
       const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/validate/access-token`,
+        `${import.meta.env.VITE_API_URL}/api/auth/validate/access-token`,
         {
           method: "GET",
           headers: {
@@ -148,7 +148,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
       if (!tempToken) return false;
 
       const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/validate/temp-token`,
+        `${import.meta.env.VITE_API_URL}/api/auth/validate/temp-token`,
         {
           method: "GET",
           headers: {
@@ -180,7 +180,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
         if (!tempToken) throw new Error("temp Token does not exist");
 
         const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/validate/2fa`,
+          `${import.meta.env.VITE_API_URL}/api/auth/validate/2fa`,
           {
             method: "POST",
             headers: {
@@ -218,7 +218,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
    */
   const signIn = useCallback(async (email: string, password: string) => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/signin`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/signin`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -231,6 +231,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
       const data = await res.json();
 
+      console.log(data);
       if (data.status === "require2FA") {
         setTempToken(data.tempToken);
         setSignInState("2FA");
@@ -271,7 +272,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
       password: string
     ) => {
       try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/signup/`, {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/signup`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

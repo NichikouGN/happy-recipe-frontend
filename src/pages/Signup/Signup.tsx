@@ -90,8 +90,8 @@ const Signup = () => {
       return alert("First name and last name is required");
     }
 
-    if (email === "admin" && password === "123")
-      signUp("abc", firstName, lastName, email, password);
+    // if (email === "admin" && password === "123")
+    signUp("abc", firstName, lastName, email, password);
   };
 
   //Reroute base on singin state

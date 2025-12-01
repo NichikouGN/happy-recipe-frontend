@@ -41,7 +41,7 @@ export const UserProvider: FC<{ children: ReactNode }> = ({ children }) => {
       try {
         if (signInState === "authorized" && accessToken) {
           const res = await fetch(
-            `${import.meta.env.VITE_API_URL}/user/user-info`,
+            `${import.meta.env.VITE_API_URL}/api/auth/user-info`,
             {
               method: "GET",
               headers: {

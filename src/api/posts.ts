@@ -16,7 +16,7 @@ export const fetchPosts: QueryFunction<
   number
 > = async ({ pageParam = 1 }) => {
   const res = await fetch(
-    `${import.meta.env.VITE_API_URL}/discover?page=${pageParam}`,
+    `${import.meta.env.VITE_API_URL}/api/posts/discover?page=${pageParam}`,
     {
       headers: {
         "Content-Type": "application/json",
@@ -28,6 +28,7 @@ export const fetchPosts: QueryFunction<
   if (!res.ok) throw new Error("Failed to fetch posts");
 
   const data = await res.json();
+  console.log(data);
   const newPosts: PostStructure[] = data.postList; //Retrieve the list
 
   return {
@@ -46,8 +47,8 @@ export const fetchDetailedPost: QueryFunction<
   FullPostStructure,
   [string, string]
 > = async ({ queryKey }) => {
-  const [, postID] = queryKey;
-  const res = await fetch(`${import.meta.env.VITE_API_URL}/post/${postID}`, {
+  const [, postId] = queryKey;
+  const res = await fetch(`${import.meta.env.VITE_API_URL}/api/posts/${postId}`, {
     headers: {
       "Content-Type": "application/json",
       "ngrok-skip-browser-warning": "true",
@@ -67,18 +68,18 @@ export const fetchDetailedPost: QueryFunction<
  *
  * @param accessToken current access token
  * @param controller controller to abort fetch
- * @param { action, postID, newReaction, newBookmark } ActionPayload type of action , new reaction or bookmark state and postID
+ * @param { action, postId, newReaction, newBookmark } ActionPayload type of action , new reaction or bookmark state and postId
  */
 export const uploadUserAction = async (
   accessToken: string,
   controller: AbortController,
-  { action, postID, newReaction, newBookmark }: ActionPayload
+  { action, postId, newReaction, newBookmark }: ActionPayload
 ) => {
   //Construct body based on action type
   const body =
     action === "reaction"
-      ? JSON.stringify({ reaction: newReaction, postID: postID })
-      : JSON.stringify({ bookmark: newBookmark, postID: postID });
+      ? JSON.stringify({ reaction: newReaction, postId: postId })
+      : JSON.stringify({ bookmark: newBookmark, postId: postId });
 
   //Upload user action
   const res = await fetch(`${import.meta.env.VITE_API_URL}/${action}`, {

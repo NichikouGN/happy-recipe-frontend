@@ -9,7 +9,7 @@ import { usePosts } from "../../context/PostContext";
 import type { Reaction, UserActions } from "../../types/PostType";
 
 interface CardProps {
-  postID: string;
+  postId: string;
   postImg?: string;
   title?: string;
   author?: string;
@@ -39,7 +39,7 @@ export const reactionType = [
  * @returns Card
  */
 const Card = ({
-  postID,
+  postId,
   postImg = "",
   title = "",
   author = "",
@@ -164,7 +164,7 @@ const Card = ({
                 userActions.userReaction === reactionType &&
                 styles[`${reactionType}-highlight`]
               }`}
-              onClick={() => handleUserReaction(postID, reactionType)}
+              onClick={() => handleUserReaction(postId, reactionType)}
             >
               <Icon
                 className={`${styles[`${reactionType}-icon`]} ${
@@ -181,7 +181,7 @@ const Card = ({
 
         <button
           className={`${styles["reaction-item"]} ${styles["bookmark"]}`}
-          onClick={() => handleUserBookmark(postID, !userActions.userBookmark)}
+          onClick={() => handleUserBookmark(postId, !userActions.userBookmark)}
         >
           {userActions.userBookmark && (
             <FaBookmark className={styles["bookmark-icon"]} />

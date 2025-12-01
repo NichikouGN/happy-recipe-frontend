@@ -30,7 +30,7 @@ export const useBookMarkMutation = ({
 
     /**
      * Handle user bookmark action with optimistic update
-     * @param newAction The new action payload containing postID and newBookmark
+     * @param newAction The new action payload containing postId and newBookmark
      * @returns The previous posts and detailed post data for rollback in case of error
      */
     onMutate: async (newAction) => {
@@ -42,12 +42,12 @@ export const useBookMarkMutation = ({
       const previousPosts = queryClient.getQueryData(["discoverPosts"]);
       const previousDetailedPost = queryClient.getQueryData<FullPostStructure>([
         "detailedPost",
-        newAction.postID,
+        newAction.postId,
       ]);
 
       // Update the detailed post
       queryClient.setQueryData(
-        ["detailedPost", newAction.postID],
+        ["detailedPost", newAction.postId],
         (oldData: any) => {
           if (!oldData) return oldData;
 
@@ -72,7 +72,7 @@ export const useBookMarkMutation = ({
             ...page,
             posts: page.posts.map((post) => {
               if (
-                post.postID !== newAction.postID ||
+                post.postId !== newAction.postId ||
                 newAction.action !== "bookmark"
               )
                 return post;
@@ -112,7 +112,7 @@ export const useBookMarkMutation = ({
 
       if (context?.previousDetailedPost) {
         queryClient.setQueryData(
-          ["detailedPost", variables.postID],
+          ["detailedPost", variables.postId],
           context.previousDetailedPost
         );
       }
@@ -120,10 +120,10 @@ export const useBookMarkMutation = ({
 
     // Always refetch after error or success to ensure data is in sync
     onSettled: (_, __, variables) => {
-      pendingMutation.current.delete(variables.postID);
+      pendingMutation.current.delete(variables.postId);
       queryClient.invalidateQueries({ queryKey: ["discoverPosts"] });
       queryClient.invalidateQueries({
-        queryKey: ["detailedPost", variables.postID],
+        queryKey: ["detailedPost", variables.postId],
       });
     },
   });

@@ -54,7 +54,7 @@ const Home = () => {
   const fetchPopularDish = async () => {
     try {
       const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/ranking/popular-dish`,
+        `${import.meta.env.VITE_API_URL}/api/posts/ranking/popular-dish`,
         {
           headers: {
             "ngrok-skip-browser-warning": "true",
@@ -68,7 +68,7 @@ const Home = () => {
 
       setPopularDish(data.popularDish);
     } catch (e) {
-      console.log(`${import.meta.env.VITE_API_URL}/ranking/popular-dish`);
+      // console.log(`${import.meta.env.VITE_API_URL}/ranking/popular-dish`);
       console.log(e);
     }
   };
@@ -123,7 +123,7 @@ const Home = () => {
                   return (
                     <Card
                       key={item.id}
-                      postID={item.id}
+                      postId={item.id}
                       title={item.title}
                       cardType="ingredients"
                       postImg={item.coverImg}
@@ -138,7 +138,7 @@ const Home = () => {
                   return (
                     <Card
                       key={i}
-                      postID={i.toString()}
+                      postId={i.toString()}
                       cardType="ingredients"
                       cardLoaded={false}
                       rounded={true}

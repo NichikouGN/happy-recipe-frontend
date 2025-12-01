@@ -4,7 +4,7 @@ const DiscoverSkeleton = () => {
   return Array.from({ length: 4 }).map((_, i) => {
     return (
       <Card
-        postID=""
+        postId=""
         key={i.toString()}
         onClick={() => {}}
         cardType="post"

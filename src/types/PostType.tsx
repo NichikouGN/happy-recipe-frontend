@@ -12,7 +12,7 @@ export interface UserActions {
 }
 
 export interface PostStructure {
-  postID: string;
+  postId: string;
   title: string;
   coverImgURL: string;
   authorID: number;
@@ -34,14 +34,14 @@ export interface FullPostStructure extends PostStructure {
 
 export interface ActionPayload {
   action: "reaction" | "bookmark";
-  postID: string;
+  postId: string;
   newReaction?: ReactionType;
   newBookmark?: boolean;
 }
 
 export interface CommentBase {
   commentID: string;
-  postID: string;
+  postId: string;
   userID: number;
   userName: string;
   content: string;

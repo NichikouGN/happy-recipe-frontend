@@ -92,7 +92,7 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
     try {
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/post/${
-          detailedPost.postID
+          detailedPost.postId
         }/comments?page=${commentPage}&limit=5`,
         {
           headers: {
@@ -126,7 +126,7 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
     try {
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/post/${
-          detailedPost.postID
+          detailedPost.postId
         }/comments/${parentCommentID}/replies?page=1&limit=5`,
         {
           headers: {
@@ -282,16 +282,16 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
             size="medium"
             onClick={() => {
               handleUserBookmark(
-                detailedPost.postID,
+                detailedPost.postId,
                 !detailedPost.userActions.userBookmark
               );
             }}
           >
-            {detailedPost.userActions.userBookmark ? (
+            {/* {detailedPost.userActions.userBookmark ? (
               <FaBookmark className={styles["btn-icon"]} />
             ) : (
               <FaRegBookmark className={styles["btn-icon"]} />
-            )}
+            )} */}
           </Button>
         </div>
       </header>
@@ -314,7 +314,7 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
                 (Number(detailedPost.cookTime) / 60) * 100,
                 100
               ),
-              text: detailedPost.cookTime.toString(),
+              text: detailedPost.cookTime?.toString(),
             })}
             <div className={styles["info"]}>Minute</div>
           </div>
@@ -328,7 +328,7 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
                   : detailedPost.difficulty === "medium"
                   ? 67
                   : 100,
-              text: detailedPost.difficulty[0].toUpperCase(),
+              // text: detailedPost?.difficulty[0]?.toUpperCase(),
             })}
             <div className={styles["info"]}>Difficulty</div>
           </div>
@@ -337,7 +337,7 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
               size: 60,
               strokeWidth: 4,
               progress: (detailedPost.servings / 8) * 100,
-              text: detailedPost.servings.toString(),
+              // text: detailedPost.servings.toString(),
             })}
             <div className={styles["info"]}>Servings</div>
           </div>
@@ -433,7 +433,7 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
                   styles[`${reactionType}-highlight`]
                 }`}
                 onClick={() =>
-                  handleUserReaction(detailedPost.postID, reactionType)
+                  handleUserReaction(detailedPost.postId, reactionType)
                 }
               >
                 <Icon
