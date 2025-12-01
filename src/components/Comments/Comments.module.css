@@ -6,22 +6,6 @@
   position: relative;
 }
 
-.comment-item::before {
-  content: "";
-  position: absolute;
-  top: 1rem;
-  left: calc(10px + var(--line-offset, 0rem));
-
-  width: 15px;
-  height: calc(100% - 1rem);
-
-  border-left: 1px solid var(--neutral-400);
-}
-
-.comment-item:not(:has(.comment-item))::before {
-  display: none;
-}
-
 .comment-main-block {
   display: flex;
   gap: 0.5rem;
@@ -30,15 +14,30 @@
   position: relative;
 }
 
-.comment-main-block-reply::before {
+.comment-item:has(> .comment-item) > .comment-main-block::before {
   content: "";
   position: absolute;
 
   top: 0;
-  left: calc(-1rem + 10px);
+  left: calc(10px);
 
-  width: 15px; /* Length of horizontal part */
-  height: 10px; /* Height to avatar center */
+  width: 15px;
+  height: calc(100% + 1rem + 10px);
+
+  border-left: 1px solid var(--neutral-400);
+  border-bottom: 1px solid var(--neutral-400);
+  border-bottom-left-radius: 8px;
+}
+
+.comment-item.is-reply:has(+ .comment-item)::before {
+  content: "";
+  position: absolute;
+
+  top: 0;
+  left: calc(-10px);
+
+  width: 15px;
+  height: calc(100% + 1rem + 10px);
 
   border-left: 1px solid var(--neutral-400);
   border-bottom: 1px solid var(--neutral-400);

@@ -8,6 +8,7 @@ import { UserProvider } from "./context/userContext.tsx";
 import { PostProvider } from "./context/PostContext.tsx";
 import { ToastContextProvider } from "./context/ToastContext.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { SearchProvider } from "./context/SearchContext.tsx";
 
 const queryClient = new QueryClient();
 createRoot(document.getElementById("root")!).render(
@@ -18,7 +19,9 @@ createRoot(document.getElementById("root")!).render(
           <UserProvider>
             <ThemeProvider>
               <PostProvider>
-                <App></App>
+                <SearchProvider>
+                  <App></App>
+                </SearchProvider>
               </PostProvider>
             </ThemeProvider>
           </UserProvider>

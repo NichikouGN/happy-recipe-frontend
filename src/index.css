@@ -3,6 +3,10 @@
   margin: 0;
   box-sizing: border-box;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+
+  button {
+    -webkit-tap-highlight-color: transparent;
+  }
 }
 
 :root {
@@ -71,7 +75,7 @@ body {
   background-color: var(--theme-body-bg);
   color: var(--theme-body-text);
   transition: background-color 0.2s ease;
-  overscroll-behavior-y: none;
+  overflow-y: auto;
   overflow-x: hidden;
 }
 

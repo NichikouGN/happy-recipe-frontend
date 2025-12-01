@@ -59,6 +59,7 @@ const Card = ({
   if (cardType === "ingredients") {
     return (
       <div
+        tabIndex={1}
         style={{
           borderRadius: `${rounded ? "0.5rem" : "0"}`,
           backgroundImage: cardLoaded

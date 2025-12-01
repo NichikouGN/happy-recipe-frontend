@@ -55,4 +55,8 @@ To execute the front end, type 'npm run dev' on the into the console and open an
   
 ## v0.5.2 (2025-11-30)
 - Added comments to the /post page with support for viewing replies.
+
+## v0.6.0 (2025-12-01)
+- Added the search page that allows basic searching and viewing search results
+- Made the comment lines prettier in /post
   

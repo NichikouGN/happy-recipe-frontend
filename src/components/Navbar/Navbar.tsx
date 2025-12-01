@@ -59,6 +59,7 @@ export const Navbar = () => {
                 styles[isActive ? "current" : ""]
               }`}
               key={menu}
+              tabIndex={0}
             >
               <div
                 className={`${styles["navbar-item__icon"]}  ${

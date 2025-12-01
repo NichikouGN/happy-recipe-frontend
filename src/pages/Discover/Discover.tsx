@@ -23,7 +23,6 @@ const Discover = () => {
     const handleScroll = () => {
       let delta = 0;
       let currentScrollY = Math.max(0, window.scrollY);
-      // setScrollY(currentScrollY);
 
       delta = currentScrollY - lastScrollY;
 

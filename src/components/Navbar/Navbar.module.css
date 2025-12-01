@@ -1,7 +1,8 @@
 .navbar-container {
   position: relative;
   display: flex;
-  background-color: var(--theme-navbar-bg);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(1rem);
 
   z-index: 999999;
 }
@@ -13,11 +14,11 @@
     justify-content: space-around;
 
     position: fixed;
-    width: 100%;
+    width: 100vw;
     height: auto;
     left: 0%;
     bottom: 0%;
-    padding: 0.75rem 0.5rem;
+    padding: 0.5rem 0.5rem;
 
     box-shadow: -4px -4px 8px rgba(0, 0, 0, 0.1);
   }
@@ -28,6 +29,8 @@
     flex-direction: column;
     align-items: center;
 
+    padding: 0.25rem 0.25rem;
+
     border-radius: 0.5rem;
     font-size: 1rem;
 
@@ -37,6 +40,11 @@
     background: transparent;
     text-decoration: none;
     transition: all 0.2s ease;
+  }
+
+  .navbar-item:focus {
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25),
+      -2px -2px 4px rgba(255, 255, 255, 0.9);
   }
 
   .navbar-item__icon {
