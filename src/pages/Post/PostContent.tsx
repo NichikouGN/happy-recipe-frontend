@@ -17,7 +17,12 @@ import type { CommentStructure, FullPostStructure } from "../../types/PostType";
 import Button from "../../components/Button/Button";
 import Comments from "../../components/Comments/Comments";
 
-const Donut = ({ size = 120, strokeWidth = 10, progress = 30, text = "" }) => {
+export const Donut = ({
+  size = 120,
+  strokeWidth = 10,
+  progress = 30,
+  text = "",
+}) => {
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (progress / 100) * circumference;
@@ -29,7 +34,7 @@ const Donut = ({ size = 120, strokeWidth = 10, progress = 30, text = "" }) => {
         cx={size / 2}
         cy={size / 2}
         r={radius}
-        stroke="#bbb"
+        stroke="#ddd"
         strokeWidth={strokeWidth}
         fill="none"
       />
@@ -92,7 +97,7 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
     try {
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/post/${
-          detailedPost.postID
+          detailedPost.postId
         }/comments?page=${commentPage}&limit=5`,
         {
           headers: {
@@ -126,7 +131,7 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
     try {
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/post/${
-          detailedPost.postID
+          detailedPost.postId
         }/comments/${parentCommentID}/replies?page=1&limit=15`,
         {
           headers: {
@@ -283,7 +288,7 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
             size="medium"
             onClick={() => {
               handleUserBookmark(
-                detailedPost.postID,
+                detailedPost.postId,
                 !detailedPost.userActions.userBookmark
               );
             }}
@@ -300,7 +305,6 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
         <h1 className={styles["title"]}>{detailedPost.title}</h1>
 
         <section className={styles["author-group"]}>
-          <img />
           <span className={styles["author-name"]}>
             {detailedPost.authorName}
           </span>
@@ -337,7 +341,7 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
             {Donut({
               size: 60,
               strokeWidth: 4,
-              progress: (detailedPost.servings / 8) * 100,
+              progress: Math.min((detailedPost.servings / 8) * 100, 100),
               text: detailedPost.servings.toString(),
             })}
             <div className={styles["info"]}>Servings</div>
@@ -390,6 +394,7 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
                   <div className={styles["card-title"]}>
                     Step {item.stepNum}
                   </div>
+
                   <IoClose
                     className={`${styles["card-title-icon"]} ${
                       styles[
@@ -413,6 +418,13 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
                     ]
                   }`}
                 >
+                  {item.stepImgURL && (
+                    <img
+                      height="auto"
+                      className={styles["card-image"]}
+                      src={item.stepImgURL}
+                    />
+                  )}
                   <div className={styles["card-content-inner"]}>
                     {item.stepDesc}
                   </div>
@@ -434,7 +446,7 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
                   styles[`${reactionType}-highlight`]
                 }`}
                 onClick={() =>
-                  handleUserReaction(detailedPost.postID, reactionType)
+                  handleUserReaction(detailedPost.postId, reactionType)
                 }
               >
                 <Icon

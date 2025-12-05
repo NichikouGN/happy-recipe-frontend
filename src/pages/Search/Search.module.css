@@ -5,8 +5,8 @@
     position: fixed;
     top: 0%;
     left: 0%;
-    width: 100vw;
-    height: 7.5vh;
+    width: 100dvw;
+    height: 7.5dvh;
 
     display: flex;
     justify-content: space-evenly;
@@ -21,6 +21,9 @@
   .header-item {
     font-size: 1.25rem;
     font-weight: bold;
+
+    color: var(--theme-text-secondary);
+    text-decoration: none;
   }
 
   .header-item.current {
@@ -37,9 +40,10 @@
 
     position: fixed;
     left: 0;
-    top: 7.5vh;
-    width: 100vw;
-    height: calc(100vh - 7.5vh);
+    top: 7.5dvh;
+    width: 100dvw;
+    height: calc(100dvh - 7.5dvh);
+    padding: 1rem;
 
     background: var(--theme-body-bg);
   }
@@ -51,7 +55,7 @@
     justify-content: center;
 
     width: 100%;
-    margin-top: -25vh;
+    margin-top: -25dvh;
   }
 
   .search-container.outro {
@@ -65,7 +69,7 @@
     }
     100% {
       opacity: 0;
-      transform: translateY(-10vh);
+      transform: translateY(-10dvh);
     }
   }
 
@@ -73,7 +77,7 @@
     margin-bottom: 1rem;
 
     color: var(--neutral-900);
-    font-size: clamp(1.25rem, 6.5vw, 1.75rem);
+    font-size: clamp(1.25rem, 6.5dvw, 1.75rem);
     font-weight: bold;
     text-align: center;
 
@@ -108,7 +112,7 @@
     border-radius: 1rem;
 
     color: var(--neutral-600);
-    font-size: clamp(0.75rem, 4vw, 1rem);
+    font-size: clamp(0.75rem, 4dvw, 1rem);
     cursor: pointer;
 
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1),
@@ -155,7 +159,7 @@
     width: 100%;
     padding: 0.5rem 0.75rem;
 
-    font-size: clamp(0.75rem, 4vw, 1rem);
+    font-size: clamp(0.75rem, 4dvw, 1rem);
     border: none;
     border-radius: 2rem;
     outline: none;
@@ -216,16 +220,5 @@
   .search-input-btn-icon {
     font-size: 2rem;
     color: var(--red-600);
-  }
-
-  .footer {
-    grid-area: "footer";
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: var(--theme-body-bg);
-
-    padding: 1rem 1rem 5rem;
   }
 }

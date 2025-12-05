@@ -8,15 +8,19 @@ import {
 } from "react";
 import { useAuthContext } from "./AuthContext";
 
+interface UserContextType {
+  userId: string;
+  username: string;
+  displayName: string;
+  email: string;
+  bio: string;
+  profileImageURL: string;
+  isVerified: boolean;
+}
+
 const UserContext = createContext<
   | {
-      userID: string;
-      username: string;
-      displayName: string;
-      email: string;
-      bio: string;
-      profileImageURL: string;
-      isVerified: boolean;
+      userInformation: UserContextType;
     }
   | undefined
 >(undefined);
@@ -24,14 +28,24 @@ const UserContext = createContext<
 export const UserProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { signInState, accessToken, requestNewAccessToken } = useAuthContext();
 
-  //User information
-  const [userID, setUserID] = useState<string>("");
-  const [username, setUsername] = useState<string>("");
-  const [displayName, setDisplayName] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [bio, setBio] = useState<string>("");
-  const [profileImageURL, setProfileImageURL] = useState<string>("");
-  const [isVerified, setIsVerified] = useState<boolean>(false);
+  const [userInformation, setUserInformation] = useState<UserContextType>({
+    userId: "",
+    username: "",
+    displayName: "",
+    email: "",
+    bio: "",
+    profileImageURL: "",
+    isVerified: false,
+  });
+
+  // //User information
+  // const [userId, setUserID] = useState<string>("");
+  // const [username, setUsername] = useState<string>("");
+  // const [displayName, setDisplayName] = useState<string>("");
+  // const [email, setEmail] = useState<string>("");
+  // const [bio, setBio] = useState<string>("");
+  // const [profileImageURL, setProfileImageURL] = useState<string>("");
+  // const [isVerified, setIsVerified] = useState<boolean>(false);
 
   useEffect(() => {
     /**
@@ -61,13 +75,13 @@ export const UserProvider: FC<{ children: ReactNode }> = ({ children }) => {
           const data = await res.json();
 
           //Set user information state
-          setUserID(data.userID);
-          setUsername(data.username);
-          setDisplayName(data.displayName);
-          setEmail(data.email);
-          setBio(data.bio);
-          setProfileImageURL(data.profileImageURL);
-          setIsVerified(data.isVerified);
+          setUserInformation((prev) => ({ ...prev, userId: data.userId }));
+          setUserInformation((prev) => ({ ...prev, username: data.username }));
+          setUserInformation((prev) => ({ ...prev, displayName: data.displayName }));
+          setUserInformation((prev) => ({ ...prev, email: data.email }));
+          setUserInformation((prev) => ({ ...prev, bio: data.bio }));
+          setUserInformation((prev) => ({ ...prev, profileImageURL: data.profileImageURL }));
+          setUserInformation((prev) => ({ ...prev, isVerified: data.isVerified }));
         }
       } catch (e) {
         console.log(e);
@@ -80,13 +94,7 @@ export const UserProvider: FC<{ children: ReactNode }> = ({ children }) => {
   return (
     <UserContext.Provider
       value={{
-        userID,
-        username,
-        displayName,
-        email,
-        bio,
-        profileImageURL,
-        isVerified,
+        userInformation,
       }}
     >
       {children}

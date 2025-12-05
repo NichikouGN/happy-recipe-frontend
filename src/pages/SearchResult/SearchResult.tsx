@@ -14,6 +14,7 @@ interface searchResultProps {
   setEngagedAI: (engaged: boolean) => void;
   searchInputPlaceholder: string;
   handleSearch: (query: string) => void;
+  setSearchQuery: (query: string) => void;
 }
 
 const SearchResult = ({
@@ -24,19 +25,23 @@ const SearchResult = ({
   setEngagedAI,
   searchInputPlaceholder,
   handleSearch,
+  setSearchQuery,
 }: searchResultProps) => {
   const { searchResults, setEngagedSearch } = useSearchContext();
   const navigate = useNavigate();
   return (
     <>
       <header className={styles["header"]}>
-        <div
+        <button
           className={styles["return-btn"]}
-          onClick={() => setEngagedSearch(false)}
+          onClick={() => {
+            setEngagedSearch(false);
+            setSearchQuery("");
+          }}
         >
           <FaArrowLeft />
-        </div>
-        <div className={styles["search-input-form-container"]}>
+        </button>
+        <div className={styles["search-input-container"]}>
           <form className={styles["search-form"]} onSubmit={handleFormSubmit}>
             <input
               type="text"
@@ -82,7 +87,7 @@ const SearchResult = ({
             ? searchResults.map(
                 (
                   {
-                    postID,
+                    postId,
                     title,
                     authorName,
                     cookTime,
@@ -94,12 +99,12 @@ const SearchResult = ({
                   },
                   index
                 ) => (
-                  <Fragment key={postID}>
+                  <Fragment key={postId}>
                     <Card
-                      key={postID}
-                      postID={postID}
+                      key={postId}
+                      postId={postId}
                       onClick={() => {
-                        navigate(`/post/${postID}`);
+                        navigate(`/post/${postId}`);
                       }}
                       cardType="post"
                       cardLoaded={true}

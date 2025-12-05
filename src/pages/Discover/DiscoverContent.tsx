@@ -4,7 +4,6 @@ import { Fragment, useEffect, useRef } from "react";
 import { usePosts } from "../../context/PostContext";
 
 const DiscoverContent = () => {
-  // const { postList, fetchPost } = useDiscoveryContext();
   const { postList, fetchNextPage, discoverScrollY } = usePosts();
   const fetchTrigger = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
@@ -16,7 +15,6 @@ const DiscoverContent = () => {
         const target = entries[0];
 
         if (target.isIntersecting) {
-          console.log("fetch");
           observer.disconnect();
           fetchNextPage();
         }
@@ -34,7 +32,7 @@ const DiscoverContent = () => {
   return postList.map(
     (
       {
-        postID,
+        postId,
         title,
         authorName,
         cookTime,
@@ -47,13 +45,13 @@ const DiscoverContent = () => {
       index
     ) => {
       return (
-        <Fragment key={postID}>
+        <Fragment key={postId}>
           <Card
-            key={postID}
-            postID={postID}
+            key={postId}
+            postId={postId}
             onClick={() => {
               discoverScrollY.current = window.scrollY;
-              navigate(`/post/${postID}`);
+              navigate(`/post/${postId}`);
             }}
             cardType="post"
             cardLoaded={true}
@@ -66,10 +64,11 @@ const DiscoverContent = () => {
             reactions={reactions}
             userActions={userActions}
           />
-          {index === postList.length - 4 ? (
-            <div ref={fetchTrigger} style={{ lineHeight: "0" }}></div>
-          ) : undefined}
+
           {/*Set the fetch trigger to the 3rd element from the bottom up */}
+          {index === postList.length - 4 ? (
+            <div ref={fetchTrigger} style={{ height: "0" }} />
+          ) : undefined}
         </Fragment>
       );
     }

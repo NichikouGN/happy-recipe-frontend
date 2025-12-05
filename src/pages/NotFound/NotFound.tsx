@@ -1,21 +1,16 @@
-import Button from "../../components/Button/Button";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import styles from "./NotFound.module.css";
 
 const NotFound = () => {
-  const navigate = useNavigate();
   return (
-    <div>
-      Uh Oh. It seems like this link is not on the menu. <br />
-      How about we order something else?
-      <Button
-        size="small"
-        variant="secondary"
-        onClick={() => {
-          navigate("/");
-        }}
-      >
-        Home
-      </Button>
+    <div className={styles["container"]}>
+      <div className={styles["error-container"]}>
+        <div className={styles["error-code"]}>404</div>
+        <div className={styles["error-message"]}>Page Not Found</div>
+        <Link to="/" className={styles["home-link"]}>
+          Return
+        </Link>
+      </div>
     </div>
   );
 };

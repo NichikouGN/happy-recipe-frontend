@@ -14,11 +14,11 @@
     justify-content: space-around;
 
     position: fixed;
-    width: 100vw;
-    height: auto;
+    width: 100dvw;
+    height: 7.5dvh;
     left: 0%;
     bottom: 0%;
-    padding: 0.5rem 0.5rem;
+    padding: 1rem 0.5rem;
 
     box-shadow: -4px -4px 8px rgba(0, 0, 0, 0.1);
   }
@@ -40,11 +40,6 @@
     background: transparent;
     text-decoration: none;
     transition: all 0.2s ease;
-  }
-
-  .navbar-item:focus {
-    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25),
-      -2px -2px 4px rgba(255, 255, 255, 0.9);
   }
 
   .navbar-item__icon {

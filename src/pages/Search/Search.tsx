@@ -1,11 +1,12 @@
 import styles from "./Search.module.css";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { TbMessageChatbot, TbMessageChatbotFilled } from "react-icons/tb";
 import { useSearchContext } from "../../context/SearchContext";
 import { useEffect, useState } from "react";
 import SearchResult from "../SearchResult/SearchResult";
 import { FaSearch } from "react-icons/fa";
 
+// Example tags for search suggestions
 const tags = [
   { tag: "Pasta", color: "yellow" },
   { tag: "Vegan", color: "green" },
@@ -16,7 +17,6 @@ const tags = [
 ];
 
 const Search = () => {
-  const navigate = useNavigate();
   const {
     engagedAI,
     setEngagedAI,
@@ -27,6 +27,7 @@ const Search = () => {
     setEngagedSearch,
   } = useSearchContext();
 
+  // State to manage transition animation
   const [transitioning, setTransitioning] = useState<boolean>(false);
   const [showSearchResults, setShowSearchResults] = useState<boolean>(false);
 
@@ -35,6 +36,8 @@ const Search = () => {
   );
   const [searchInputPlaceholder, setSearchInputPlaceholder] =
     useState<string>("");
+
+  // Update titles and placeholders based on AI mode
   useEffect(() => {
     if (engagedAI) {
       setSearchTitle("AI Assistant Engaged!");
@@ -45,27 +48,12 @@ const Search = () => {
     }
   }, [engagedAI]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
-  };
-
-  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    handleSearch(searchQuery);
-  };
-
-  useEffect(() => {
-    return () => {
-      setSearchQuery("");
-      setEngagedAI(false);
-      setEngagedSearch(false);
-    };
-  }, []);
-
+  // Handle transition when engagedSearch changes
   useEffect(() => {
     setTransitioning(engagedSearch !== showSearchResults);
   }, [engagedSearch, showSearchResults]);
 
+  // After transition, update the display of search results
   useEffect(() => {
     if (transitioning) {
       const timer = setTimeout(() => {
@@ -76,6 +64,24 @@ const Search = () => {
       return () => clearTimeout(timer);
     }
   }, [engagedSearch, transitioning]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      setSearchQuery("");
+      setEngagedAI(false);
+      setEngagedSearch(false);
+    };
+  }, []);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    handleSearch(searchQuery);
+  };
 
   return (
     <>
@@ -88,49 +94,31 @@ const Search = () => {
           setEngagedAI={setEngagedAI}
           searchInputPlaceholder={searchInputPlaceholder}
           handleSearch={handleSearch}
+          setSearchQuery={setSearchQuery}
         />
       ) : (
         <>
           <header className={styles["header"]}>
-            <div
-              className={styles["header-item"]}
-              onClick={() => {
-                handleInputChange({
-                  target: { value: "" },
-                } as React.ChangeEvent<HTMLInputElement>);
-                navigate("/discover");
-              }}
-            >
+            <Link to="/discover" className={styles["header-item"]}>
               Discover
-            </div>
-            <div
+            </Link>
+            <button
               className={`${styles["header-item"]} ${styles["current"]}`}
               onClick={() => {
-                handleInputChange({
-                  target: { value: "" },
-                } as React.ChangeEvent<HTMLInputElement>);
-                setEngagedSearch(false);
-                setShowSearchResults(false);
-                navigate("/search");
+                !transitioning && setSearchQuery("");
               }}
             >
               Search
-            </div>
+            </button>
           </header>
 
-          <main
-            className={styles["content"]}
-            style={{
-              justifyContent: showSearchResults ? "flex-start" : "center",
-              padding: showSearchResults ? "0" : "1rem",
-            }}
-          >
+          <main className={styles["content"]}>
             <div
               className={`${styles["search-container"]}  ${
                 transitioning ? styles["outro"] : ""
               }`}
             >
-              <div className={styles["search-title"]}>{searchTitle}</div>
+              <h1 className={styles["search-title"]}>{searchTitle}</h1>
               <div className={styles["search-suggestion-container"]}>
                 {tags.map(({ tag, color }) => (
                   <button

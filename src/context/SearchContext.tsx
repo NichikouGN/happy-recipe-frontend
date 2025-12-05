@@ -1,7 +1,6 @@
 import {
   createContext,
   useContext,
-  useEffect,
   useState,
   type FC,
   type ReactNode,
@@ -39,6 +38,11 @@ export const SearchProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [searchResults, setSearchResults] = useState<PostStructure[]>([]);
   const [numberOfResults, setNumberOfResults] = useState<number>(0);
 
+  /**
+   * Handles the search functionality and updates the search results.
+   * @param query what the user is searching for
+   * @returns a list of search results
+   */
   const handleSearch = (query: string) => {
     if (query.trim() === "") {
       setSearchResults([]);
@@ -55,11 +59,6 @@ export const SearchProvider: FC<{ children: ReactNode }> = ({ children }) => {
       setNumberOfResults(data.searchResults.length);
     });
   };
-
-  useEffect(() => {
-    if (searchResults && searchResults.length > 0)
-      console.log("Search Results Updated:", searchResults);
-  }, [searchResults]);
 
   return (
     <SearchContext.Provider

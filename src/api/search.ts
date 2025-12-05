@@ -1,3 +1,9 @@
+/**
+ * Fetches search results based on the provided query.
+ * @param query what the user is searching for
+ * @returns a list of search results
+ */
+
 export const fetchSearchSuggestions = async (query: string) => {
   try {
     const res = await fetch(

@@ -2,7 +2,6 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.tsx";
-import { ThemeProvider } from "./context/ThemeContext.tsx";
 import { AuthProvider } from "./context/AuthContext.tsx";
 import { UserProvider } from "./context/userContext.tsx";
 import { PostProvider } from "./context/PostContext.tsx";
@@ -17,13 +16,11 @@ createRoot(document.getElementById("root")!).render(
       <ToastContextProvider>
         <AuthProvider>
           <UserProvider>
-            <ThemeProvider>
-              <PostProvider>
-                <SearchProvider>
-                  <App></App>
-                </SearchProvider>
-              </PostProvider>
-            </ThemeProvider>
+            <PostProvider>
+              <SearchProvider>
+                <App></App>
+              </SearchProvider>
+            </PostProvider>
           </UserProvider>
         </AuthProvider>
       </ToastContextProvider>

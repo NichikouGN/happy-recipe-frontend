@@ -11,7 +11,7 @@ const ProtectedRoute = ({
   children,
   requireAuthoriazation,
 }: ProtectRouteProps) => {
-  const { validateTempToken, validateAccessToken } = useAuthContext();
+  const { validateTwoFactorToken, validateAccessToken } = useAuthContext();
   const [state, setState] = useState<"loading" | "finished">("loading");
   const [isValid, setIsValid] = useState<boolean>(false);
   const navigate = useNavigate();
@@ -22,7 +22,7 @@ const ProtectedRoute = ({
     const validate = async () => {
       let isValid = false;
 
-      if (requireAuthoriazation === "2FA") isValid = await validateTempToken();
+      if (requireAuthoriazation === "2FA") isValid = await validateTwoFactorToken();
       else if (requireAuthoriazation === "authorized")
         isValid = await validateAccessToken();
 
@@ -36,7 +36,7 @@ const ProtectedRoute = ({
     };
 
     validate();
-  }, [requireAuthoriazation, validateAccessToken, validateTempToken]);
+  }, [requireAuthoriazation, validateAccessToken, validateTwoFactorToken]);
 
   if (state === "loading") {
     return <>Loading</>;

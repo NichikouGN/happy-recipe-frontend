@@ -12,7 +12,7 @@ export interface UserActions {
 }
 
 export interface PostStructure {
-  postID: string;
+  postId: string;
   title: string;
   coverImgURL: string;
   authorID: number;
@@ -29,20 +29,21 @@ export interface FullPostStructure extends PostStructure {
   steps: {
     stepNum: number;
     stepDesc: string;
+    stepImgURL?: string | undefined;
   }[];
 }
 
 export interface ActionPayload {
   action: "reaction" | "bookmark";
-  postID: string;
+  postId: string;
   newReaction?: ReactionType;
   newBookmark?: boolean;
 }
 
 export interface CommentBase {
   commentID: string;
-  postID: string;
-  userID: number;
+  postId: string;
+  userId: number;
   userName: string;
   content: string;
   createdAt: string;

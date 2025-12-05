@@ -5,8 +5,8 @@
     position: fixed;
     top: 0%;
     left: 0%;
-    width: 100vw;
-    height: 7.5vh;
+    width: 100dvw;
+    height: 7.5dvh;
 
     display: flex;
     justify-content: space-evenly;
@@ -21,6 +21,9 @@
   .header-item {
     font-size: 1.25rem;
     font-weight: bold;
+
+    color: var(--theme-text-secondary);
+    text-decoration: none;
   }
 
   .header-item.current {
@@ -30,7 +33,7 @@
 
   .content {
     grid-area: "content";
-    margin-top: 7.5vh;
+    margin-top: 7.5dvh;
 
     background-color: var(--theme-body-bg);
   }

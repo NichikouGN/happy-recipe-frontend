@@ -6,13 +6,13 @@ import PostContent from "./PostContent";
 
 const Post = () => {
   const { useDetailedPost } = usePosts();
-  const { postID } = useParams();
+  const { postId } = useParams();
 
-  if (!postID) {
+  if (!postId) {
     return <>No Args</>;
   }
 
-  const { data: detailedPost, isFetching } = useDetailedPost(postID);
+  const { data: detailedPost, isFetching } = useDetailedPost(postId);
 
   return (
     <>

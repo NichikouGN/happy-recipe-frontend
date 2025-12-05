@@ -32,14 +32,14 @@ export const useReactionMutation = ({
     /**
      * Optimistically update the cache with the new reaction before the mutation completes
      *
-     * @param newAction The new action payload containing postID and newReaction
+     * @param newAction The new action payload containing postId and newReaction
      * @returns The previous posts and detailed post data for rollback in case of error
      */
     onMutate: async (newAction) => {
       // Cancel current query to prevent overwritting
       await queryClient.cancelQueries({ queryKey: ["discoverPosts"] });
       await queryClient.cancelQueries({
-        queryKey: ["detailedPost", newAction.postID],
+        queryKey: ["detailedPost", newAction.postId],
       });
 
       // Store the previous value
@@ -50,7 +50,7 @@ export const useReactionMutation = ({
 
       // Update the detailed post
       queryClient.setQueryData(
-        ["detailedPost", newAction.postID],
+        ["detailedPost", newAction.postId],
         (oldData: any) => {
           if (!oldData) return oldData;
 
@@ -86,7 +86,7 @@ export const useReactionMutation = ({
             ...page,
             posts: page.posts.map((post) => {
               if (
-                post.postID !== newAction.postID ||
+                post.postId !== newAction.postId ||
                 newAction.action !== "reaction"
               )
                 return post;
@@ -136,7 +136,7 @@ export const useReactionMutation = ({
 
       if (context?.previousDetailedPost) {
         queryClient.setQueryData(
-          ["detailedPost", variables.postID],
+          ["detailedPost", variables.postId],
           context.previousDetailedPost
         );
       }
@@ -144,10 +144,10 @@ export const useReactionMutation = ({
 
     // After mutation, refetch to sync data
     onSettled: (_, __, variables) => {
-      pendingMutation.current.delete(variables.postID);
+      pendingMutation.current.delete(variables.postId);
       queryClient.invalidateQueries({ queryKey: ["discoverPosts"] });
       queryClient.invalidateQueries({
-        queryKey: ["detailedPost", variables.postID],
+        queryKey: ["detailedPost", variables.postId],
       });
     },
   });
