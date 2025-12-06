@@ -1,7 +1,8 @@
 import styles from "./Home.module.css";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { FaSquareFacebook, FaSquareGithub, FaYoutube } from "react-icons/fa6";
 import Card from "../../components/Card/Card";
+
 interface popularDishStructure {
   id: string;
   title: string;
@@ -28,15 +29,15 @@ const contacts = [
 ];
 
 const Home = () => {
-  const [scrollY, setScrollY] = useState<number>(0); //Parallax Var
+  //Parallax Var
+  const [scrollY, setScrollY] = useState<number>(0);
   const [headerHeight, setHeaderHeight] = useState<number>(0);
+
+  //Popular Dish State
   const [popularDish, setPopularDish] = useState<popularDishStructure[]>([]);
   const [loaded, setLoaded] = useState<boolean>(false);
 
-  /**
-   * Get the header height
-   * Add an event listener for scroll, update scrollY position
-   */
+  //Parallax Effect - Update scrollY state on scroll;
   useEffect(() => {
     setHeaderHeight(
       document.getElementsByClassName(styles.header)[0].clientHeight
@@ -51,38 +52,42 @@ const Home = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const fetchPopularDish = async () => {
-    try {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/posts/ranking/popular-dish`,
-        {
-          headers: {
-            "ngrok-skip-browser-warning": "true",
-          },
-        }
-      );
+  //Transform translate value with hard limit tie to the header height
+  const translateVal = useMemo(
+    () => Math.min(headerHeight / 4, scrollY / 4),
+    [headerHeight, scrollY]
+  );
 
-      if (!res.ok) throw new Error("xdd");
-
-      const data = await res.json();
-
-      setPopularDish(data.popularDish);
-    } catch (e) {
-      // console.log(`${import.meta.env.VITE_API_URL}/ranking/popular-dish`);
-      console.log(e);
-    }
-  };
 
   useEffect(() => {
-    fetchPopularDish();
+    //Fetch popular dish from backend
+    const fetchPopularIngredients = async () => {
+      try {
+        const res = await fetch(
+          `${import.meta.env.VITE_API_URL}/ranking/popular-dish`,
+          {
+            headers: {
+              "ngrok-skip-browser-warning": "true",
+            },
+          }
+        );
+
+        if (!res.ok) throw new Error("Unable to fetch popular dish data");
+        const data = await res.json();
+
+        setPopularDish(data.popularDish);
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    fetchPopularIngredients();
   }, []);
 
+  //Set loaded state based on popularDish data
   useEffect(() => {
     popularDish.length !== 0 ? setLoaded(true) : setLoaded(false);
   }, [popularDish]);
-
-  //Transform translate value with hard limit tie to the header height
-  const translateVal = Math.min(headerHeight / 4, scrollY / 4);
 
   return (
     <>
@@ -91,65 +96,47 @@ const Home = () => {
         className={styles["header"]}
         style={{ transform: `translateY(${translateVal}px)` }}
       >
-        <div className={styles["header-title"]}>
+        <h1 className={styles["header-title"]}>
           Bring&nbsp;
           <span style={{ color: "#ef4444", fontWeight: "800" }}>joy</span>
           &nbsp;to your cooking
-        </div>
+        </h1>
       </header>
 
+      {/* Main content - Popular Ingredients Section */}
       <main className={styles["content"]}>
-        <section className={styles["popular-ingredients"]}>
-          <div
-            style={{
-              fontWeight: "bold",
-              fontSize: "1.2rem",
-              marginBottom: "1rem",
-            }}
-          >
-            Popular Dishes
-          </div>
+        <h2 className={styles["popular-dish-title"]}>Popular Dishes</h2>
 
-          <div
-            style={{
-              display: "grid",
-              gap: "0.5rem",
-              gridTemplateColumns: "repeat(auto-fill, minmax(8rem, 1fr))",
-            }}
-          >
-            <>
-              {loaded &&
-                popularDish.map((item) => {
-                  return (
-                    <Card
-                      key={item.id}
-                      postId={item.id}
-                      title={item.title}
-                      cardType="ingredients"
-                      postImg={item.coverImg}
-                      cardLoaded={true}
-                      rounded={true}
-                    />
-                  );
-                })}
-
-              {!loaded &&
-                Array.from({ length: 10 }).map((_, i) => {
-                  return (
-                    <Card
-                      key={i}
-                      postId={i.toString()}
-                      cardType="ingredients"
-                      cardLoaded={false}
-                      rounded={true}
-                    />
-                  );
-                })}
-            </>
-          </div>
-        </section>
+        <div className={styles["popular-dish-container"]}>
+          {loaded
+            ? popularDish.map((item) => {
+                return (
+                  <Card
+                    key={item.id}
+                    postId={item.id}
+                    title={item.title}
+                    cardType="ingredients"
+                    postImg={item.coverImg}
+                    cardLoaded={true}
+                    rounded={true}
+                  />
+                );
+              })
+            : Array.from({ length: 10 }).map((_, i) => {
+                return (
+                  <Card
+                    key={i}
+                    postId={i.toString()}
+                    cardType="ingredients"
+                    cardLoaded={false}
+                    rounded={true}
+                  />
+                );
+              })}
+        </div>
       </main>
 
+      {/* Footer Section */}
       <footer className={styles["footer"]}>
         <section className={styles["about-us"]}>
           <h3>About us</h3>
@@ -162,38 +149,29 @@ const Home = () => {
             joyful time and we hope to bring that vision to life.
           </p>
         </section>
-        <section className={styles["contacts"]}>
-          <img src="/src/assets/happy-recipe-logo.png" width="128px" />
 
-          <div className={styles["contacts-hyperlink"]}>
-            <div className={styles["hyperlink-section"]}>
-              <h3>Contacts</h3>
+        <section className={styles["contact-us"]}>
+          <img src="/src/assets/happy-recipe-logo.png" />
 
-              <ul style={{ listStyle: "none" }}>
-                {contacts.map((item) => {
-                  return (
-                    <li
-                      key={item.title}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "0.25rem",
-                      }}
-                      onClick={() => {
-                        window.open(item.url, "_blank");
-                      }}
-                    >
-                      <item.icon
-                        style={{ textAlign: "left" }}
-                        className={`${styles["hyperlink-item"]} ${styles["contact-icon"]}`}
-                      />
+          <div className={styles["contact-container"]}>
+            <h3>Contacts</h3>
 
-                      <span>{item.title}</span>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
+            <ul className={styles["contact-list"]}>
+              {contacts.map((item) => {
+                return (
+                  <li
+                    key={item.title}
+                    onClick={() => {
+                      window.open(item.url, "_blank");
+                    }}
+                    className={styles["contact-item"]}
+                  >
+                    <item.icon className={styles["contact-icon"]} />
+                    <span>{item.title}</span>
+                  </li>
+                );
+              })}
+            </ul>
           </div>
         </section>
       </footer>

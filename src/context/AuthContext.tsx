@@ -9,15 +9,21 @@ import {
 
 const AuthContext = createContext<
   | {
-      tempToken: string;
-      validateTempToken: () => Promise<boolean>;
       accessToken: string;
-      validateAccessToken: () => Promise<boolean>;
-      requestNewAccessToken: () => Promise<string>;
       setAccessToken: (accessToken: string) => void;
+
       refreshToken: string;
       setRefreshToken: (refreshToken: string) => void;
+
+      validateAccessToken: () => Promise<boolean>;
+      requestNewAccessToken: () => Promise<string>;
+
+      twoFactorToken: string;
+      validateTwoFactorToken: () => Promise<boolean>;
+      verify2FA: (code: string) => Promise<boolean>;
+
       signInState: "unauthorized" | "2FA" | "authorized";
+
       signIn: (email: string, password: string) => Promise<void>;
       signUp: (
         userName: string,
@@ -26,7 +32,7 @@ const AuthContext = createContext<
         email: string,
         password: string
       ) => Promise<boolean>;
-      verify2FA: (code: string) => Promise<boolean>;
+
       signOut: () => void;
     }
   | undefined
@@ -37,13 +43,15 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [signInState, setSignInState] = useState<
     "unauthorized" | "2FA" | "authorized"
   >("unauthorized");
+
+  //Tokens
   const [accessToken, setAccessToken] = useState<string>("");
   const [refreshToken, setRefreshToken] = useState<string>(() => {
     const refreshTok = localStorage.getItem("refresh-token");
     if (!refreshTok) return "";
     return refreshTok;
   });
-  const [tempToken, setTempToken] = useState<string>(""); //2FA temporary token
+  const [twoFactorToken, settwoFactorToken] = useState<string>(""); //2FA temporary token
 
   /**
    * Helper function that clear all access token and refresh token
@@ -111,7 +119,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
    */
   const validateAccessToken = useCallback(async () => {
     try {
-      if (!accessToken) throw new Error("No access token found");
+      // if (!accessToken) throw new Error("No access token found");
 
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/api/auth/validate/access-token`,
@@ -124,7 +132,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
         }
       );
 
-      if (!res.ok) throw authError(res.status);
+      // if (!res.ok) throw authError(res.status);
 
       setSignInState("authorized");
 
@@ -143,16 +151,16 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
    *
    * @returns Promise<boolean>
    */
-  const validateTempToken = useCallback(async () => {
+  const validateTwoFactorToken = useCallback(async () => {
     try {
-      if (!tempToken) return false;
+      if (!twoFactorToken) return false;
 
       const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/auth/validate/temp-token`,
+        `${import.meta.env.VITE_API_URL}/validate/2fa-token`,
         {
           method: "GET",
           headers: {
-            authorization: `Bearer ${tempToken}`,
+            authorization: `Bearer ${twoFactorToken}`,
             "ngrok-skip-browser-warning": "true",
           },
         }
@@ -163,10 +171,10 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
       return true;
     } catch (e) {
       setSignInState("unauthorized");
-      setTempToken("");
+      settwoFactorToken("");
       return false;
     }
-  }, [tempToken]);
+  }, [twoFactorToken]);
 
   /**
    * Send the 2FA code along side the temp token to the backend
@@ -177,7 +185,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const verify2FA = useCallback(
     async (code: string) => {
       try {
-        if (!tempToken) throw new Error("temp Token does not exist");
+        if (!twoFactorToken) throw new Error("temp Token does not exist");
 
         const res = await fetch(
           `${import.meta.env.VITE_API_URL}/api/auth/validate/2fa`,
@@ -185,7 +193,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              authorization: `Bearer ${tempToken}`,
+              authorization: `Bearer ${twoFactorToken}`,
               "ngrok-skip-browser-warning": "true",
             },
             body: JSON.stringify({ code: code }),
@@ -200,14 +208,14 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
         localStorage.setItem("refresh-token", data.refreshToken);
 
         setSignInState("authorized");
-        setTempToken("");
+        settwoFactorToken("");
 
         return true;
       } catch (e) {
         return false;
       }
     },
-    [tempToken]
+    [twoFactorToken]
   );
 
   /**
@@ -233,11 +241,10 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
       console.log(data);
       if (data.status === "require2FA") {
-        setTempToken(data.tempToken);
+        settwoFactorToken(data.twoFactorToken);
         setSignInState("2FA");
       } else {
         setAccessToken(data.accessToken);
-
         setRefreshToken(data.refreshToken);
         localStorage.setItem("refresh-token", data.refreshToken);
 
@@ -309,14 +316,14 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
    */
   const signOut = useCallback(() => {
     clearToken();
-    setTempToken("");
+    settwoFactorToken("");
   }, []);
 
   return (
     <AuthContext.Provider
       value={{
-        tempToken,
-        validateTempToken,
+        twoFactorToken,
+        validateTwoFactorToken,
         accessToken,
         validateAccessToken,
         requestNewAccessToken,

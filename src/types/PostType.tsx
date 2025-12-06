@@ -29,6 +29,7 @@ export interface FullPostStructure extends PostStructure {
   steps: {
     stepNum: number;
     stepDesc: string;
+    stepImgURL?: string | undefined;
   }[];
 }
 
@@ -42,7 +43,7 @@ export interface ActionPayload {
 export interface CommentBase {
   commentID: string;
   postId: string;
-  userID: number;
+  userId: number;
   userName: string;
   content: string;
   createdAt: string;

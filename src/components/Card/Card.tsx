@@ -46,7 +46,7 @@ const Card = ({
   time = 0,
   serving = 0,
   difficulty = "easy",
-  cardType,
+  cardType = "ingredients",
   reactions = { like: 0, heart: 0, yum: 0 },
   cardLoaded,
   userActions = { userReaction: null, userBookmark: false },
@@ -56,65 +56,49 @@ const Card = ({
 }: CardProps) => {
   const { handleUserReaction, handleUserBookmark } = usePosts();
 
-  if (cardType === "ingredients") {
-    return (
-      <div
-        style={{
-          borderRadius: `${rounded ? "0.5rem" : "0"}`,
-          backgroundImage: cardLoaded
-            ? `linear-gradient(to bottom, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0) 70%), url('${postImg}')`
-            : "",
-        }}
-        className={`${styles["card-item"]} ${styles["food"]} ${
-          !cardLoaded && styles["loading"]
-        } `}
-        onClick={onClick}
-      >
-        {cardLoaded ? (
-          <span className={styles["card-title"]}>{title}</span>
-        ) : (
-          <LuText
-            style={{
-              fontSize: "clamp(2.5rem, 10vw, 5rem",
-              color: "rgba(255,255,255,0.5)",
-              fontWeight: "bold",
-            }}
-          />
-        )}
-      </div>
-    );
-  }
-
-  return (
+  return cardType === "ingredients" ? (
+    <button
+      style={{
+        backgroundImage: cardLoaded
+          ? `linear-gradient(to bottom, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0) 70%), url('${postImg}')`
+          : "",
+      }}
+      className={`${styles["card-item"]} ${styles["ingredients"]} ${
+        !cardLoaded && styles["loading"]
+      } ${rounded ? styles["rounded"] : ""} `}
+      onClick={onClick}
+    >
+      {cardLoaded ? (
+        <h1 className={styles["card-title"]}>{title}</h1>
+      ) : (
+        <LuText className={styles["loading-text-icon"]} />
+      )}
+    </button>
+  ) : (
     <>
-      <div
+      <button
         ref={fetchRef}
-        style={
-          cardLoaded
-            ? {
-                backgroundImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0) 70%), url('${postImg}')`,
-              }
-            : { backgroundImage: "" }
-        }
+        style={{
+          backgroundImage: `${
+            cardLoaded &&
+            `linear-gradient(to bottom, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0) 70%), url('${postImg}')`
+          }`,
+        }}
         className={`${styles["card-item"]} ${!cardLoaded && styles["loading"]}`}
         onClick={onClick}
       >
         <div className={styles["card-info-wrapper"]}>
-          <>
-            {cardLoaded && (
-              <img
-                src="/src/assets/happy-recipe-logo-text.png"
-                className={styles["card-author-logo"]}
-              />
-            )}
-
-            {!cardLoaded && (
-              <FaCircleUser className={styles["card-author-logo"]} />
-            )}
-          </>
+          {cardLoaded ? (
+            <img
+              src="/src/assets/happy-recipe-logo-text.png"
+              className={styles["card-author-logo"]}
+            />
+          ) : (
+            <FaCircleUser className={styles["card-author-logo"]} />
+          )}
 
           <div className={styles["card-details"]}>
-            {cardLoaded && (
+            {cardLoaded ? (
               <>
                 <span className={styles["card-title"]}>{title}</span>
 
@@ -136,20 +120,12 @@ const Card = ({
                   </div>
                 </div>
               </>
-            )}
-
-            {!cardLoaded && (
-              <LuText
-                style={{
-                  fontSize: "clamp(2.5rem, 10vw, 5rem",
-                  color: "rgba(255,255,255,0.5)",
-                  fontWeight: "bold",
-                }}
-              />
+            ) : (
+              <LuText className={styles["loading-text-icon"]} />
             )}
           </div>
         </div>
-      </div>
+      </button>
 
       <div
         className={`${styles["reaction-wrapper"]} ${
@@ -177,16 +153,15 @@ const Card = ({
           );
         })}
 
-        <div style={{ flexGrow: "1" }}></div>
+        <div style={{ flexGrow: "1" }} />
 
         <button
           className={`${styles["reaction-item"]} ${styles["bookmark"]}`}
           onClick={() => handleUserBookmark(postId, !userActions.userBookmark)}
         >
-          {userActions.userBookmark && (
+          {userActions.userBookmark ? (
             <FaBookmark className={styles["bookmark-icon"]} />
-          )}
-          {!userActions.userBookmark && (
+          ) : (
             <FaRegBookmark className={styles["bookmark-icon"]} />
           )}
         </button>

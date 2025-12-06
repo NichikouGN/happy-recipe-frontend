@@ -56,7 +56,7 @@ export const PostProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const queryClient = useQueryClient();
   const { Toast } = useToastContext();
 
-  const { accessToken, requestNewAccessToken } = useAuthContext(); // Assuming access token logic
+  const { accessToken, requestNewAccessToken } = useAuthContext();
   const pendingMutation = useRef<Set<string>>(new Set());
   const discoverScrollY = useRef<number>(0);
 
@@ -89,6 +89,14 @@ export const PostProvider: FC<{ children: ReactNode }> = ({ children }) => {
       } catch (e) {
         // Refresh token and retry again
         const updatedToken = await requestNewAccessToken();
+        if (!updatedToken) {
+          Toast({
+            type: "error",
+            title: "Authentication Error",
+            message: "Please sign in to react to the post",
+          });
+          return;
+        }
         try {
           await uploadUserAction(updatedToken, controller, {
             action,

@@ -1,0 +1,206 @@
+.upload-page {
+  width: 100dvw;
+  margin-bottom: 7.5dvh;
+  padding: 1rem;
+  background: var(--neutral-50);
+}
+
+.upload-page.blurred {
+  overflow: hidden;
+  filter: blur(0.25rem);
+  pointer-events: none;
+  user-select: none;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+
+  padding: 0.5rem 0;
+  width: 100%;
+  margin-bottom: 0.5rem;
+  overflow: hidden;
+}
+
+.info-section {
+  flex-direction: row;
+  gap: 1rem;
+}
+
+.section-title {
+  display: flex;
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.input,
+.select {
+  flex: 1;
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 0.9rem;
+
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+}
+
+.info-input-group {
+  display: flex;
+  gap: 1rem;
+
+  width: 100%;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+
+  margin-bottom: 1.5rem;
+  width: 100%;
+}
+
+.step-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  width: 100%;
+  padding: 0.25rem 0.5rem;
+
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+}
+
+.step-number {
+  font-weight: 700;
+}
+
+.step-number::after {
+  content: "|";
+  margin: 0 0.25rem 0 0.5rem;
+}
+
+.step-input {
+  flex: 1;
+  padding: 0.5rem 0;
+  font-size: 0.9rem;
+
+  height: 100%;
+
+  outline: none;
+  border: none;
+}
+
+.step-image-upload {
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0.25rem;
+
+  border-radius: 50%;
+  cursor: pointer;
+
+  outline: none;
+  border: none;
+}
+
+.step-image, .cover-image {
+  width: 100%;
+  max-height: 28dvh;
+  object-fit: cover;
+
+  border: 1px solid var(--neutral-500);
+  border-radius: 0.5rem;
+}
+
+.step-image-preview {
+  width: 100%;
+  max-height: 40dvh;
+  object-fit: cover;
+}
+
+.add-step-button {
+  display: flex;
+  align-items: center;
+  text-align: center;
+
+  width: 100%;
+  margin-top: 0.5rem;
+  padding: 0 0.25rem;
+}
+
+.add-step-button::before,
+.add-step-button::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid var(--neutral-400);
+}
+
+.add-step-button:not(:empty)::before {
+  margin-right: 0.5em;
+}
+
+.add-step-button:not(:empty)::after {
+  margin-left: 0.5em;
+}
+
+.submit-section {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.preview-button,
+.upload-button {
+  padding: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+
+  border-radius: 0.5rem;
+  background: var(--red-50);
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1),
+    -2px -2px 4px rgba(255, 255, 255, 0.7);
+}
+
+.preview-overlay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  position: fixed;
+  top: 5dvh;
+  left: 5dvw;
+  width: 90dvw;
+  height: calc(100dvh - 17.5dvh);
+
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 1rem;
+  border: 1px solid black;
+
+  color: white;
+  font-size: 2rem;
+  z-index: 1000;
+
+  overflow-y: auto;
+}
+
+.close-preview-container {
+  display: flex;
+  justify-content: flex-end;
+
+  width: 100%;
+  padding: 1rem;
+}
+
+.close-preview {
+  width: 2rem;
+  height: 2rem;
+  background: var(--neutral-200);
+
+  border-radius: 1rem;
+
+  transform: translate(50%, -50%);
+}

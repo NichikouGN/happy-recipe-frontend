@@ -16,22 +16,17 @@ const Comments = ({
     ? comments.map((comment) => (
         <div
           key={comment.commentID}
-          className={styles["comment-item"]}
+          className={`${styles["comment-item"]} ${
+            styles[comment.parentCommentID != null ? "is-reply" : ""]
+          }`}
           style={
             {
-              "--line-offset": `${layer * 1}rem`,
+              marginLeft: layer === 0 ? "0" : "20px",
+              width: `calc(100% - 20px)`,
             } as React.CSSProperties
           }
         >
-          <div
-            style={{
-              marginLeft: `${layer * 1}rem`,
-              width: `calc(100% - ${layer * 1}rem)`,
-            }}
-            className={`${styles["comment-main-block"]} ${
-              layer !== 0 ? styles["comment-main-block-reply"] : ""
-            }`}
-          >
+          <div className={`${styles["comment-main-block"]}`}>
             <div className={styles["comment-author-avatar"]} />
             <div className={styles["comment-author-group"]}>
               <div className={styles["comment-author"]}>
