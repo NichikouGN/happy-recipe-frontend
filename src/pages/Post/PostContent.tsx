@@ -265,7 +265,7 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
          rgba(0, 0, 0, 0.25) 0%,
          rgba(0, 0, 0, 0.25) 100%
       ),
-       url("${detailedPost.coverImgURL}")`,
+       url("${detailedPost.coverImgUrl}")`,
         }}
       >
         <div className={styles["action-bar"]}>

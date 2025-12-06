@@ -28,7 +28,6 @@ export const fetchPosts: QueryFunction<
   if (!res.ok) throw new Error("Failed to fetch posts");
 
   const data = await res.json();
-  console.log(data);
   const newPosts: PostStructure[] = data.postList; //Retrieve the list
 
   return {
@@ -75,14 +74,16 @@ export const uploadUserAction = async (
   controller: AbortController,
   { action, postId, newReaction, newBookmark }: ActionPayload
 ) => {
-  //Construct body based on action type
-  const body =
-    action === "reaction"
-      ? JSON.stringify({ reaction: newReaction, postId: postId })
-      : JSON.stringify({ bookmark: newBookmark, postId: postId });
+  //Construct body with full ActionPayload format
+  const body = JSON.stringify({
+    action,
+    postId,
+    newReaction,
+    newBookmark,
+  });
 
-  //Upload user action
-  const res = await fetch(`${import.meta.env.VITE_API_URL}/${action}`, {
+  //Upload user action to unified endpoint
+  const res = await fetch(`${import.meta.env.VITE_API_URL}/api/user-action/user-action`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

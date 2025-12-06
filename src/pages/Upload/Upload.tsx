@@ -18,7 +18,7 @@ const Upload = () => {
 
   const [uploadPost, setUploadPost] = useState<uploadPostStructure>({
     title: "",
-    coverImgURL: "",
+    coverImgUrl: "",
     cookTime: 0,
     servings: 1,
     difficulty: "easy",
@@ -79,7 +79,7 @@ const Upload = () => {
     if (file) {
       setUploadPost((prev) => ({
         ...prev,
-        coverImgURL: URL.createObjectURL(file),
+        coverImgUrl: URL.createObjectURL(file),
       }));
     }
   }, []);
@@ -90,7 +90,7 @@ const Upload = () => {
       !uploadPost.title ||
       !uploadPost.description ||
       uploadPost.steps.length === 0 ||
-      !uploadPost.coverImgURL
+      !uploadPost.coverImgUrl
     ) {
       Toast({
         title: "Missing Fields",
@@ -117,9 +117,9 @@ const Upload = () => {
             onChange={handleHeaderImage}
           />
 
-          {uploadPost.coverImgURL && (
+          {uploadPost.coverImgUrl && (
             <img
-              src={uploadPost.coverImgURL}
+              src={uploadPost.coverImgUrl}
               alt="Preview"
               className={styles["cover-image"]}
             />

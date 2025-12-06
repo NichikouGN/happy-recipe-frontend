@@ -38,7 +38,7 @@ const DiscoverContent = () => {
         cookTime,
         servings,
         difficulty,
-        coverImgURL,
+        coverImgUrl,
         reactions,
         userActions,
       },
@@ -55,7 +55,7 @@ const DiscoverContent = () => {
             }}
             cardType="post"
             cardLoaded={true}
-            postImg={coverImgURL}
+            postImg={coverImgUrl}
             title={title}
             author={authorName}
             time={cookTime}

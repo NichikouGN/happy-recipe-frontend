@@ -38,7 +38,7 @@ const Preview = ({
          rgba(0, 0, 0, 0.25) 0%,
          rgba(0, 0, 0, 0.25) 100%
       ),
-       url("${uploadPost.coverImgURL}")`,
+       url("${uploadPost.coverImgUrl}")`,
         }}
       >
         <div className={styles["close-preview-container"]}>

@@ -132,7 +132,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
         }
       );
 
-      // if (!res.ok) throw authError(res.status);
+      if (!res.ok) throw authError(res.status);
 
       setSignInState("authorized");
 
@@ -156,7 +156,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
       if (!twoFactorToken) return false;
 
       const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/validate/2fa-token`,
+        `${import.meta.env.VITE_API_URL}/api/auth/validate/2fa`,
         {
           method: "GET",
           headers: {

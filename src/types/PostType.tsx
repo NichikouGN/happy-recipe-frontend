@@ -14,7 +14,7 @@ export interface UserActions {
 export interface PostStructure {
   postId: string;
   title: string;
-  coverImgURL: string;
+  coverImgUrl: string;
   authorID: number;
   authorName: string;
   cookTime: number;
