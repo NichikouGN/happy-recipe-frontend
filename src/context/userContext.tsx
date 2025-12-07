@@ -14,7 +14,7 @@ interface UserContextType {
   displayName: string;
   email: string;
   bio: string;
-  profileImageURL: string;
+  profileImageUrl: string;
   isVerified: boolean;
 }
 
@@ -34,7 +34,7 @@ export const UserProvider: FC<{ children: ReactNode }> = ({ children }) => {
     displayName: "",
     email: "",
     bio: "",
-    profileImageURL: "",
+    profileImageUrl: "",
     isVerified: false,
   });
 
@@ -44,7 +44,7 @@ export const UserProvider: FC<{ children: ReactNode }> = ({ children }) => {
   // const [displayName, setDisplayName] = useState<string>("");
   // const [email, setEmail] = useState<string>("");
   // const [bio, setBio] = useState<string>("");
-  // const [profileImageURL, setProfileImageURL] = useState<string>("");
+  // const [profileImageUrl, setProfileImageURL] = useState<string>("");
   // const [isVerified, setIsVerified] = useState<boolean>(false);
 
   useEffect(() => {
@@ -73,6 +73,7 @@ export const UserProvider: FC<{ children: ReactNode }> = ({ children }) => {
           }
 
           const data = await res.json();
+          console.log("Fetched user info:", data);
 
           //Set user information state
           setUserInformation((prev) => ({ ...prev, userId: data.userId }));
@@ -80,7 +81,7 @@ export const UserProvider: FC<{ children: ReactNode }> = ({ children }) => {
           setUserInformation((prev) => ({ ...prev, displayName: data.displayName }));
           setUserInformation((prev) => ({ ...prev, email: data.email }));
           setUserInformation((prev) => ({ ...prev, bio: data.bio }));
-          setUserInformation((prev) => ({ ...prev, profileImageURL: data.profileImageURL }));
+          setUserInformation((prev) => ({ ...prev, profileImageUrl: data.profileImageUrl }));
           setUserInformation((prev) => ({ ...prev, isVerified: data.isVerified }));
         }
       } catch (e) {

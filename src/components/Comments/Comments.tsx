@@ -15,7 +15,7 @@ const Comments = ({
   return comments.length !== 0
     ? comments.map((comment) => (
         <div
-          key={comment.commentID}
+          key={comment.commentId}
           className={`${styles["comment-item"]} ${
             styles[comment.parentCommentID != null ? "is-reply" : ""]
           }`}
@@ -52,7 +52,7 @@ const Comments = ({
             <div className={styles["comment-actions"]}>
               <button
                 className={styles["comment-action-btn"]}
-                onClick={() => fetchReplies(comment.commentID)}
+                onClick={() => fetchReplies(comment.commentId)}
               >
                 View {comment.replyCount} replies
               </button>

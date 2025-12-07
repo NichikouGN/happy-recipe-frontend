@@ -9,7 +9,7 @@ const ProfileContent = () => {
       <button className={styles["user-btn"]}>
         <div className={styles["user-info"]}>
           <img
-            src={userInformation.profileImageURL || "/default-avatar.png"}
+            src={userInformation.profileImageUrl || "/default-avatar.png"}
             className={styles["avatar"]}
           />
           <div className={styles["user-id"]}>{userInformation.userId}</div>

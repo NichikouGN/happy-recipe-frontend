@@ -41,7 +41,7 @@ export interface ActionPayload {
 }
 
 export interface CommentBase {
-  commentID: string;
+  commentId: string;
   postId: string;
   userId: number;
   userName: string;

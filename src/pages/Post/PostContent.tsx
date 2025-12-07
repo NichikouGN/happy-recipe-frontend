@@ -96,7 +96,7 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
   const fetchComments = async () => {
     try {
       const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/post/${
+        `${import.meta.env.VITE_API_URL}/api/posts/${
           detailedPost.postId
         }/comments?page=${commentPage}&limit=5`,
         {
@@ -148,7 +148,7 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
       const data = await res.json();
       console.log(data);
       SetComments((prev) => {
-        const curComments = prev.find((c) => c.commentID === parentCommentID);
+        const curComments = prev.find((c) => c.commentId === parentCommentID);
         if (curComments) {
           curComments.replies = data.replies;
           curComments.nextRepliesPage = data.nextRepliesPage;
