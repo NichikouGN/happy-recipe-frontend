@@ -1,9 +1,12 @@
-import { useUserContext } from "../../context/userContext";
+import Button from "../../components/Button/Button";
+import { useAuthStore } from "../../stores/authStore";
+import { useUserStore } from "../../stores/userStore";
 import styles from "./Profile.module.css";
 import { IoSettingsSharp } from "react-icons/io5";
 
 const ProfileContent = () => {
-  const { userInformation } = useUserContext();
+  const userInformation = useUserStore((state) => state.userInformation);
+  const signOut = useAuthStore((state) => state.signOut);
   return (
     <>
       <button className={styles["user-btn"]}>
@@ -25,6 +28,10 @@ const ProfileContent = () => {
         <IoSettingsSharp size={28} />
         <p>Settings</p>
       </button>
+
+      <Button variant="primary" onClick={signOut}>
+        Sign Out
+      </Button>
     </>
   );
 };

@@ -4,7 +4,7 @@ export interface Reaction {
   yum: number;
 }
 
-export type ReactionType = "like" | "heart" | "yum";
+export type ReactionType = "like" | "heart" | "yum" | null;
 
 export interface UserActions {
   userReaction: ReactionType | null;

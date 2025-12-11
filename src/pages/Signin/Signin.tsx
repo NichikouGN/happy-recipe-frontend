@@ -1,12 +1,6 @@
 import { FaUser, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
-import {
-  useCallback,
-  useEffect,
-  useState,
-  type ChangeEvent,
-  type FormEvent,
-} from "react";
-import { useAuthContext } from "../../context/AuthContext";
+import { useCallback, useEffect, useState, type ChangeEvent, type FormEvent } from "react";
+import { useAuthStore } from "../../stores/authStore";
 import { IoClose } from "react-icons/io5";
 import styles from "./Signin.module.css";
 import Button from "../../components/Button/Button";
@@ -15,7 +9,9 @@ import { NavLink, useNavigate } from "react-router-dom";
 const Signin = () => {
   const navigate = useNavigate();
   //Hooks
-  const { signIn, signInState } = useAuthContext();
+  const signIn = useAuthStore((state) => state.signIn);
+  const signInState = useAuthStore((state) => state.signInState);
+
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -26,20 +22,14 @@ const Signin = () => {
   }, [showPassword]);
 
   //Update email field in real time
-  const handleUsernameChange = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => {
-      setEmail(event.target.value);
-    },
-    []
-  );
+  const handleUsernameChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+    setEmail(event.target.value);
+  }, []);
 
   //Update password field in real time
-  const handlePasswordChange = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => {
-      setPassword(event.target.value);
-    },
-    []
-  );
+  const handlePasswordChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+    setPassword(event.target.value);
+  }, []);
 
   //Handle submission
   const handleSubmission = async (event: FormEvent) => {
@@ -48,13 +38,13 @@ const Signin = () => {
       alert("Emails or password are incorrect");
     }
 
-    signIn(email, password);
+    await signIn(email, password);
   };
 
   //Forward to page passed on signin state
   useEffect(() => {
     if (signInState === "2FA") {
-      navigate("/authentication");
+      navigate("/signin/2fa");
     } else if (signInState === "authorized") {
       navigate(-1);
     }
@@ -72,10 +62,7 @@ const Signin = () => {
       </div>
 
       <div className={styles["title"]}>
-        <img
-          src="/src/assets/happy-recipe-logo-text.png"
-          className={styles["title-logo"]}
-        />
+        <img src="/src/assets/happy-recipe-logo-text.png" className={styles["title-logo"]} />
         <div className={styles["title-text"]}>Happy Recipe</div>
       </div>
 

@@ -1,12 +1,6 @@
 import { FaUser, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
-import {
-  useCallback,
-  useEffect,
-  useState,
-  type ChangeEvent,
-  type FormEvent,
-} from "react";
-import { useAuthContext } from "../../context/AuthContext";
+import { useCallback, useEffect, useState, type ChangeEvent, type FormEvent } from "react";
+import { useAuthStore } from "../../stores/authStore";
 import { IoClose } from "react-icons/io5";
 import styles from "./Signup.module.css";
 import Button from "../../components/Button/Button";
@@ -15,10 +9,11 @@ import { useNavigate, NavLink } from "react-router-dom";
 const Signup = () => {
   const navigate = useNavigate();
   //Hooks
-  const { signInState, signUp } = useAuthContext();
+  const signInState = useAuthStore((state) => state.signInState);
+  const signUp = useAuthStore((state) => state.signUp);
+
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [showConfirmPassword, setShowConfirmPassword] =
-    useState<boolean>(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
 
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -37,44 +32,29 @@ const Signup = () => {
   }, [showConfirmPassword]);
 
   //Update first name in real time
-  const handleFirstNameChange = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => {
-      setFirstName(event.target.value);
-    },
-    []
-  );
+  const handleFirstNameChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+    setFirstName(event.target.value);
+  }, []);
 
   //Update last name in real time
-  const handleLastNameChange = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => {
-      setLastName(event.target.value);
-    },
-    []
-  );
+  const handleLastNameChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+    setLastName(event.target.value);
+  }, []);
 
   //Update email in real time
-  const handleUsernameChange = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => {
-      setEmail(event.target.value);
-    },
-    []
-  );
+  const handleUsernameChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+    setEmail(event.target.value);
+  }, []);
 
   //Update password in real time
-  const handlePasswordChange = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => {
-      setPassword(event.target.value);
-    },
-    []
-  );
+  const handlePasswordChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+    setPassword(event.target.value);
+  }, []);
 
   //Update confirm password in real time
-  const handleConfirmPasswordChange = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => {
-      setConfirmPassword(event.target.value);
-    },
-    []
-  );
+  const handleConfirmPasswordChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+    setConfirmPassword(event.target.value);
+  }, []);
 
   //Handle submission
   const handleSubmission = async (event: FormEvent) => {
@@ -91,7 +71,7 @@ const Signup = () => {
     }
 
     // if (email === "admin" && password === "123")
-    signUp("abc", firstName, lastName, email, password);
+    signUp(firstName, lastName, email, password);
   };
 
   //Reroute base on singin state
@@ -115,10 +95,7 @@ const Signup = () => {
       </div>
 
       <div className={styles["title"]}>
-        <img
-          src="/src/assets/happy-recipe-logo-text.png"
-          className={styles["title-logo"]}
-        />
+        <img src="/src/assets/happy-recipe-logo-text.png" className={styles["title-logo"]} />
         <div className={styles["title-text"]}>Happy Recipe</div>
       </div>
 

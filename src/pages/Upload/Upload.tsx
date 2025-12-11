@@ -2,9 +2,9 @@ import { useCallback, useState, type ChangeEvent } from "react";
 import styles from "./Upload.module.css";
 import { IoAdd } from "react-icons/io5";
 import Preview from "./Preview";
-import { useUserContext } from "../../context/userContext";
-import { useToastContext } from "../../context/ToastContext";
+import { useUserStore } from "../../stores/userStore";
 import type { FullPostStructure } from "../../types/PostType";
+import { Toast } from "../../stores/toastStore";
 
 export interface uploadPostStructure
   extends Omit<
@@ -13,8 +13,7 @@ export interface uploadPostStructure
   > {}
 
 const Upload = () => {
-  const { userInformation } = useUserContext();
-  const { Toast } = useToastContext();
+  const userInformation = useUserStore((state) => state.userInformation);
 
   const [uploadPost, setUploadPost] = useState<uploadPostStructure>({
     title: "",
@@ -32,46 +31,36 @@ const Upload = () => {
   const addSteps = useCallback(() => {
     setUploadPost((prev) => ({
       ...prev,
-      steps: [
-        ...prev.steps,
-        { stepNum: prev.steps.length + 1, stepDesc: "", stepImgURL: "" },
-      ],
+      steps: [...prev.steps, { stepNum: prev.steps.length + 1, stepDesc: "", stepImgURL: "" }],
     }));
   }, []);
 
   // Handle step description change
-  const handleStepDescriptionChange = useCallback(
-    (index: number, value: string) => {
-      console.log("Updating step", index, "with value", value);
+  const handleStepDescriptionChange = useCallback((index: number, value: string) => {
+    setUploadPost((prev) => {
+      const updatedSteps = [...prev.steps];
+      updatedSteps[index].stepDesc = value;
+      return {
+        ...prev,
+        steps: updatedSteps,
+      };
+    });
+  }, []);
+
+  // Handle step image upload
+  const handleStepImage = useCallback((index: number, e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
       setUploadPost((prev) => {
         const updatedSteps = [...prev.steps];
-        updatedSteps[index].stepDesc = value;
+        updatedSteps[index].stepImgURL = URL.createObjectURL(file);
         return {
           ...prev,
           steps: updatedSteps,
         };
       });
-    },
-    []
-  );
-
-  // Handle step image upload
-  const handleStepImage = useCallback(
-    (index: number, e: ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0];
-      if (file) {
-        setUploadPost((prev) => {
-          const updatedSteps = [...prev.steps];
-          updatedSteps[index].stepImgURL = URL.createObjectURL(file);
-          return {
-            ...prev,
-            steps: updatedSteps,
-          };
-        });
-      }
-    },
-    []
-  );
+    }
+  }, []);
 
   // Handle header image upload
   const handleHeaderImage = useCallback((e: ChangeEvent<HTMLInputElement>) => {
@@ -103,11 +92,7 @@ const Upload = () => {
 
   return (
     <>
-      <div
-        className={`${styles["upload-page"]} ${
-          showPreview ? styles["blurred"] : ""
-        }`}
-      >
+      <div className={`${styles["upload-page"]} ${showPreview ? styles["blurred"] : ""}`}>
         <section className={styles["section"]}>
           <div className={styles["section-title"]}>Post Image</div>
           <input
@@ -118,11 +103,7 @@ const Upload = () => {
           />
 
           {uploadPost.coverImgUrl && (
-            <img
-              src={uploadPost.coverImgUrl}
-              alt="Preview"
-              className={styles["cover-image"]}
-            />
+            <img src={uploadPost.coverImgUrl} alt="Preview" className={styles["cover-image"]} />
           )}
         </section>
 
@@ -156,10 +137,7 @@ const Upload = () => {
         </section>
 
         <section className={styles["section"]}>
-          <div
-            className={styles["section-title"]}
-            style={{ justifyContent: "space-between" }}
-          >
+          <div className={styles["section-title"]} style={{ justifyContent: "space-between" }}>
             <div>Duration</div>
             <div>Difficulty</div>
             <div>Servings</div>
@@ -229,17 +207,10 @@ const Upload = () => {
                   accept="image/*"
                   multiple
                   className={styles["step-image-uploader"]}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                    handleStepImage(index, e)
-                  }
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => handleStepImage(index, e)}
                 />
               </div>
-              {step.stepImgURL && (
-                <img
-                  className={styles["step-image"]}
-                  src={step.stepImgURL}
-                />
-              )}
+              {step.stepImgURL && <img className={styles["step-image"]} src={step.stepImgURL} />}
             </div>
           ))}
           <button className={styles["add-step-button"]} onClick={addSteps}>

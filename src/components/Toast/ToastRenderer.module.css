@@ -1,0 +1,97 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  position: fixed;
+  top: 1dvh;
+  left: 50dvw;
+  padding: 0.5rem;
+  max-width: 75dvw;
+
+  border-radius: 0.25rem;
+  transform: translateX(-50%);
+
+  z-index: 9999999999;
+  animation: noti 0.5s ease;
+}
+
+.error {
+  background: var(--red-50);
+  border: 1px solid var(--red-300);
+}
+
+.warning {
+  background: var(--yellow-50);
+  border: 1px solid var(--yellow-300);
+}
+
+.info {
+  background: var(--sky-50);
+  border: 1px solid var(--sky-300);
+}
+
+.success {
+  background: var(--green-50);
+  border: 1px solid var(--green-300);
+}
+
+.title {
+  width: 100%;
+  margin-bottom: 0.25rem;
+
+  font-weight: bold;
+  text-transform: capitalize;
+  font-size: clamp(0.8rem, 4dvw, 1rem);
+}
+
+.error .title {
+  color: var(--red-500);
+}
+
+.warning .title {
+  color: var(--yellow-500);
+}
+
+.info .title {
+  color: var(--sky-500);
+}
+
+.success .title {
+  color: var(--green-500);
+}
+
+.message {
+  width: 100%;
+
+  font-size: clamp(0.7rem, 3.5dvw, 0.8rem);
+  word-wrap: break-word;
+}
+
+.error .message {
+  color: var(--red-400);
+}
+
+.warning .message {
+  color: var(--yellow-540);
+}
+
+.info .message {
+  color: var(--sky-400);
+}
+
+.success .message {
+  color: var(--green-400);
+}
+
+@keyframes noti {
+  0% {
+    top: -5%;
+    opacity: 0%;
+  }
+
+  100% {
+    top: 1%;
+    opacity: 100%;
+  }
+}

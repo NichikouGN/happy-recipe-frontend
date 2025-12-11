@@ -1,0 +1,261 @@
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import { queryClient } from "../queryClient";
+import { formatConsoleError } from "../consoleError";
+
+interface authStoreType {
+  accessToken: string;
+  setAccessToken: (accessToken: string) => void;
+
+  refreshToken: string;
+  setRefreshToken: (refreshToken: string) => void;
+
+  setUpToken: (accessToken: string, refreshToken: string) => void;
+  clearToken: () => void;
+  authError: (status: number) => Error;
+
+  validateAccessToken: () => Promise<boolean>;
+  requestNewAccessToken: () => Promise<boolean>;
+
+  twoFactorToken: string;
+  setTwoFactorToken: (twoFactorToken: string) => void;
+  validateTwoFactorToken: () => Promise<boolean>;
+  verify2FA: (code: string) => Promise<boolean>;
+
+  signInState: "unauthorized" | "2FA" | "authorized";
+  setSignInState: (state: "unauthorized" | "2FA" | "authorized") => void;
+
+  signIn: (email: string, password: string) => Promise<void>;
+  signUp: (
+    firstName: string,
+    lastName: string,
+    email: string,
+    password: string
+  ) => Promise<boolean>;
+
+  signOut: () => void;
+}
+
+export const useAuthStore = create<authStoreType>()(
+  persist(
+    (set, get) => ({
+      accessToken: "",
+      refreshToken: "",
+      twoFactorToken: "",
+      signInState: "unauthorized",
+
+      setAccessToken: (accessToken: string) => set({ accessToken }),
+      setRefreshToken: (refreshToken: string) => set({ refreshToken }),
+      setTwoFactorToken: (twoFactorToken: string) => set({ twoFactorToken }),
+      setSignInState: (state: "unauthorized" | "2FA" | "authorized") => set({ signInState: state }),
+
+      setUpToken: (accessToken: string, refreshToken: string) => {
+        set({ accessToken, refreshToken, signInState: "authorized" });
+      },
+
+      clearToken: () => {
+        set({
+          accessToken: "",
+          refreshToken: "",
+          twoFactorToken: "",
+          signInState: "unauthorized",
+        });
+      },
+
+      authError: (status: number) => {
+        const error: any = new Error("Failed to fetch");
+        error.status = status;
+        return error;
+      },
+
+      validateAccessToken: async () => {
+        const accessToken = get().accessToken;
+        try {
+          if (!get().accessToken) throw new Error("No access token found");
+
+          const res = await fetch(
+            `${import.meta.env.VITE_API_URL}/api/auth/validate/access-token`,
+            {
+              method: "GET",
+              headers: {
+                authorization: `Bearer ${accessToken}`,
+                "ngrok-skip-browser-warning": "true",
+              },
+            }
+          );
+
+          if (!res.ok) throw get().authError(res.status);
+          get().setSignInState("authorized");
+
+          return true;
+        } catch (e: any) {
+          if (e.status === 401) {
+            return get().requestNewAccessToken();
+          } else {
+            get().clearToken();
+            formatConsoleError("authStore.ts", "validateAccessToken", e);
+            return false;
+          }
+        }
+      },
+
+      requestNewAccessToken: async () => {
+        const refreshToken = get().refreshToken;
+        try {
+          if (!refreshToken) throw new Error("No refresh token found");
+
+          const res = await fetch(
+            `${import.meta.env.VITE_API_URL}/api/auth/validate/refresh-token`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                authorization: `Bearer ${refreshToken}`,
+                "ngrok-skip-browser-warning": "true",
+              },
+            }
+          );
+
+          if (!res.ok) throw get().authError(res.status);
+
+          const data = await res.json();
+          get().setUpToken(data.accessToken, data.refreshToken);
+
+          return true;
+        } catch (e) {
+          get().clearToken();
+          formatConsoleError("authStore.ts", "requestNewAccessToken", e);
+          return false;
+        }
+      },
+
+      validateTwoFactorToken: async () => {
+        try {
+          const twoFactorToken = get().twoFactorToken;
+          if (!twoFactorToken) return false;
+
+          const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/validate/2fa`, {
+            method: "GET",
+            headers: {
+              authorization: `Bearer ${twoFactorToken}`,
+              "ngrok-skip-browser-warning": "true",
+            },
+          });
+
+          if (!res.ok) throw get().authError(res.status);
+
+          return true;
+        } catch (e) {
+          get().setSignInState("unauthorized");
+          get().setTwoFactorToken("");
+          formatConsoleError("authStore.ts", "validateTwoFactorToken", e);
+          return false;
+        }
+      },
+
+      verify2FA: async (code: string) => {
+        try {
+          const twoFactorToken = get().twoFactorToken;
+          if (!twoFactorToken) throw new Error("temp Token does not exist");
+
+          const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/validate/2fa`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              authorization: `Bearer ${twoFactorToken}`,
+              "ngrok-skip-browser-warning": "true",
+            },
+            body: JSON.stringify({ code: code }),
+          });
+          if (!res.ok) throw get().authError(res.status);
+
+          const data = await res.json();
+          get().setUpToken(data.accessToken, data.refreshToken);
+          get().setTwoFactorToken("");
+          queryClient.invalidateQueries();
+          console.log("2FA successful:", data);
+
+          return true;
+        } catch (e) {
+          formatConsoleError("authStore.ts", "verify2FA", e);
+          return false;
+        }
+      },
+
+      signIn: async (email: string, password: string) => {
+        try {
+          const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/signin`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "ngrok-skip-browser-warning": "true",
+            },
+            body: JSON.stringify({ email: email, password: password }),
+          });
+
+          if (!res.ok) throw get().authError(res.status);
+
+          const data = await res.json();
+          console.log("Sign in successful:", data);
+
+          if (data.status === "require2FA") {
+            console.log("2FA required");
+            get().setTwoFactorToken(data.twoFactorToken);
+            get().setSignInState("2FA");
+          } else {
+            get().setUpToken(data.accessToken, data.refreshToken);
+            queryClient.invalidateQueries();
+          }
+        } catch (error: any) {
+          if (error.status === 401) {
+            alert("Your username or password is incorrect");
+          } else {
+            alert("500 Internal Server Error");
+          }
+        }
+      },
+
+      signUp: async (firstName: string, lastName: string, email: string, password: string) => {
+        try {
+          const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/signup`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "ngrok-skip-browser-warning": "true",
+            },
+            body: JSON.stringify({
+              firstName: firstName,
+              lastName: lastName,
+              email: email,
+              password: password,
+            }),
+          });
+
+          if (!res.ok) return false;
+
+          const data = await res.json();
+          get().setUpToken(data.accessToken, data.refreshToken);
+          queryClient.invalidateQueries();
+
+          return true;
+        } catch (e) {
+          formatConsoleError("authStore.ts", "signUp", e);
+          return false;
+        }
+      },
+
+      signOut: () => {
+        get().clearToken();
+        queryClient.invalidateQueries();
+      },
+    }),
+    {
+      name: "auth-storage", // name of the item in the storage (must be unique)
+      partialize: (state) => ({
+        accessToken: state.accessToken,
+        refreshToken: state.refreshToken,
+        twoFactorToken: state.twoFactorToken,
+      }),
+    }
+  )
+);

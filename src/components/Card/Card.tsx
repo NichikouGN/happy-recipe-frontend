@@ -7,6 +7,7 @@ import { AiFillLike } from "react-icons/ai";
 import { GiForkKnifeSpoon } from "react-icons/gi";
 import { usePosts } from "../../context/PostContext";
 import type { Reaction, UserActions } from "../../types/PostType";
+import { computeReactionState } from "../../api/posts";
 
 interface CardProps {
   postId: string;
@@ -109,9 +110,7 @@ const Card = ({
                   </div>
 
                   <div className={styles["other-info-item"]}>
-                    <FaFire
-                      className={`${styles["diff-color"]} ${styles[difficulty]}`}
-                    />
+                    <FaFire className={`${styles["diff-color"]} ${styles[difficulty]}`} />
                     <span>{difficulty}</span>
                   </div>
 
@@ -127,25 +126,24 @@ const Card = ({
         </div>
       </button>
 
-      <div
-        className={`${styles["reaction-wrapper"]} ${
-          !cardLoaded && styles["hide-reaction"]
-        }`}
-      >
+      <div className={`${styles["reaction-wrapper"]} ${!cardLoaded && styles["hide-reaction"]}`}>
         {reactionType.map(({ reactionType, icon: Icon }) => {
           return (
             <button
               key={reactionType}
               className={`${styles["reaction-item"]} ${styles[reactionType]} ${
-                userActions.userReaction === reactionType &&
-                styles[`${reactionType}-highlight`]
+                userActions.userReaction === reactionType && styles[`${reactionType}-highlight`]
               }`}
-              onClick={() => handleUserReaction(postId, reactionType)}
+              onClick={() =>
+                handleUserReaction(
+                  postId,
+                  computeReactionState(reactionType, userActions.userReaction)
+                )
+              }
             >
               <Icon
                 className={`${styles[`${reactionType}-icon`]} ${
-                  userActions.userReaction === reactionType &&
-                  styles[`${reactionType}-highlight`]
+                  userActions.userReaction === reactionType && styles[`${reactionType}-highlight`]
                 }`}
               />
               {reactions[reactionType]}

@@ -1,35 +1,18 @@
 //Tanstack
-import {
-  useInfiniteQuery,
-  useQuery,
-  useQueryClient,
-  type UseQueryResult,
-} from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery, type UseQueryResult } from "@tanstack/react-query";
+
+import { queryClient } from "../queryClient";
 
 //React
-import {
-  useContext,
-  createContext,
-  type FC,
-  type ReactNode,
-  useCallback,
-  useRef,
-} from "react";
+import { useContext, createContext, type FC, type ReactNode, useCallback, useRef } from "react";
 
-//Context
-import { useAuthContext } from "./AuthContext";
-import { useToastContext } from "./ToastContext";
+import { useToastStore } from "../stores/toastStore";
 
 //Types
-import type {
-  ActionPayload,
-  FullPostStructure,
-  PostStructure,
-  ReactionType,
-} from "../types/PostType";
+import type { FullPostStructure, PostStructure, ReactionType } from "../types/PostType";
 
 //API & Hooks
-import { fetchDetailedPost, fetchPosts, uploadUserAction } from "../api/posts";
+import { fetchDetailedPost, fetchPosts, confirmUserAction } from "../api/posts";
 import { useReactionMutation } from "../hooks/useReactionMutation";
 import { useBookMarkMutation } from "../hooks/useBookMarkMutation";
 
@@ -42,10 +25,7 @@ const PostContext = createContext<
       isFetchingNextPage: boolean; // Fetching state
       fetchNextPage: () => void;
       useDetailedPost: (postId: string) => UseQueryResult<FullPostStructure>;
-      handleUserReaction: (
-        sourcePost: string,
-        newReaction: ReactionType
-      ) => void;
+      handleUserReaction: (sourcePost: string, newReaction: ReactionType) => void;
       handleUserBookmark: (sourcePost: string, newBookmark: boolean) => void;
     }
   | undefined
@@ -53,90 +33,26 @@ const PostContext = createContext<
 
 export const PostProvider: FC<{ children: ReactNode }> = ({ children }) => {
   //Tanstack
-  const queryClient = useQueryClient();
-  const { Toast } = useToastContext();
+  const Toast = useToastStore((state) => state.Toast);
 
-  const { accessToken, requestNewAccessToken } = useAuthContext();
   const pendingMutation = useRef<Set<string>>(new Set());
   const discoverScrollY = useRef<number>(0);
 
   /**
-   * Function for tanstack useMutation()
-   * @param { action, postId, newReaction, newBookmark } ActionPayload type of action , new reaction or bookmark state and postId
-   */
-  const confirmUserAction = useCallback(
-    async ({ action, postId, newReaction, newBookmark }: ActionPayload) => {
-      if (!accessToken) {
-        Toast({
-          type: "error",
-          title: "Authentication Error",
-          message: "Please sign in to react to the post",
-        });
-
-        return;
-      }
-
-      const controller = new AbortController();
-      const id = setTimeout(() => controller.abort(), 2000);
-
-      try {
-        await uploadUserAction(accessToken, controller, {
-          action,
-          postId,
-          newReaction,
-          newBookmark,
-        });
-      } catch (e) {
-        // Refresh token and retry again
-        const updatedToken = await requestNewAccessToken();
-        if (!updatedToken) {
-          Toast({
-            type: "error",
-            title: "Authentication Error",
-            message: "Please sign in to react to the post",
-          });
-          return;
-        }
-        try {
-          await uploadUserAction(updatedToken, controller, {
-            action,
-            postId,
-            newReaction,
-            newBookmark,
-          });
-        } catch (e) {
-          // Final error toast
-          Toast({
-            type: "error",
-            title: "Action Failed",
-            message: "Unable to complete your action. Please try again later.",
-          });
-        }
-      } finally {
-        clearTimeout(id);
-      }
-    },
-    [accessToken, requestNewAccessToken]
-  );
-
-  /**
    * useInfiniteQuery hook to fetch posts for discovery feed
    */
-  const { data, isLoading, isFetchingNextPage, fetchNextPage } =
-    useInfiniteQuery({
-      queryKey: ["discoverPosts"],
-      queryFn: fetchPosts,
+  const { data, isLoading, isFetchingNextPage, fetchNextPage } = useInfiniteQuery({
+    queryKey: ["discoverPosts"],
+    queryFn: ({ pageParam = 1 }) => fetchPosts(pageParam),
 
-      initialPageParam: 1, // Start page
-      getNextPageParam: (lastPage) => lastPage.nextPage,
+    initialPageParam: 1, // Start page
+    getNextPageParam: (lastPage) => lastPage.nextPage,
 
-      staleTime: 1000 * 60 * 5, // Refresh data every 5 mins
-    });
+    staleTime: 1000 * 60 * 5, // Refresh data every 5 mins
+  });
 
   //Flatten postList
-  const postList: PostStructure[] = data
-    ? data.pages.flatMap((page) => page.posts)
-    : [];
+  const postList: PostStructure[] = data ? data.pages.flatMap((page) => page.posts) : [];
 
   //Query hook for detailed post
   const useDetailedPost = (postId: string) => {
@@ -163,6 +79,8 @@ export const PostProvider: FC<{ children: ReactNode }> = ({ children }) => {
    */
   const handleUserReaction = useCallback(
     (sourcePost: string, newReaction: ReactionType) => {
+      console.log("Handling reaction:", sourcePost, newReaction);
+
       // Trigger the mutation hook
       if (pendingMutation.current.has(sourcePost)) return;
 
@@ -191,21 +109,18 @@ export const PostProvider: FC<{ children: ReactNode }> = ({ children }) => {
    * @param sourcePost The ID of the post being bookmarked
    * @param newBookmark The new bookmark state
    */
-  const handleUserBookmark = useCallback(
-    (sourcePost: string, newBookmark: boolean) => {
-      // Trigger the mutation hook
-      if (pendingMutation.current.has(sourcePost)) return;
+  const handleUserBookmark = useCallback((sourcePost: string, newBookmark: boolean) => {
+    // Trigger the mutation hook
+    if (pendingMutation.current.has(sourcePost)) return;
 
-      pendingMutation.current.add(sourcePost);
+    pendingMutation.current.add(sourcePost);
 
-      bookMarkMutation.mutate({
-        action: "bookmark",
-        postId: sourcePost,
-        newBookmark: newBookmark,
-      });
-    },
-    []
-  );
+    bookMarkMutation.mutate({
+      action: "bookmark",
+      postId: sourcePost,
+      newBookmark: newBookmark,
+    });
+  }, []);
 
   return (
     <PostContext.Provider

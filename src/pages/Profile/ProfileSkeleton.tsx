@@ -22,10 +22,7 @@ const ProfileSkeleton = () => {
         <p>Settings</p>
       </button>
 
-      <button
-        className={styles["login-btn"]}
-        onClick={() => navigate("/login")}
-      >
+      <button className={styles["login-btn"]} onClick={() => navigate("/signin")}>
         <p>Log in to see your profile</p>
       </button>
     </>

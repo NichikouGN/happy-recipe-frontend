@@ -1,4 +1,4 @@
-import { useAuthContext } from "../../context/AuthContext";
+import { useAuthStore } from "../../stores/authStore";
 import { useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 
@@ -7,11 +7,9 @@ interface ProtectRouteProps {
   requireAuthoriazation: "2FA" | "authorized";
 }
 
-const ProtectedRoute = ({
-  children,
-  requireAuthoriazation,
-}: ProtectRouteProps) => {
-  const { validateTwoFactorToken, validateAccessToken } = useAuthContext();
+const ProtectedRoute = ({ children, requireAuthoriazation }: ProtectRouteProps) => {
+  const validateAccessToken = useAuthStore((state) => state.validateAccessToken);
+  const validateTwoFactorToken = useAuthStore((state) => state.validateTwoFactorToken);
   const [state, setState] = useState<"loading" | "finished">("loading");
   const [isValid, setIsValid] = useState<boolean>(false);
   const navigate = useNavigate();
@@ -23,8 +21,7 @@ const ProtectedRoute = ({
       let isValid = false;
 
       if (requireAuthoriazation === "2FA") isValid = await validateTwoFactorToken();
-      else if (requireAuthoriazation === "authorized")
-        isValid = await validateAccessToken();
+      else if (requireAuthoriazation === "authorized") isValid = await validateAccessToken();
 
       if (!isValid) {
         setIsValid(false);

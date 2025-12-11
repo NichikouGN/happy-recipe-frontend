@@ -2,6 +2,7 @@ import styles from "./Home.module.css";
 import { useState, useEffect, useMemo } from "react";
 import { FaSquareFacebook, FaSquareGithub, FaYoutube } from "react-icons/fa6";
 import Card from "../../components/Card/Card";
+import { formatConsoleError } from "../../consoleError";
 
 interface popularDishStructure {
   id: string;
@@ -39,9 +40,7 @@ const Home = () => {
 
   //Parallax Effect - Update scrollY state on scroll;
   useEffect(() => {
-    setHeaderHeight(
-      document.getElementsByClassName(styles.header)[0].clientHeight
-    );
+    setHeaderHeight(document.getElementsByClassName(styles.header)[0].clientHeight);
 
     const handleScroll = () => {
       setScrollY(Math.min(Math.max(0, window.scrollY)));
@@ -58,30 +57,26 @@ const Home = () => {
     [headerHeight, scrollY]
   );
 
-
   useEffect(() => {
     //Fetch popular dish from backend
     const fetchPopularIngredients = async () => {
       try {
-        const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/ranking/popular-dish`,
-          {
-            headers: {
-              "ngrok-skip-browser-warning": "true",
-            },
-          }
-        );
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/ranking/popular-dish`, {
+          headers: {
+            "ngrok-skip-browser-warning": "true",
+          },
+        });
 
         if (!res.ok) throw new Error("Unable to fetch popular dish data");
         const data = await res.json();
 
         setPopularDish(data.popularDish);
       } catch (e) {
-        console.log(e);
+        formatConsoleError("Home.tsx", "fetchPopularIngredients", e);
       }
     };
 
-    fetchPopularIngredients();
+    // fetchPopularIngredients();
   }, []);
 
   //Set loaded state based on popularDish data
@@ -92,10 +87,7 @@ const Home = () => {
   return (
     <>
       {/*Banner Image with parallax inline styling*/}
-      <header
-        className={styles["header"]}
-        style={{ transform: `translateY(${translateVal}px)` }}
-      >
+      <header className={styles["header"]} style={{ transform: `translateY(${translateVal}px)` }}>
         <h1 className={styles["header-title"]}>
           Bring&nbsp;
           <span style={{ color: "#ef4444", fontWeight: "800" }}>joy</span>
@@ -143,10 +135,9 @@ const Home = () => {
 
           <p>
             Happy Recipe is a passionate project aimed at&nbsp;
-            <b>delivering joy and comfort to your own cooking</b>. We provide a
-            platform where users can connect and share fantastic cuisine from
-            all around the world. We believe that cooking is meant to be a
-            joyful time and we hope to bring that vision to life.
+            <b>delivering joy and comfort to your own cooking</b>. We provide a platform where users
+            can connect and share fantastic cuisine from all around the world. We believe that
+            cooking is meant to be a joyful time and we hope to bring that vision to life.
           </p>
         </section>
 

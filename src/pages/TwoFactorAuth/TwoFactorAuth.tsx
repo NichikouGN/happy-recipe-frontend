@@ -1,12 +1,6 @@
 import { TbAuth2Fa } from "react-icons/tb";
-import {
-  useCallback,
-  useEffect,
-  useState,
-  type ChangeEvent,
-  type FormEvent,
-} from "react";
-import { useAuthContext } from "../../context/AuthContext";
+import { useCallback, useEffect, useState, type ChangeEvent, type FormEvent } from "react";
+import { useAuthStore } from "../../stores/authStore";
 import { IoClose } from "react-icons/io5";
 import Button from "../../components/Button/Button";
 import { useNavigate } from "react-router-dom";
@@ -15,23 +9,21 @@ import styles from "./TwoFactorAuth.module.css";
 const TwoFactorAuth = () => {
   const navigate = useNavigate();
   //Hooks
-  const { verify2FA, signInState } = useAuthContext();
+  const verify2FA = useAuthStore((state) => state.verify2FA);
+  const signInState = useAuthStore((state) => state.signInState);
+
   const [twoFactor, setTwoFactor] = useState<string>("");
 
   //Update 2FA in real time
-  const handleTwoFactorChanges = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => {
-      setTwoFactor(event.target.value);
-    },
-    []
-  );
+  const handleTwoFactorChanges = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+    setTwoFactor(event.target.value);
+  }, []);
 
   //Handle submission
   const handleSubmission = async (event: FormEvent) => {
     event.preventDefault();
 
-    if (await verify2FA(twoFactor)) {
-    }
+    await verify2FA(twoFactor);
   };
 
   //Reroute base on signin state
@@ -53,16 +45,11 @@ const TwoFactorAuth = () => {
       </div>
 
       <div className={styles["title"]}>
-        <img
-          src="/src/assets/happy-recipe-logo-text.png"
-          className={styles["title-logo"]}
-        />
+        <img src="/src/assets/happy-recipe-logo-text.png" className={styles["title-logo"]} />
         <div className={styles["title-text"]}>Happy Recipe</div>
       </div>
 
-      <div className={styles["quote"]}>
-        Enter the 2FA code sent to your email
-      </div>
+      <div className={styles["quote"]}>Enter the 2FA code sent to your email</div>
 
       <div className={styles["log-in-menu"]}>
         <form

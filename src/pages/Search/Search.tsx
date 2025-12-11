@@ -1,7 +1,7 @@
 import styles from "./Search.module.css";
 import { Link } from "react-router-dom";
 import { TbMessageChatbot, TbMessageChatbotFilled } from "react-icons/tb";
-import { useSearchContext } from "../../context/SearchContext";
+import { useSearchStore } from "../../stores/searchStore";
 import { useEffect, useState } from "react";
 import SearchResult from "../SearchResult/SearchResult";
 import { FaSearch } from "react-icons/fa";
@@ -17,25 +17,20 @@ const tags = [
 ];
 
 const Search = () => {
-  const {
-    engagedAI,
-    setEngagedAI,
-    searchQuery,
-    setSearchQuery,
-    handleSearch,
-    engagedSearch,
-    setEngagedSearch,
-  } = useSearchContext();
+  const engagedAI = useSearchStore((state) => state.engagedAI);
+  const setEngagedAI = useSearchStore((state) => state.setEngagedAI);
+  const searchQuery = useSearchStore((state) => state.searchQuery);
+  const setSearchQuery = useSearchStore((state) => state.setSearchQuery);
+  const handleSearch = useSearchStore((state) => state.handleSearch);
+  const engagedSearch = useSearchStore((state) => state.engagedSearch);
+  const setEngagedSearch = useSearchStore((state) => state.setEngagedSearch);
 
   // State to manage transition animation
   const [transitioning, setTransitioning] = useState<boolean>(false);
   const [showSearchResults, setShowSearchResults] = useState<boolean>(false);
 
-  const [searchTitle, setSearchTitle] = useState<string>(
-    "What do you fancy today?"
-  );
-  const [searchInputPlaceholder, setSearchInputPlaceholder] =
-    useState<string>("");
+  const [searchTitle, setSearchTitle] = useState<string>("What do you fancy today?");
+  const [searchInputPlaceholder, setSearchInputPlaceholder] = useState<string>("");
 
   // Update titles and placeholders based on AI mode
   useEffect(() => {
@@ -114,9 +109,7 @@ const Search = () => {
 
           <main className={styles["content"]}>
             <div
-              className={`${styles["search-container"]}  ${
-                transitioning ? styles["outro"] : ""
-              }`}
+              className={`${styles["search-container"]}  ${transitioning ? styles["outro"] : ""}`}
             >
               <h1 className={styles["search-title"]}>{searchTitle}</h1>
               <div className={styles["search-suggestion-container"]}>
@@ -136,10 +129,7 @@ const Search = () => {
                 ))}
               </div>
               <div className={`${styles["search-input-container"]}`}>
-                <form
-                  className={styles["search-form"]}
-                  onSubmit={handleFormSubmit}
-                >
+                <form className={styles["search-form"]} onSubmit={handleFormSubmit}>
                   <input
                     type="text"
                     className={styles["search-input"]}
@@ -156,13 +146,9 @@ const Search = () => {
                   onClick={() => setEngagedAI(!engagedAI)}
                 >
                   {engagedAI ? (
-                    <TbMessageChatbotFilled
-                      className={styles["search-input-btn-icon"]}
-                    />
+                    <TbMessageChatbotFilled className={styles["search-input-btn-icon"]} />
                   ) : (
-                    <TbMessageChatbot
-                      className={styles["search-input-btn-icon"]}
-                    />
+                    <TbMessageChatbot className={styles["search-input-btn-icon"]} />
                   )}
                 </div>
 

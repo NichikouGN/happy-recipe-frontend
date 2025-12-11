@@ -44,76 +44,65 @@ export const useReactionMutation = ({
 
       // Store the previous value
       const previousPosts = queryClient.getQueryData(["discoverPosts"]);
-      const previousDetailedPost = queryClient.getQueryData<FullPostStructure>([
-        "detailedPost",
-      ]);
+      const previousDetailedPost = queryClient.getQueryData<FullPostStructure>(["detailedPost"]);
 
       // Update the detailed post
-      queryClient.setQueryData(
-        ["detailedPost", newAction.postId],
-        (oldData: any) => {
-          if (!oldData) return oldData;
+      queryClient.setQueryData(["detailedPost", newAction.postId], (oldData: any) => {
+        if (!oldData) return oldData;
 
-          const oldUserReaction = oldData.userActions.userReaction;
-          let newReactions = { ...oldData.reactions };
-          let newUserReaction: ReactionType | null = newAction.newReaction!;
+        const oldUserReaction = oldData.userActions.userReaction;
+        let newReactions = { ...oldData.reactions };
+        let newUserReaction: ReactionType | null = newAction.newReaction!;
 
-          if (oldUserReaction === newAction.newReaction) {
-            newReactions[newAction.newReaction!] -= 1;
-            newUserReaction = null;
-          } else {
-            if (oldUserReaction) newReactions[oldUserReaction] -= 1;
-            newReactions[newAction.newReaction!] += 1;
-          }
-
-          return {
-            ...oldData,
-            reactions: newReactions,
-            userActions: {
-              ...oldData.userActions,
-              userReaction: newUserReaction,
-            },
-          };
+        if (oldUserReaction === newAction.newReaction) {
+          newReactions[newAction.newReaction!] -= 1;
+          newUserReaction = null;
+        } else {
+          if (oldUserReaction) newReactions[oldUserReaction] -= 1;
+          newReactions[newAction.newReaction!] += 1;
         }
-      );
+
+        return {
+          ...oldData,
+          reactions: newReactions,
+          userActions: {
+            ...oldData.userActions,
+            userReaction: newUserReaction,
+          },
+        };
+      });
 
       // Update the discover posts list
       queryClient.setQueryData(["discoverPosts"], (oldData: any) => {
         if (!oldData) return oldData;
 
-        const updatedPages = oldData.pages.map(
-          (page: { posts: PostStructure[] }) => ({
-            ...page,
-            posts: page.posts.map((post) => {
-              if (
-                post.postId !== newAction.postId ||
-                newAction.action !== "reaction"
-              )
-                return post;
+        const updatedPages = oldData.pages.map((page: { posts: PostStructure[] }) => ({
+          ...page,
+          posts: page.posts.map((post) => {
+            if (post.postId !== newAction.postId || newAction.action !== "reaction") return post;
 
-              const oldUserReaction = post.userActions.userReaction;
-              let newReactions = { ...post.reactions };
-              let newUserReaction: ReactionType | null = newAction.newReaction!;
+            const oldUserReaction = post.userActions.userReaction;
+            let newReactions = { ...post.reactions };
+            let newUserReaction: ReactionType | null = newAction.newReaction!;
 
-              if (oldUserReaction === newAction.newReaction) {
-                newReactions[newAction.newReaction!] -= 1;
-                newUserReaction = null;
-              } else {
-                if (oldUserReaction) newReactions[oldUserReaction] -= 1;
-                newReactions[newAction.newReaction!] += 1;
-              }
+            if (oldUserReaction === newAction.newReaction) {
+              newReactions[newAction.newReaction!] -= 1;
+              newUserReaction = null;
+            } else {
+              if (oldUserReaction) newReactions[oldUserReaction] -= 1;
+              newReactions[newAction.newReaction!] += 1;
+            }
 
-              return {
-                ...post,
-                reactions: newReactions,
-                userActions: {
-                  ...post.userActions,
-                  userReaction: newUserReaction,
-                },
-              };
-            }),
-          })
-        );
+            return {
+              ...post,
+              reactions: newReactions,
+              userActions: {
+                ...post.userActions,
+                userReaction: newUserReaction,
+              },
+            };
+          }),
+        }));
 
         return { ...oldData, pages: updatedPages };
       });
@@ -135,10 +124,7 @@ export const useReactionMutation = ({
       }
 
       if (context?.previousDetailedPost) {
-        queryClient.setQueryData(
-          ["detailedPost", variables.postId],
-          context.previousDetailedPost
-        );
+        queryClient.setQueryData(["detailedPost", variables.postId], context.previousDetailedPost);
       }
     },
 

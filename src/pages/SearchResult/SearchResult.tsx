@@ -1,7 +1,7 @@
 import React, { Fragment } from "react";
 import { TbMessageChatbot, TbMessageChatbotFilled } from "react-icons/tb";
 import styles from "./SearchResult.module.css";
-import { useSearchContext } from "../../context/SearchContext";
+import { useSearchStore } from "../../stores/searchStore";
 import Card from "../../components/Card/Card";
 import { useNavigate } from "react-router-dom";
 import { FaSearch, FaArrowLeft } from "react-icons/fa";
@@ -27,7 +27,8 @@ const SearchResult = ({
   handleSearch,
   setSearchQuery,
 }: searchResultProps) => {
-  const { searchResults, setEngagedSearch } = useSearchContext();
+  const searchResults = useSearchStore((state) => state.searchResults);
+  const setEngagedSearch = useSearchStore((state) => state.setEngagedSearch);
   const navigate = useNavigate();
   return (
     <>
@@ -54,23 +55,15 @@ const SearchResult = ({
             />
           </form>
 
-          <div
-            className={styles["search-input-btn"]}
-            onClick={() => setEngagedAI(!engagedAI)}
-          >
+          <div className={styles["search-input-btn"]} onClick={() => setEngagedAI(!engagedAI)}>
             {engagedAI ? (
-              <TbMessageChatbotFilled
-                className={styles["search-input-btn-icon"]}
-              />
+              <TbMessageChatbotFilled className={styles["search-input-btn-icon"]} />
             ) : (
               <TbMessageChatbot className={styles["search-input-btn-icon"]} />
             )}
           </div>
 
-          <div
-            className={styles["search-input-btn"]}
-            onClick={() => handleSearch(searchQuery)}
-          >
+          <div className={styles["search-input-btn"]} onClick={() => handleSearch(searchQuery)}>
             <FaSearch className={styles["search-input-btn-icon"]} />
           </div>
         </div>
@@ -78,8 +71,7 @@ const SearchResult = ({
 
       <main className={styles["content"]}>
         <div className={styles["search-result-count"]}>
-          {searchResults && searchResults.length > 0 ? searchResults.length : 0}{" "}
-          results found
+          {searchResults && searchResults.length > 0 ? searchResults.length : 0} results found
         </div>
 
         <div className={styles["search-results-container"]}>

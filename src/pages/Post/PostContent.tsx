@@ -1,28 +1,18 @@
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { usePosts } from "../../context/PostContext";
 import styles from "./Post.module.css";
 import { IoClose } from "react-icons/io5";
 import { IoIosShareAlt } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
-import { useToastContext } from "../../context/ToastContext";
 import { FaBookmark, FaRegBookmark } from "react-icons/fa";
 import { reactionType } from "../../components/Card/Card";
 import type { CommentStructure, FullPostStructure } from "../../types/PostType";
 import Button from "../../components/Button/Button";
 import Comments from "../../components/Comments/Comments";
+import { formatConsoleError } from "../../consoleError";
+import { Toast } from "../../stores/toastStore";
 
-export const Donut = ({
-  size = 120,
-  strokeWidth = 10,
-  progress = 30,
-  text = "",
-}) => {
+export const Donut = ({ size = 120, strokeWidth = 10, progress = 30, text = "" }) => {
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (progress / 100) * circumference;
@@ -70,15 +60,12 @@ export const Donut = ({
 
 const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
   const { handleUserBookmark, handleUserReaction } = usePosts();
-  const { Toast } = useToastContext();
 
   const [commentPage, setCommentPage] = useState<number>(1);
   const [comments, SetComments] = useState<CommentStructure[]>([]);
   const [commentInitialized, setCommentInitialized] = useState<boolean>(false);
 
-  const [isCollapsed, setIsCollapsed] = useState(
-    Array(detailedPost.steps.length + 1).fill(false)
-  );
+  const [isCollapsed, setIsCollapsed] = useState(Array(detailedPost.steps.length + 1).fill(false));
   const [scrollY, setScrollY] = useState<number>(0); //Parallax Var
   const [headerHeight, setHeaderHeight] = useState<number>(0);
 
@@ -118,7 +105,7 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
       setCommentPage((prev) => prev + 1);
       setCommentInitialized(true);
     } catch (error) {
-      console.error("Error fetching comments:", error);
+      formatConsoleError("PostContent.tsx", "fetchComments", error);
     }
   };
 
@@ -157,7 +144,7 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
         return [...prev];
       });
     } catch (error) {
-      console.error("Error fetching replies:", error);
+      formatConsoleError("PostContent.tsx", "fetchReplies", error);
     }
   };
 
@@ -237,7 +224,7 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
           url: window.location.href,
         })
         .catch((error) => {
-          console.error("Error sharing:", error);
+          formatConsoleError("PostContent.tsx", "handleShare", error);
         });
     }
   };
@@ -269,11 +256,7 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
         }}
       >
         <div className={styles["action-bar"]}>
-          <Button
-            variant="rounded"
-            size="medium"
-            onClick={() => navigate("/discover")}
-          >
+          <Button variant="rounded" size="medium" onClick={() => navigate("/discover")}>
             <IoClose className={styles["btn-icon"]} />
           </Button>
 
@@ -287,17 +270,14 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
             variant="rounded"
             size="medium"
             onClick={() => {
-              handleUserBookmark(
-                detailedPost.postId,
-                !detailedPost.userActions.userBookmark
-              );
+              handleUserBookmark(detailedPost.postId, !detailedPost.userActions.userBookmark);
             }}
           >
-            {/* {detailedPost.userActions.userBookmark ? (
+            {detailedPost.userActions.userBookmark ? (
               <FaBookmark className={styles["btn-icon"]} />
             ) : (
               <FaRegBookmark className={styles["btn-icon"]} />
-            )} */}
+            )}
           </Button>
         </div>
       </header>
@@ -305,9 +285,7 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
         <h1 className={styles["title"]}>{detailedPost.title}</h1>
 
         <section className={styles["author-group"]}>
-          <span className={styles["author-name"]}>
-            {detailedPost.authorName}
-          </span>
+          <span className={styles["author-name"]}>{detailedPost.authorName}</span>
         </section>
 
         <section className={styles["info-panel"]}>
@@ -315,10 +293,7 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
             {Donut({
               size: 60,
               strokeWidth: 4,
-              progress: Math.min(
-                (Number(detailedPost.cookTime) / 60) * 100,
-                100
-              ),
+              progress: Math.min((Number(detailedPost.cookTime) / 60) * 100, 100),
               text: detailedPost.cookTime?.toString(),
             })}
             <div className={styles["info"]}>Minute</div>
@@ -368,17 +343,13 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
                 heightRef.current[0] = el;
               }}
               style={{
-                height: isCollapsed[0]
-                  ? "0"
-                  : heightRef.current[0]?.scrollHeight,
+                height: isCollapsed[0] ? "0" : heightRef.current[0]?.scrollHeight,
               }}
               className={`${styles["card-content"]} ${
                 styles[`${isCollapsed[0] ? "collapsed" : "expanded"}`]
               }`}
             >
-              <div className={styles["card-content-inner"]}>
-                {detailedPost.description}
-              </div>
+              <div className={styles["card-content-inner"]}>{detailedPost.description}</div>
             </div>
           </div>
 
@@ -391,15 +362,11 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
                     handleCollapse(index + 1);
                   }}
                 >
-                  <div className={styles["card-title"]}>
-                    Step {item.stepNum}
-                  </div>
+                  <div className={styles["card-title"]}>Step {item.stepNum}</div>
 
                   <IoClose
                     className={`${styles["card-title-icon"]} ${
-                      styles[
-                        `${isCollapsed[index + 1] ? "collapsed" : "expanded"}`
-                      ]
+                      styles[`${isCollapsed[index + 1] ? "collapsed" : "expanded"}`]
                     }`}
                   />
                 </button>
@@ -413,21 +380,13 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
                       : heightRef.current[index + 1]?.scrollHeight,
                   }}
                   className={`${styles["card-content"]} ${
-                    styles[
-                      `${isCollapsed[index + 1] ? "collapsed" : "expanded"}`
-                    ]
+                    styles[`${isCollapsed[index + 1] ? "collapsed" : "expanded"}`]
                   }`}
                 >
                   {item.stepImgURL && (
-                    <img
-                      height="auto"
-                      className={styles["card-image"]}
-                      src={item.stepImgURL}
-                    />
+                    <img height="auto" className={styles["card-image"]} src={item.stepImgURL} />
                   )}
-                  <div className={styles["card-content-inner"]}>
-                    {item.stepDesc}
-                  </div>
+                  <div className={styles["card-content-inner"]}>{item.stepDesc}</div>
                 </div>
               </div>
             );
@@ -439,15 +398,11 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
             return (
               <button
                 key={reactionType}
-                className={`${styles["reaction-item"]} ${
-                  styles[reactionType]
-                } ${
+                className={`${styles["reaction-item"]} ${styles[reactionType]} ${
                   detailedPost.userActions.userReaction === reactionType &&
                   styles[`${reactionType}-highlight`]
                 }`}
-                onClick={() =>
-                  handleUserReaction(detailedPost.postId, reactionType)
-                }
+                onClick={() => handleUserReaction(detailedPost.postId, reactionType)}
               >
                 <Icon
                   className={`${styles[`${reactionType}-icon`]} ${
@@ -464,10 +419,7 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
         <section className={styles["comment-section"]} ref={fetchTrigger}>
           <div className={styles["user-comments"]}>
             <div></div>
-            <input
-              className={styles["comment-input"]}
-              placeholder="Add a comment..."
-            />
+            <input className={styles["comment-input"]} placeholder="Add a comment..." />
           </div>
 
           <div className={styles["comment-list"]}>
