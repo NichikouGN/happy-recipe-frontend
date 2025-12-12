@@ -16,7 +16,7 @@
 
     z-index: 999999;
     will-change: transform;
-    background: rgba(255, 255, 255, 0.8);
+    background: var(--theme-body-primary-bg);
     backdrop-filter: blur(1rem);
 
     animation: search-input-container-intro 0.5s ease-in-out;
@@ -28,19 +28,23 @@
     gap: 0.5rem;
 
     width: 100%;
-    padding: 0.5rem 0.75rem;
+    padding: 0.25rem 0.75rem;
 
     font-size: clamp(0.75rem, 4dvw, 1rem);
     border: none;
     border-radius: 2rem;
     outline: none;
 
-    background: var(--neutral-100);
-    box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.1),
-      inset -2px -2px 4px rgba(255, 255, 255, 0.9);
+    background: var(--theme-body-bg);
+    box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.2), inset -2px -2px 4px rgba(255, 255, 255, 0.9);
 
     animation: search-input-container-intro 0.5s ease-in-out;
   }
+
+  [data-theme="dark"] .search-input-container {
+    box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.75), inset -2px -2px 4px rgba(255, 255, 255, 0.08);
+  }
+
   .return-btn {
     display: flex;
     justify-content: center;
@@ -50,7 +54,7 @@
     height: 2rem;
     padding: 0.5rem;
 
-    background: var(--neutral-200);
+    background: var(--theme-body-secondary-bg);
     border-radius: 50%;
 
     cursor: pointer;
@@ -92,7 +96,7 @@
     height: 2rem;
     padding: 0.5rem;
 
-    background: var(--red-200);
+    background: var(--theme-body-primary-bg);
     border-radius: 50%;
 
     cursor: pointer;
@@ -100,7 +104,7 @@
 
   .search-input-btn-icon {
     font-size: 2rem;
-    color: black;
+    color: var(--red-600);
   }
 
   .content {

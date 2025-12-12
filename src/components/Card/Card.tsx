@@ -59,13 +59,13 @@ const Card = ({
 
   return cardType === "ingredients" ? (
     <button
-      style={{
-        backgroundImage: cardLoaded
-          ? `linear-gradient(to bottom, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0) 70%), url('${postImg}')`
-          : "",
-      }}
+      style={
+        {
+          "--post-img": `url('${postImg}')`,
+        } as React.CSSProperties
+      }
       className={`${styles["card-item"]} ${styles["ingredients"]} ${
-        !cardLoaded && styles["loading"]
+        cardLoaded ? styles["loaded"] : styles["loading"]
       } ${rounded ? styles["rounded"] : ""} `}
       onClick={onClick}
     >
@@ -79,13 +79,12 @@ const Card = ({
     <>
       <button
         ref={fetchRef}
-        style={{
-          backgroundImage: `${
-            cardLoaded &&
-            `linear-gradient(to bottom, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0) 70%), url('${postImg}')`
-          }`,
-        }}
-        className={`${styles["card-item"]} ${!cardLoaded && styles["loading"]}`}
+        style={
+          {
+            "--post-img": `url('${postImg}')`,
+          } as React.CSSProperties
+        }
+        className={`${styles["card-item"]} ${cardLoaded ? styles["loaded"] : styles["loading"]}`}
         onClick={onClick}
       >
         <div className={styles["card-info-wrapper"]}>
@@ -126,7 +125,7 @@ const Card = ({
         </div>
       </button>
 
-      <div className={`${styles["reaction-wrapper"]} ${!cardLoaded && styles["hide-reaction"]}`}>
+      <div className={`${styles["reaction-wrapper"]}`}>
         {reactionType.map(({ reactionType, icon: Icon }) => {
           return (
             <button
@@ -146,7 +145,7 @@ const Card = ({
                   userActions.userReaction === reactionType && styles[`${reactionType}-highlight`]
                 }`}
               />
-              {reactions[reactionType]}
+              <span>{reactions[reactionType]}</span>
             </button>
           );
         })}

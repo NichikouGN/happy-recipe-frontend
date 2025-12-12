@@ -15,8 +15,7 @@ const Discover = () => {
   //Top bar parallax
   useEffect(() => {
     //Retrieve height of the top bar
-    const topBarHeight = document.getElementsByClassName(styles.header)[0]
-      .clientHeight;
+    const topBarHeight = document.getElementsByClassName(styles.header)[0].clientHeight;
 
     //Calculate parallax on scroll
     const handleScroll = () => {
@@ -41,13 +40,8 @@ const Discover = () => {
 
   return (
     <>
-      <header
-        className={styles["header"]}
-        style={{ transform: `translateY(${topBarPos}px)` }}
-      >
-        <div className={`${styles["header-item"]} ${styles["current"]}`}>
-          Discover
-        </div>
+      <header className={styles["header"]} style={{ transform: `translateY(${topBarPos}px)` }}>
+        <div className={`${styles["header-item"]} ${styles["current"]}`}>Discover</div>
         <Link to="/search" className={styles["header-item"]}>
           Search
         </Link>
@@ -58,9 +52,7 @@ const Discover = () => {
         </div>
       </main>
       <footer className={styles["footer"]}>
-        {isFetchingNextPage && (
-          <FaArrowRotateRight className={styles["footer-item"]} />
-        )}
+        {isFetchingNextPage && <FaArrowRotateRight className={styles["footer-item"]} />}
       </footer>
     </>
   );

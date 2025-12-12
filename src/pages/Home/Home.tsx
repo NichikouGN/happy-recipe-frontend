@@ -3,6 +3,7 @@ import { useState, useEffect, useMemo } from "react";
 import { FaSquareFacebook, FaSquareGithub, FaYoutube } from "react-icons/fa6";
 import Card from "../../components/Card/Card";
 import { formatConsoleError } from "../../consoleError";
+import { useThemeStore } from "../../stores/themeStore";
 
 interface popularDishStructure {
   id: string;
@@ -14,18 +15,18 @@ const contacts = [
   {
     icon: FaSquareFacebook,
     url: "https://facebook.com",
-    title: "Fb",
+    title: "Facebook",
   },
 
   {
     icon: FaYoutube,
     url: "https://youtube.com",
-    title: "Ytb",
+    title: "YouTube",
   },
   {
     icon: FaSquareGithub,
     url: "https://github.com",
-    title: "Git",
+    title: "GitHub",
   },
 ];
 
@@ -52,10 +53,7 @@ const Home = () => {
   }, []);
 
   //Transform translate value with hard limit tie to the header height
-  const translateVal = useMemo(
-    () => Math.min(headerHeight / 4, scrollY / 4),
-    [headerHeight, scrollY]
-  );
+  const translateVal = useMemo(() => Math.min(headerHeight, scrollY / 4), [headerHeight, scrollY]);
 
   useEffect(() => {
     //Fetch popular dish from backend
@@ -85,90 +83,97 @@ const Home = () => {
   }, [popularDish]);
 
   return (
-    <>
+    <div className={styles["container"]}>
       {/*Banner Image with parallax inline styling*/}
-      <header className={styles["header"]} style={{ transform: `translateY(${translateVal}px)` }}>
+      <header
+        className={styles["header"]}
+        style={{ transform: `translateY(${translateVal}px)` }}
+        onClick={() => {
+          const theme = useThemeStore.getState().theme;
+          useThemeStore.getState().setTheme(theme === "light" ? "dark" : "light");
+        }}
+      >
         <h1 className={styles["header-title"]}>
           Bring&nbsp;
-          <span style={{ color: "#ef4444", fontWeight: "800" }}>joy</span>
+          <span style={{ color: "#ef4444", fontWeight: "900" }}>joy</span>
           &nbsp;to your cooking
         </h1>
       </header>
 
       {/* Main content - Popular Ingredients Section */}
       <main className={styles["content"]}>
-        <h2 className={styles["popular-dish-title"]}>Popular Dishes</h2>
+        <div className={styles["content-wrapper"]}>
+          <section className={styles["popular-dish-section"]}>
+            <h2>Popular Dishes</h2>
 
-        <div className={styles["popular-dish-container"]}>
-          {loaded
-            ? popularDish.map((item) => {
-                return (
-                  <Card
-                    key={item.id}
-                    postId={item.id}
-                    title={item.title}
-                    cardType="ingredients"
-                    postImg={item.coverImg}
-                    cardLoaded={true}
-                    rounded={true}
-                  />
-                );
-              })
-            : Array.from({ length: 10 }).map((_, i) => {
-                return (
-                  <Card
-                    key={i}
-                    postId={i.toString()}
-                    cardType="ingredients"
-                    cardLoaded={false}
-                    rounded={true}
-                  />
-                );
-              })}
+            <div className={styles["popular-dish-container"]}>
+              {loaded
+                ? popularDish.map((item) => {
+                    return (
+                      <Card
+                        key={item.id}
+                        postId={item.id}
+                        title={item.title}
+                        cardType="ingredients"
+                        postImg={item.coverImg}
+                        cardLoaded={true}
+                        rounded={true}
+                      />
+                    );
+                  })
+                : Array.from({ length: 8 }).map((_, i) => {
+                    return (
+                      <Card
+                        key={i}
+                        postId={i.toString()}
+                        cardType="ingredients"
+                        cardLoaded={false}
+                        rounded={true}
+                      />
+                    );
+                  })}
+            </div>
+          </section>
+
+          <section className={styles["about-us-section"]}>
+            <h2>About us</h2>
+
+            <p>
+              Happy Recipe is a passionate project aimed at&nbsp;
+              <b>delivering joy and comfort to your own cooking</b>. We provide a platform where
+              users can connect and share fantastic cuisine from all around the world. We believe
+              that cooking is meant to be a joyful time and we hope to bring that vision to life.
+            </p>
+          </section>
         </div>
       </main>
 
       {/* Footer Section */}
       <footer className={styles["footer"]}>
-        <section className={styles["about-us"]}>
-          <h3>About us</h3>
-
-          <p>
-            Happy Recipe is a passionate project aimed at&nbsp;
-            <b>delivering joy and comfort to your own cooking</b>. We provide a platform where users
-            can connect and share fantastic cuisine from all around the world. We believe that
-            cooking is meant to be a joyful time and we hope to bring that vision to life.
-          </p>
-        </section>
-
         <section className={styles["contact-us"]}>
-          <img src="/src/assets/happy-recipe-logo.png" />
+          <h2>Contacts</h2>
 
-          <div className={styles["contact-container"]}>
-            <h3>Contacts</h3>
-
-            <ul className={styles["contact-list"]}>
-              {contacts.map((item) => {
-                return (
-                  <li
-                    key={item.title}
-                    onClick={() => {
-                      window.open(item.url, "_blank");
-                    }}
-                    className={styles["contact-item"]}
-                  >
-                    <item.icon className={styles["contact-icon"]} />
-                    <span>{item.title}</span>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
+          <ul className={styles["contact-list"]}>
+            {contacts.map((item) => {
+              return (
+                <li
+                  key={item.title}
+                  onClick={() => {
+                    window.open(item.url, "_blank");
+                  }}
+                  className={styles["contact-item"]}
+                >
+                  <item.icon className={styles["contact-icon"]} />
+                  <span>{item.title}</span>
+                </li>
+              );
+            })}
+          </ul>
         </section>
       </footer>
 
       <img className={styles["footer-banner"]} src="/src/assets/Footer.jpg" />
-    </>
+    </div>
   );
 };
 

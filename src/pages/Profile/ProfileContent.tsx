@@ -1,37 +1,57 @@
-import Button from "../../components/Button/Button";
-import { useAuthStore } from "../../stores/authStore";
+import { FaMoon, FaSun, FaUser } from "react-icons/fa";
+import { useThemeStore } from "../../stores/themeStore";
 import { useUserStore } from "../../stores/userStore";
 import styles from "./Profile.module.css";
-import { IoSettingsSharp } from "react-icons/io5";
+import { IoCopySharp } from "react-icons/io5";
+import { MdEdit } from "react-icons/md";
+import { useState } from "react";
 
-const ProfileContent = () => {
+const ProfileContent = ({ handleShare }: { handleShare: (text: string) => void }) => {
   const userInformation = useUserStore((state) => state.userInformation);
-  const signOut = useAuthStore((state) => state.signOut);
+  const theme = useThemeStore((state) => state.theme);
+  const setTheme = useThemeStore((state) => state.setTheme);
+
+  const [openSettings, setOpenSettings] = useState(false);
   return (
     <>
-      <button className={styles["user-btn"]}>
-        <div className={styles["user-info"]}>
-          <img
-            src={userInformation.profileImageUrl || "/default-avatar.png"}
-            className={styles["avatar"]}
-          />
-          <div className={styles["user-id"]}>{userInformation.userId}</div>
+      <header className={styles["header"]}>
+        <button
+          className={styles["settings-button"]}
+          onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+        >
+          {theme === "light" ? (
+            <FaSun className={styles["theme-toggle-icon"]} />
+          ) : (
+            <FaMoon className={styles["theme-toggle-icon"]} />
+          )}
+        </button>
+        <button className={styles["settings-button"]} onClick={() => setOpenSettings(true)}>
+          <MdEdit className={styles["settings-button-icon"]} />
+        </button>
+      </header>
+      <main className={styles["content"]}>
+        {userInformation.profileImageUrl ? (
+          <img src={userInformation.profileImageUrl} alt="Avatar" className={styles["avatar"]} />
+        ) : (
+          <FaUser className={styles["avatar"]} />
+        )}
+        <div
+          className={styles["username"]}
+          onClick={() => {
+            handleShare(userInformation.userId);
+          }}
+        >
+          <div>{userInformation.username}</div>
+          <div className={styles["share-uid"]}>
+            <IoCopySharp className={styles["share-uid-icon"]} />
+          </div>
         </div>
 
-        <div className={styles["user-info"]}>
-          <div className={styles["user-name"]}>{userInformation.username}</div>
-          <div className={styles["bio"]}>{userInformation.bio}</div>
+        <div className={styles["follow-info"]}>
+          <span>Followers</span>
+          <span>Following</span>
         </div>
-      </button>
-
-      <button className={styles["setting-btn"]}>
-        <IoSettingsSharp size={28} />
-        <p>Settings</p>
-      </button>
-
-      <Button variant="primary" onClick={signOut}>
-        Sign Out
-      </Button>
+      </main>
     </>
   );
 };

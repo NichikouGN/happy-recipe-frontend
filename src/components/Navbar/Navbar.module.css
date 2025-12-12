@@ -1,69 +1,72 @@
 .navbar-container {
-  position: relative;
   display: flex;
-  background: rgba(255, 255, 255, 0.8);
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+
+  position: fixed;
+  width: 100dvw;
+  height: 7.5dvh;
+  left: 0%;
+  bottom: 0%;
+  padding: 1rem 0.5rem;
+
+  box-shadow: -2px -2px 4px rgba(0, 0, 0, 0.08);
+
+  background: rgba(var(--theme-body-primary-bg-rgba), 0.8);
   backdrop-filter: blur(1rem);
 
   z-index: 999999;
+
+  transition: all 0.3s ease-in-out;
 }
 
-@media (max-width: 767px) {
-  .navbar-container {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-around;
+.navbar-item {
+  -webkit-tap-highlight-color: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
-    position: fixed;
-    width: 100dvw;
-    height: 7.5dvh;
-    left: 0%;
-    bottom: 0%;
-    padding: 1rem 0.5rem;
+  padding: 0.25rem 0.25rem;
 
-    box-shadow: -4px -4px 8px rgba(0, 0, 0, 0.1);
-  }
+  border-radius: 0.5rem;
+  font-size: 1rem;
 
-  .navbar-item {
-    -webkit-tap-highlight-color: transparent;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  background: transparent;
+  text-decoration: none;
 
-    padding: 0.25rem 0.25rem;
+  transition: all 0.3s ease-in-out;
+}
 
-    border-radius: 0.5rem;
-    font-size: 1rem;
+.navbar-item__icon {
+  font-size: 1.25rem;
+  margin: 0;
+  color: rgba(var(--theme-text-primary-rgba), 0.8);
+  transition: color 0.3s ease-in-out;
+}
 
-    cursor: pointer;
-    border: none;
-    outline: none;
-    background: transparent;
-    text-decoration: none;
-    transition: all 0.2s ease;
-  }
+.navbar-item__label {
+  margin: 0;
 
-  .navbar-item__icon {
-    font-size: 1.25rem;
-    margin: 0;
-    color: rgba(var(--theme-body-text-rgb), 0.5);
-  }
+  font-size: 0.7rem;
+  line-height: 0.5rem;
+  font-weight: 700;
+  color: rgba(var(--theme-text-primary-rgba), 0.5);
 
-  .navbar-item__label {
-    margin: 0;
+  transition: color 0.3s ease-in-out;
+}
 
-    font-size: 0.7rem;
-    line-height: 0.5rem;
-    font-weight: 700;
-    color: rgba(var(--theme-body-text-rgb), 0.5);
-  }
+.current {
+  transform: scale(1.1);
+  color: var(--red-500);
+  font-weight: bold;
 
-  .current {
-    transform: scale(1.1);
-    color: var(--red-500);
-    font-weight: bold;
-  }
+  transition: color 0.3s ease-in-out;
+}
 
-  .collapse-btn {
-    display: none;
-  }
+.collapse-btn {
+  display: none;
 }

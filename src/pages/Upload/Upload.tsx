@@ -229,6 +229,23 @@ const Upload = () => {
           <button
             className={styles["preview-button"]}
             onClick={() => {
+              setUploadPost({
+                title: "",
+                coverImgUrl: "",
+                cookTime: 0,
+                servings: 1,
+                difficulty: "easy",
+                description: "",
+                steps: [{ stepNum: 1, stepDesc: "", stepImgURL: "" }],
+              });
+            }}
+          >
+            Reset
+          </button>
+
+          <button
+            className={styles["preview-button"]}
+            onClick={() => {
               setShowPreview(!showPreview);
             }}
           >

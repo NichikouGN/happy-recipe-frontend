@@ -10,8 +10,9 @@
   outline: none;
   background: rgba(0, 0, 0, 0.2);
   cursor: pointer;
+  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.16), -3px -3px 6px rgba(255, 255, 255, 0.75);
 
-  color: white;
+  color: var(--theme-text-primary);
   font-weight: 700;
   font-size: 1.5rem;
 
@@ -19,15 +20,19 @@
   overflow: hidden;
 }
 
+[data-theme="dark"] .btn {
+  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.75), -3px -3px 6px rgba(255, 255, 255, 0.16);
+}
+
 .primary {
-  background-color: var(--btn-primary-bg);
-  color: white;
+  background: var(--theme-button-primary-bg);
+  color: var(--theme-text-primary);
 }
 
 .secondary {
-  border: 1px solid var(--btn-secondary-border);
+  border: 1px solid var(--theme-button-secondary-bg);
   background: transparent;
-  color: black;
+  color: var(--theme-text-primary);
 }
 
 .rounded {

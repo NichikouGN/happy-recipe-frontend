@@ -1,73 +1,71 @@
-@media (max-width: 767px) {
-  .header {
-    grid-area: "header";
+.header {
+  grid-area: "header";
 
-    position: fixed;
-    top: 0%;
-    left: 0%;
-    width: 100dvw;
-    height: 7.5dvh;
+  position: fixed;
+  top: 0%;
+  left: 0%;
+  width: 100dvw;
+  height: 7.5dvh;
 
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
 
-    z-index: 999999;
-    will-change: transform;
-    background-color: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(1rem);
+  z-index: 999999;
+  will-change: transform;
+  background-color: var(--theme-body-primary-bg);
+  backdrop-filter: blur(1rem);
+}
+
+.header-item {
+  font-size: 1.25rem;
+  font-weight: bold;
+
+  color: var(--theme-text-secondary);
+  text-decoration: none;
+}
+
+.header-item.current {
+  color: var(--red-500);
+  transform: scale(1.1);
+}
+
+.content {
+  grid-area: "content";
+  margin-top: 7.5dvh;
+
+  background-color: var(--theme-body-bg);
+}
+
+.recommendation-card-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+
+  width: 100%;
+}
+
+.footer {
+  grid-area: "footer";
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--theme-body-bg);
+
+  padding: 1rem 1rem 5rem;
+}
+
+.footer-item {
+  font-size: 2.5rem;
+  animation: loading-circle 1s linear infinite;
+}
+
+@keyframes loading-circle {
+  0% {
+    transform: rotate(0deg);
   }
-
-  .header-item {
-    font-size: 1.25rem;
-    font-weight: bold;
-
-    color: var(--theme-text-secondary);
-    text-decoration: none;
-  }
-
-  .header-item.current {
-    color: var(--red-500);
-    transform: scale(1.1);
-  }
-
-  .content {
-    grid-area: "content";
-    margin-top: 7.5dvh;
-
-    background-color: var(--theme-body-bg);
-  }
-
-  .recommendation-card-container {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 0;
-
-    width: 100%;
-  }
-
-  .footer {
-    grid-area: "footer";
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: var(--theme-body-bg);
-
-    padding: 1rem 1rem 5rem;
-  }
-
-  .footer-item {
-    font-size: 2.5rem;
-    animation: loading-circle 1s linear infinite;
-  }
-
-  @keyframes loading-circle {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
+  100% {
+    transform: rotate(360deg);
   }
 }

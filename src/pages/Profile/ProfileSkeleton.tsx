@@ -1,30 +1,47 @@
 import styles from "./Profile.module.css";
-import { IoSettingsSharp } from "react-icons/io5";
 import { useNavigate } from "react-router";
-import { FaUser } from "react-icons/fa";
-// import { LuText } from "react-icons/lu";
+import { FaUser, FaSun, FaMoon } from "react-icons/fa";
+import { useThemeStore } from "../../stores/themeStore";
+import Button from "../../components/Button/Button";
 
 const ProfileSkeleton = () => {
+  const theme = useThemeStore((state) => state.theme);
+  const setTheme = useThemeStore((state) => state.setTheme);
   const navigate = useNavigate();
   return (
     <>
-      <button className={styles["user-btn"]}>
-        <div className={styles["user-avatar-wrapper"]}>
-          <FaUser size={60} className={styles["avatar"]} />
-          <div className={styles["user-id"]}></div>
+      <header className={styles["header"]}>
+        <button
+          className={styles["settings-button"]}
+          onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+        >
+          {theme === "light" ? (
+            <FaSun className={styles["theme-toggle-icon"]} />
+          ) : (
+            <FaMoon className={styles["theme-toggle-icon"]} />
+          )}
+        </button>
+      </header>
+      <main className={styles["content"]}>
+        <FaUser className={styles["avatar"]} />
+        <div className={styles["username"]}>
+          <div>Lorem Ipsum</div>
         </div>
 
-        <div className={`${styles["user-info"]} ${styles["loading"]}`}></div>
-      </button>
+        <div className={styles["follow-info"]}>
+          <span>0 Followers</span>
+          <span>0 Following</span>
+        </div>
+        <div className={styles["bio"]}>
+          <span>...</span>
+        </div>
 
-      <button className={styles["setting-btn"]}>
-        <IoSettingsSharp size={28} />
-        <p>Settings</p>
-      </button>
-
-      <button className={styles["login-btn"]} onClick={() => navigate("/signin")}>
-        <p>Log in to see your profile</p>
-      </button>
+        <div className={styles["actions"]}>
+          <Button size="medium" variant="primary" onClick={() => navigate("/signin")}>
+            Sign in to view profile
+          </Button>
+        </div>
+      </main>
     </>
   );
 };

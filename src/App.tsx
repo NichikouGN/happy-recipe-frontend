@@ -15,6 +15,7 @@ import { useAuthStore } from "./stores/authStore";
 import { useUserStore } from "./stores/userStore";
 import { useEffect } from "react";
 import { ToastRenderer } from "./components/Toast/ToastRenderer";
+import { useThemeStore } from "./stores/themeStore";
 
 const App = () => {
   // Store subscription to fetch user info upon authorization
@@ -32,6 +33,13 @@ const App = () => {
   useEffect(() => {
     validateAccessToken();
   }, [validateAccessToken]);
+
+  // Apply theme to document root
+  const theme = useThemeStore((state) => state.theme);
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+  }, [theme]);
 
   return (
     <>

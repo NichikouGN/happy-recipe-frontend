@@ -415,23 +415,23 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
             );
           })}
         </section>
-
-        <section className={styles["comment-section"]} ref={fetchTrigger}>
-          <div className={styles["user-comments"]}>
-            <div></div>
-            <input className={styles["comment-input"]} placeholder="Add a comment..." />
-          </div>
-
-          <div className={styles["comment-list"]}>
-            <Comments
-              comments={comments}
-              fetchReplies={fetchReplies}
-              commentInitialized={commentInitialized}
-              layer={0}
-            />
-          </div>
-        </section>
       </main>
+
+      <footer className={styles["comment-section"]} ref={fetchTrigger}>
+        <div className={styles["user-comments"]}>
+          <div></div>
+          <input className={styles["comment-input"]} placeholder="Add a comment..." />
+        </div>
+
+        <div className={styles["comment-list"]}>
+          <Comments
+            comments={comments}
+            fetchReplies={fetchReplies}
+            commentInitialized={commentInitialized}
+            layer={0}
+          />
+        </div>
+      </footer>
     </>
   );
 };
