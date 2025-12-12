@@ -53,11 +53,21 @@ export const fetchDetailedPost: QueryFunction<FullPostStructure, [string, string
   queryKey,
 }) => {
   const [, postId] = queryKey;
+  const { accessToken } = useAuthStore.getState();
+
+  //Build headers
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+    "ngrok-skip-browser-warning": "true",
+  };
+
+  //Add authorization if token exists
+  if (accessToken) {
+    headers["authorization"] = `Bearer ${accessToken}`;
+  }
+
   const res = await fetch(`${import.meta.env.VITE_API_URL}/api/posts/${postId}`, {
-    headers: {
-      "Content-Type": "application/json",
-      "ngrok-skip-browser-warning": "true",
-    },
+    headers: headers,
   });
 
   if (!res.ok) throw new Error("Failed to fetch posts");

@@ -194,12 +194,24 @@
   background: var(--sky-200);
 }
 
+.like-highlight span {
+  color: var(--neutral-900);
+}
+
 .heart-highlight {
   background: var(--red-200);
 }
 
+.heart-highlight span {
+  color: var(--neutral-900);
+}
+
 .yum-highlight {
   background: var(--yellow-200);
+}
+
+.yum-highlight span {
+  color: var(--neutral-900);
 }
 
 .like-icon {

@@ -4,13 +4,21 @@ import styles from "./Post.module.css";
 import { IoClose } from "react-icons/io5";
 import { IoIosShareAlt } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
-import { FaBookmark, FaRegBookmark } from "react-icons/fa";
-import { reactionType } from "../../components/Card/Card";
+import { FaBookmark, FaHeart, FaRegBookmark } from "react-icons/fa";
 import type { CommentStructure, FullPostStructure } from "../../types/PostType";
 import Button from "../../components/Button/Button";
 import Comments from "../../components/Comments/Comments";
 import { formatConsoleError } from "../../consoleError";
 import { Toast } from "../../stores/toastStore";
+import { computeReactionState } from "../../api/posts";
+import { AiFillLike } from "react-icons/ai";
+import { GiForkKnifeSpoon } from "react-icons/gi";
+
+const reactionType = [
+  { reactionType: "like", icon: AiFillLike },
+  { reactionType: "heart", icon: FaHeart },
+  { reactionType: "yum", icon: GiForkKnifeSpoon },
+] as const;
 
 export const Donut = ({ size = 120, strokeWidth = 10, progress = 30, text = "" }) => {
   const radius = (size - strokeWidth) / 2;
@@ -393,7 +401,7 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
           })}
         </section>
 
-        <section className={styles["reaction-wrapper"]}>
+        <section className={`${styles["reaction-wrapper"]}`}>
           {reactionType.map(({ reactionType, icon: Icon }) => {
             return (
               <button
@@ -402,7 +410,12 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
                   detailedPost.userActions.userReaction === reactionType &&
                   styles[`${reactionType}-highlight`]
                 }`}
-                onClick={() => handleUserReaction(detailedPost.postId, reactionType)}
+                onClick={() =>
+                  handleUserReaction(
+                    detailedPost.postId,
+                    computeReactionState(reactionType, detailedPost.userActions.userReaction)
+                  )
+                }
               >
                 <Icon
                   className={`${styles[`${reactionType}-icon`]} ${
@@ -410,28 +423,28 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
                     styles[`${reactionType}-highlight`]
                   }`}
                 />
-                {detailedPost.reactions[reactionType]}
+                <span>{detailedPost.reactions[reactionType]}</span>
               </button>
             );
           })}
         </section>
+
+        <section className={styles["comment-section"]} ref={fetchTrigger}>
+          <div className={styles["user-comments"]}>
+            <div></div>
+            <input className={styles["comment-input"]} placeholder="Add a comment..." />
+          </div>
+
+          <div className={styles["comment-list"]}>
+            <Comments
+              comments={comments}
+              fetchReplies={fetchReplies}
+              commentInitialized={commentInitialized}
+              layer={0}
+            />
+          </div>
+        </section>
       </main>
-
-      <footer className={styles["comment-section"]} ref={fetchTrigger}>
-        <div className={styles["user-comments"]}>
-          <div></div>
-          <input className={styles["comment-input"]} placeholder="Add a comment..." />
-        </div>
-
-        <div className={styles["comment-list"]}>
-          <Comments
-            comments={comments}
-            fetchReplies={fetchReplies}
-            commentInitialized={commentInitialized}
-            layer={0}
-          />
-        </div>
-      </footer>
     </>
   );
 };
