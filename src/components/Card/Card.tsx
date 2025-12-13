@@ -23,13 +23,14 @@ interface CardProps {
   userActions?: UserActions;
   fetchRef?: null;
   rounded?: boolean;
+  excludeReactionSection?: boolean;
   onClick?: () => void;
 }
 
 export const reactionType = [
-  { reactionType: "like", icon: AiFillLike },
-  { reactionType: "heart", icon: FaHeart },
-  { reactionType: "yum", icon: GiForkKnifeSpoon },
+  { reactionType: "like", icon: AiFillLike, color: "var(--sky-500)" },
+  { reactionType: "heart", icon: FaHeart, color: "var(--red-500)" },
+  { reactionType: "yum", icon: GiForkKnifeSpoon, color: "var(--yellow-600)" },
 ] as const;
 
 /**
@@ -53,6 +54,7 @@ const Card = ({
   userActions = { userReaction: null, userBookmark: false },
   fetchRef,
   rounded = false,
+  excludeReactionSection = false,
   onClick,
 }: CardProps) => {
   const { handleUserReaction, handleUserBookmark } = usePosts();
@@ -84,7 +86,9 @@ const Card = ({
             "--post-img": `url('${postImg}')`,
           } as React.CSSProperties
         }
-        className={`${styles["card-item"]} ${cardLoaded ? styles["loaded"] : styles["loading"]}`}
+        className={`${styles["card-item"]} ${cardLoaded ? styles["loaded"] : styles["loading"]} ${
+          rounded ? styles["rounded"] : ""
+        } `}
         onClick={onClick}
       >
         <div className={styles["card-info-wrapper"]}>
@@ -125,44 +129,43 @@ const Card = ({
         </div>
       </button>
 
-      <div className={`${styles["reaction-wrapper"]}`}>
-        {reactionType.map(({ reactionType, icon: Icon }) => {
-          return (
-            <button
-              key={reactionType}
-              className={`${styles["reaction-item"]} ${styles[reactionType]} ${
-                userActions.userReaction === reactionType && styles[`${reactionType}-highlight`]
-              }`}
-              onClick={() =>
-                handleUserReaction(
-                  postId,
-                  computeReactionState(reactionType, userActions.userReaction)
-                )
-              }
-            >
-              <Icon
-                className={`${styles[`${reactionType}-icon`]} ${
-                  userActions.userReaction === reactionType && styles[`${reactionType}-highlight`]
+      {!excludeReactionSection && (
+        <div className={`${styles["reaction-wrapper"]}`}>
+          {reactionType.map(({ reactionType, icon: Icon, color }) => {
+            return (
+              <button
+                key={reactionType}
+                style={{ "--reaction-color": color } as React.CSSProperties}
+                className={`${styles["reaction-item"]} ${
+                  userActions.userReaction === reactionType && styles[`reaction-highlight`]
                 }`}
-              />
-              <span>{reactions[reactionType]}</span>
-            </button>
-          );
-        })}
+                onClick={() =>
+                  handleUserReaction(
+                    postId,
+                    computeReactionState(reactionType, userActions.userReaction)
+                  )
+                }
+              >
+                <Icon className={`${styles["reaction-item-icon"]} `} />
+                <span>{reactions[reactionType]}</span>
+              </button>
+            );
+          })}
 
-        <div style={{ flexGrow: "1" }} />
+          <div style={{ flexGrow: "1" }} />
 
-        <button
-          className={`${styles["reaction-item"]} ${styles["bookmark"]}`}
-          onClick={() => handleUserBookmark(postId, !userActions.userBookmark)}
-        >
-          {userActions.userBookmark ? (
-            <FaBookmark className={styles["bookmark-icon"]} />
-          ) : (
-            <FaRegBookmark className={styles["bookmark-icon"]} />
-          )}
-        </button>
-      </div>
+          <button
+            className={`${styles["reaction-item"]} ${styles["bookmark"]}`}
+            onClick={() => handleUserBookmark(postId, !userActions.userBookmark)}
+          >
+            {userActions.userBookmark ? (
+              <FaBookmark className={styles["bookmark-icon"]} />
+            ) : (
+              <FaRegBookmark className={styles["bookmark-icon"]} />
+            )}
+          </button>
+        </div>
+      )}
     </>
   );
 };

@@ -7,12 +7,7 @@ interface ToggleProps {
   onClick?: () => void;
 }
 
-const Toggle = ({
-  size = "small",
-  variant = "",
-  state = "on",
-  onClick,
-}: ToggleProps) => {
+const Toggle = ({ size = "small", variant = "", state = "on", onClick }: ToggleProps) => {
   return (
     <button
       className={`${styles.toggle} ${styles[size]} ${styles[variant]} ${styles[state]}`}

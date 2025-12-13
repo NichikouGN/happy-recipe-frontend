@@ -14,10 +14,10 @@ import { computeReactionState } from "../../api/posts";
 import { AiFillLike } from "react-icons/ai";
 import { GiForkKnifeSpoon } from "react-icons/gi";
 
-const reactionType = [
-  { reactionType: "like", icon: AiFillLike },
-  { reactionType: "heart", icon: FaHeart },
-  { reactionType: "yum", icon: GiForkKnifeSpoon },
+export const reactionType = [
+  { reactionType: "like", icon: AiFillLike, color: "var(--sky-500)" },
+  { reactionType: "heart", icon: FaHeart, color: "var(--red-500)" },
+  { reactionType: "yum", icon: GiForkKnifeSpoon, color: "var(--yellow-600)" },
 ] as const;
 
 export const Donut = ({ size = 120, strokeWidth = 10, progress = 30, text = "" }) => {
@@ -402,13 +402,14 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
         </section>
 
         <section className={`${styles["reaction-wrapper"]}`}>
-          {reactionType.map(({ reactionType, icon: Icon }) => {
+          {reactionType.map(({ reactionType, icon: Icon, color }) => {
             return (
               <button
                 key={reactionType}
-                className={`${styles["reaction-item"]} ${styles[reactionType]} ${
+                style={{ "--reaction-color": color } as React.CSSProperties}
+                className={`${styles["reaction-item"]} ${
                   detailedPost.userActions.userReaction === reactionType &&
-                  styles[`${reactionType}-highlight`]
+                  styles[`reaction-highlight`]
                 }`}
                 onClick={() =>
                   handleUserReaction(
@@ -417,12 +418,7 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
                   )
                 }
               >
-                <Icon
-                  className={`${styles[`${reactionType}-icon`]} ${
-                    detailedPost.userActions.userReaction === reactionType &&
-                    styles[`${reactionType}-highlight`]
-                  }`}
-                />
+                <Icon className={`${styles["reaction-item-icon"]} `} />
                 <span>{detailedPost.reactions[reactionType]}</span>
               </button>
             );

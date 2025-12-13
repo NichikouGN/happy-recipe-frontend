@@ -1,45 +1,28 @@
+import { Outlet, Navigate } from "react-router-dom";
 import { useAuthStore } from "../../stores/authStore";
-import { useNavigate } from "react-router-dom";
-import React, { useEffect, useState } from "react";
 
 interface ProtectRouteProps {
-  children: React.ReactNode;
-  requireAuthoriazation: "2FA" | "authorized";
+  requireAuthorization: "2FA" | "authorized" | "unauthorized";
+  customRedirectPath?: string;
 }
 
-const ProtectedRoute = ({ children, requireAuthoriazation }: ProtectRouteProps) => {
-  const validateAccessToken = useAuthStore((state) => state.validateAccessToken);
-  const validateTwoFactorToken = useAuthStore((state) => state.validateTwoFactorToken);
-  const [state, setState] = useState<"loading" | "finished">("loading");
-  const [isValid, setIsValid] = useState<boolean>(false);
-  const navigate = useNavigate();
+export default function ProtectedRoute({
+  requireAuthorization,
+  customRedirectPath = "/signin",
+}: ProtectRouteProps) {
+  const signInState = useAuthStore((state) => state.signInState);
 
-  //All route within this component require some form of validation to access
-  //either through access token or temp token (2FA)
-  useEffect(() => {
-    const validate = async () => {
-      let isValid = false;
-
-      if (requireAuthoriazation === "2FA") isValid = await validateTwoFactorToken();
-      else if (requireAuthoriazation === "authorized") isValid = await validateAccessToken();
-
-      if (!isValid) {
-        setIsValid(false);
-        navigate("/login");
-      }
-
-      setIsValid(true);
-      setState("finished");
-    };
-
-    validate();
-  }, [requireAuthoriazation, validateAccessToken, validateTwoFactorToken]);
-
-  if (state === "loading") {
-    return <>Loading</>;
+  if (requireAuthorization === "authorized" && signInState !== "authorized") {
+    return <Navigate to={customRedirectPath} replace />;
   }
 
-  return <>{isValid && children}</>;
-};
+  if (requireAuthorization === "unauthorized" && signInState === "authorized") {
+    return <Navigate to="/" replace />;
+  }
 
-export default ProtectedRoute;
+  if (requireAuthorization === "2FA" && signInState !== "2FA") {
+    return <Navigate to="/signin" replace />;
+  }
+
+  return <Outlet />;
+}

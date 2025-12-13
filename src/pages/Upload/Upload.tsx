@@ -5,6 +5,8 @@ import Preview from "./Preview";
 import { useUserStore } from "../../stores/userStore";
 import type { FullPostStructure } from "../../types/PostType";
 import { Toast } from "../../stores/toastStore";
+import { pushPost } from "../../api/upload";
+import { formatConsoleError } from "../../consoleError";
 
 export interface uploadPostStructure
   extends Omit<
@@ -88,6 +90,32 @@ const Upload = () => {
       });
       return;
     }
+
+    pushPost(uploadPost)
+      .then(() => {
+        Toast({
+          title: "Upload Successful",
+          message: "Your post has been uploaded successfully.",
+          type: "success",
+        });
+        setUploadPost({
+          title: "",
+          coverImgUrl: "",
+          cookTime: 0,
+          servings: 1,
+          difficulty: "easy",
+          description: "",
+          steps: [{ stepNum: 1, stepDesc: "", stepImgURL: "" }],
+        });
+      })
+      .catch((error) => {
+        formatConsoleError("upload.ts", "pushPost", error);
+        Toast({
+          title: "Upload Failed",
+          message: "There was an error uploading your post. Please try again.",
+          type: "error",
+        });
+      });
   }, [uploadPost, Toast]);
 
   return (

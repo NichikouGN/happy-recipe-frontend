@@ -237,74 +237,28 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.25rem;
 
-  padding: 0.25rem;
+  padding: 0.25rem 0.5rem;
   background: var(--theme-card-secondary-bg);
+
+  color: var(--theme-text-secondary);
+  font-size: clamp(0.9rem, 4dvw, 1.2rem);
 
   border-radius: 0.5rem;
   outline: none;
   border: none;
-  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.75), -1px -1px 2px rgba(255, 255, 255, 0.25);
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.24), -1px -1px 2px rgba(255, 255, 255, 0.75);
+
+  transition: color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
-.reaction-item span {
-  color: var(--theme-text-primary);
+[data-theme="dark"] .reaction-item {
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.75), -1px -1px 2px rgba(255, 255, 255, 0.32);
 }
 
-.hide-reaction {
-  opacity: 0%;
-}
-
-.like-highlight {
-  background: var(--sky-200);
-}
-
-.like-highlight span {
-  color: var(--neutral-900);
-}
-
-.heart-highlight {
-  background: var(--red-200);
-}
-
-.heart-highlight span {
-  color: var(--neutral-900);
-}
-
-.yum-highlight {
-  background: var(--yellow-200);
-}
-
-.yum-highlight span {
-  color: var(--neutral-900);
-}
-
-.like-icon {
-  color: var(--theme-text-secondary);
-  font-size: 1.1rem;
-}
-
-.like-icon.like-highlight {
-  color: var(--sky-500);
-}
-
-.heart-icon {
-  color: var(--theme-text-secondary);
-
-  font-size: 1.1rem;
-}
-.heart-icon.heart-highlight {
-  color: var(--red-500);
-}
-
-.yum-icon {
-  color: var(--theme-text-secondary);
-
-  font-size: 1.1rem;
-}
-.yum-icon.yum-highlight {
-  color: var(--yellow-500);
+.reaction-highlight {
+  color: var(--reaction-color);
 }
 
 .comment-section {

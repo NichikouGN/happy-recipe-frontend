@@ -2,16 +2,7 @@ import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
 import { useAuthStore } from "./authStore";
 import { formatConsoleError } from "../consoleError";
-
-interface userInformation {
-  userId: string;
-  username: string;
-  displayName: string;
-  email: string;
-  bio: string;
-  profileImageUrl: string;
-  isVerified: boolean;
-}
+import type { userInformation } from "../types/userType";
 
 interface UserContextType {
   userInformation: userInformation;

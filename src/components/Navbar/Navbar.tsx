@@ -5,8 +5,6 @@ import { RiContactsBookUploadFill } from "react-icons/ri";
 import { Link, useLocation } from "react-router-dom";
 import { useAuthStore } from "../../stores/authStore";
 
-type menuItems = "home" | "discover" | "profile" | "upload";
-
 const navItems = [
   { path: "/", menu: "home", icon: FaHome, label: "Home" },
   {
@@ -31,11 +29,11 @@ export const Navbar = () => {
 
   const location = useLocation();
   const path = location.pathname;
-  let currentMenu: menuItems = "home";
+  let currentMenu = "home";
 
   //Sync navbar with url
   if (path.startsWith("/discover")) currentMenu = "discover";
-  else if (path.startsWith("/profile")) currentMenu = "profile";
+  else if (path.startsWith("/profile")) currentMenu = `profile`;
   else if (path.startsWith("/upload")) currentMenu = "upload";
   else if (path.startsWith("/search")) currentMenu = "discover";
 

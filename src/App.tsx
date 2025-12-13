@@ -16,6 +16,9 @@ import { useUserStore } from "./stores/userStore";
 import { useEffect } from "react";
 import { ToastRenderer } from "./components/Toast/ToastRenderer";
 import { useThemeStore } from "./stores/themeStore";
+import EditProfile from "./pages/EditProfile/EditProfile";
+import Settings from "./pages/Settings/Settings";
+import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 
 const App = () => {
   // Store subscription to fetch user info upon authorization
@@ -32,7 +35,7 @@ const App = () => {
 
   useEffect(() => {
     validateAccessToken();
-  }, [validateAccessToken]);
+  }, []);
 
   // Apply theme to document root
   const theme = useThemeStore((state) => state.theme);
@@ -46,9 +49,6 @@ const App = () => {
       <BrowserRouter>
         <Routes>
           <Route path="/post/:postId" element={<Post />} />
-          <Route path="/signin" element={<Signin />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/signin/2fa" element={<TwoFactorAuth />} />
 
           <Route element={<Layout />}>
             <Route path="/" element={<Home />} />
@@ -59,6 +59,24 @@ const App = () => {
             <Route path="/notices" element={<Notifications />} />
 
             <Route path="/profile" element={<Profile />} />
+            <Route path="/settings" element={<Settings />} />
+          </Route>
+
+          <Route element={<ProtectedRoute requireAuthorization="unauthorized" />}>
+            <Route path="/signin" element={<Signin />} />
+            <Route path="/signup" element={<Signup />} />
+          </Route>
+
+          <Route
+            element={
+              <ProtectedRoute requireAuthorization="authorized" customRedirectPath="/profile" />
+            }
+          >
+            <Route path="/profile/edit" element={<EditProfile />} />
+          </Route>
+
+          <Route element={<ProtectedRoute requireAuthorization="2FA" />}>
+            <Route path="/signin/2fa" element={<TwoFactorAuth />} />
           </Route>
 
           <Route path="*" element={<NotFound />} />

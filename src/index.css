@@ -5,7 +5,8 @@
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
-button {
+button,
+a {
   background: none;
   border: none;
   outline: none;
@@ -79,6 +80,8 @@ body {
   --sky-800: #075985; /* rgb(7, 89, 133) */
   --sky-900: #0c4a6e; /* rgb(12, 74, 110) */
   --sky-950: #082f49; /* rgb(8, 47, 73) */
+
+  background: var(--theme-body-bg);
 }
 
 :root[data-theme="light"] {

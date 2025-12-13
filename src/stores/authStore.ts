@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { queryClient } from "../queryClient";
 import { formatConsoleError } from "../consoleError";
+import { Toast } from "./toastStore";
 
 interface authStoreType {
   accessToken: string;
@@ -121,6 +122,12 @@ export const useAuthStore = create<authStoreType>()(
           const data = await res.json();
           get().setUpToken(data.accessToken, data.refreshToken);
 
+          Toast({
+            title: "Session Renewed",
+            message: "Your session has been renewed successfully.",
+            type: "success",
+          });
+
           return true;
         } catch (e) {
           get().clearToken();
@@ -130,6 +137,8 @@ export const useAuthStore = create<authStoreType>()(
       },
 
       validateTwoFactorToken: async () => {
+        if (!get().twoFactorToken) return false;
+
         try {
           const twoFactorToken = get().twoFactorToken;
           if (!twoFactorToken) return false;

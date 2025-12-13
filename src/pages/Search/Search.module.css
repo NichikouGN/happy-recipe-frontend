@@ -124,7 +124,7 @@
 }
 
 [data-theme="dark"] .search-suggestion-item {
-  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.75), -2px -2px 4px rgba(255, 255, 255, 0.08);
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.75), -2px -2px 4px rgba(255, 255, 255, 0.16);
 }
 
 .search-suggestion-item.red {

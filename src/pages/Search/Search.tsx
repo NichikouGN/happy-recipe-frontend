@@ -141,7 +141,7 @@ const Search = () => {
                   />
                 </form>
 
-                <div
+                <button
                   className={styles["search-input-btn"]}
                   onClick={() => setEngagedAI(!engagedAI)}
                 >
@@ -150,14 +150,14 @@ const Search = () => {
                   ) : (
                     <TbMessageChatbot className={styles["search-input-btn-icon"]} />
                   )}
-                </div>
+                </button>
 
-                <div
+                <button
                   className={styles["search-input-btn"]}
                   onClick={() => handleSearch(searchQuery)}
                 >
                   <FaSearch className={styles["search-input-btn-icon"]} />
-                </div>
+                </button>
               </div>
             </div>
           </main>
