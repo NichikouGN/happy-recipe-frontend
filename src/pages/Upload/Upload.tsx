@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState, type ChangeEvent } from "react";
 import styles from "./Upload.module.css";
-import { IoAdd } from "react-icons/io5";
+import { FaPlus, FaMinus } from "react-icons/fa";
 import Preview from "./Preview";
 import { useUserStore } from "../../stores/userStore";
 import type { FullPostStructure } from "../../types/PostType";
@@ -39,6 +39,20 @@ const Upload = () => {
       ...prev,
       steps: [...prev.steps, { stepNum: prev.steps.length + 1, stepDesc: "", stepImgURL: "" }],
     }));
+  }, []);
+
+  const removeSteps = useCallback(() => {
+    setUploadPost((prev) => {
+      if (prev.steps.length <= 1) return prev;
+      const updatedSteps = prev.steps.slice(0, -1).map((step, index) => ({
+        ...step,
+        stepNum: index + 1,
+      }));
+      return {
+        ...prev,
+        steps: updatedSteps,
+      };
+    });
   }, []);
 
   // Handle step description change
@@ -264,9 +278,14 @@ const Upload = () => {
               {step.stepImgURL && <img className={styles["step-image"]} src={step.stepImgURL} />}
             </div>
           ))}
-          <button className={styles["add-step-button"]} onClick={addSteps}>
-            <IoAdd size={24} />
-          </button>
+          <div className={styles["action-container"]}>
+            <button className={styles["add-step-button"]} onClick={removeSteps}>
+              <FaMinus size={24} />
+            </button>
+            <button className={styles["add-step-button"]} onClick={addSteps}>
+              <FaPlus size={24} />
+            </button>
+          </div>
         </section>
 
         <section

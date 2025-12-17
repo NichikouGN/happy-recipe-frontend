@@ -1,14 +1,14 @@
 import { Toast } from "../stores/toastStore";
 
 export const uploadProfileChanges = async (profileData: {
-  username?: string;
+  displayName?: string;
   bio?: string;
   avatarFile?: File;
 }) => {
   try {
     const formData = new FormData();
-    if (profileData.username) {
-      formData.append("username", profileData.username);
+    if (profileData.displayName) {
+      formData.append("displayName", profileData.displayName);
     }
     if (profileData.bio) {
       formData.append("bio", profileData.bio);

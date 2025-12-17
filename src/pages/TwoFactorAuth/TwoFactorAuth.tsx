@@ -3,8 +3,8 @@ import { useCallback, useEffect, useState, type ChangeEvent, type FormEvent } fr
 import { useAuthStore } from "../../stores/authStore";
 import { IoClose } from "react-icons/io5";
 import Button from "../../components/Button/Button";
-import { useNavigate } from "react-router-dom";
-import styles from "./TwoFactorAuth.module.css";
+import { Link, useNavigate } from "react-router-dom";
+import styles from "../Signin/Signin.module.css";
 
 const TwoFactorAuth = () => {
   const navigate = useNavigate();
@@ -38,16 +38,16 @@ const TwoFactorAuth = () => {
 
   return (
     signInState === "2FA" && (
-      <div className={styles["login-container"]}>
-        <div className={styles["return"]}>
-          <IoClose
-            className={styles["return-icon"]}
-            onClick={() => {
-              setSignInState("unauthorized");
-              navigate("/");
-            }}
-          />
-        </div>
+      <div className={styles["signin-container"]}>
+        <Link
+          to="/"
+          className={styles["return"]}
+          onClick={() => {
+            setSignInState("unauthorized");
+          }}
+        >
+          <IoClose className={styles["return-icon"]} />
+        </Link>
 
         <div className={styles["title"]}>
           <img src="/src/assets/happy-recipe-logo-text.png" className={styles["title-logo"]} />
@@ -56,8 +56,9 @@ const TwoFactorAuth = () => {
 
         <div className={styles["quote"]}>Enter the 2FA code sent to your email</div>
 
-        <div className={styles["log-in-menu"]}>
+        <div className={styles["signin-menu"]}>
           <form
+            className={styles["signin-form"]}
             onSubmit={(event) => {
               handleSubmission(event);
             }}

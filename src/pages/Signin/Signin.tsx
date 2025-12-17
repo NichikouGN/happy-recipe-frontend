@@ -1,10 +1,18 @@
 import { FaUser, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
-import { useCallback, useEffect, useState, type ChangeEvent, type FormEvent } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useAuthStore } from "../../stores/authStore";
 import { IoClose } from "react-icons/io5";
 import styles from "./Signin.module.css";
 import Button from "../../components/Button/Button";
-import { NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const signInSchema = z.object({
+  email: z.email("Invalid email address"),
+  password: z.string().min(8, "Password must be at least 8 characters long"),
+});
 
 const Signin = () => {
   const navigate = useNavigate();
@@ -12,34 +20,26 @@ const Signin = () => {
   const signIn = useAuthStore((state) => state.signIn);
   const signInState = useAuthStore((state) => state.signInState);
 
-  const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+  const [showPassword, setShowPassword] = useState(false);
 
-  //Toggle password show/hide
-  const togglePasswordVisibility = useCallback(() => {
-    setShowPassword(!showPassword);
-  }, [showPassword]);
-
-  //Update email field in real time
-  const handleUsernameChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
-    setEmail(event.target.value);
-  }, []);
-
-  //Update password field in real time
-  const handlePasswordChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
-    setPassword(event.target.value);
-  }, []);
-
-  //Handle submission
-  const handleSubmission = async (event: FormEvent) => {
-    event.preventDefault();
-    if (password.length < 8) {
-      alert("Emails or password are incorrect");
-    }
-
-    await signIn(email, password);
+  const togglePasswordVisibility = () => {
+    setShowPassword((prevState) => !prevState);
   };
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<z.infer<typeof signInSchema>>({
+    resolver: zodResolver(signInSchema),
+  });
+
+  const onSubmit = useCallback(
+    async (data: z.infer<typeof signInSchema>) => {
+      await signIn(data.email, data.password);
+    },
+    [signIn]
+  );
 
   //Forward to page passed on signin state
   useEffect(() => {
@@ -53,46 +53,35 @@ const Signin = () => {
   return (
     signInState === "unauthorized" && (
       <div className={styles["signin-container"]}>
-        <div className={styles["return"]}>
-          <IoClose
-            className={styles["return-icon"]}
-            onClick={() => {
-              navigate("/");
-            }}
-          />
-        </div>
+        <Link to="/" className={styles["return"]}>
+          <IoClose className={styles["return-icon"]} />
+        </Link>
 
         <div className={styles["title"]}>
           <img src="/src/assets/happy-recipe-logo-text.png" className={styles["title-logo"]} />
-          <div className={styles["title-text"]}>Happy Recipe</div>
+          <h1 className={styles["title-text"]}>Happy Recipe</h1>
         </div>
 
-        <div className={styles["quote"]}>
+        <h2 className={styles["quote"]}>
           Sign in to join our community of passionate chefs all around the world
-        </div>
+        </h2>
 
-        <div className={styles["log-in-menu"]}>
-          <form
-            onSubmit={(event) => {
-              handleSubmission(event);
-            }}
-          >
+        <div className={styles["signin-menu"]}>
+          <form className={styles["signin-form"]} onSubmit={handleSubmit(onSubmit)}>
             {/*Email Input*/}
             <div className={styles["input-wrapper"]}>
               <FaUser className={styles["input-icon"]} />
               <input
                 type="text"
                 placeholder="Enter your username"
-                value={email}
                 alt="Enter your username"
                 autoComplete="off"
                 className={styles["input-field"]}
-                onChange={(event) => {
-                  handleUsernameChange(event);
-                }}
+                {...register("email")}
                 // required
-              ></input>
+              />
             </div>
+            {errors.email && <div className={styles["error-text"]}>{errors.email.message}</div>}
 
             {/*Password Input*/}
             <div className={styles["input-wrapper"]}>
@@ -100,15 +89,12 @@ const Signin = () => {
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter your password"
-                value={password}
                 alt="Enter your password"
                 autoComplete="off"
                 className={styles["input-field"]}
-                onChange={(event) => {
-                  handlePasswordChange(event);
-                }}
+                {...register("password")}
                 // required
-              ></input>
+              />
 
               {/* Show/Hide password*/}
               <button
@@ -119,6 +105,9 @@ const Signin = () => {
                 {showPassword ? <FaEye /> : <FaEyeSlash />}
               </button>
             </div>
+            {errors.password && (
+              <div className={styles["error-text"]}>{errors.password.message}</div>
+            )}
 
             {/*Submit*/}
             <Button variant="primary" size="small" type="submit" fullWidth={true}>
@@ -128,7 +117,7 @@ const Signin = () => {
 
           <div className={styles["signup-quote"]}>
             New to Happy Recipe?&nbsp;
-            <NavLink to="/sign-up" className={styles["signup-btn"]}>
+            <NavLink to="/signup" className={styles["signup-btn"]}>
               Sign Up
             </NavLink>
             &nbsp;today

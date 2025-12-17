@@ -1,10 +1,26 @@
 import { FaUser, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
-import { useCallback, useEffect, useState, type ChangeEvent, type FormEvent } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useAuthStore } from "../../stores/authStore";
 import { IoClose } from "react-icons/io5";
-import styles from "./Signup.module.css";
+import styles from "../Signin/Signin.module.css";
 import Button from "../../components/Button/Button";
-import { useNavigate, NavLink } from "react-router-dom";
+import { useNavigate, NavLink, Link } from "react-router-dom";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const signUpSchema = z
+  .object({
+    email: z.email("Invalid email address"),
+    password: z.string().min(8, "Password must be at least 8 characters long"),
+    confirmPassword: z.string().min(8, "Password must be at least 8 characters long"),
+    firstName: z.string().min(1, "First name is required"),
+    lastName: z.string().min(1, "Last name is required"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -15,11 +31,13 @@ const Signup = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
 
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [confirmPassword, setConfirmPassword] = useState<string>("");
-  const [firstName, setFirstName] = useState<string>("");
-  const [lastName, setLastName] = useState<string>("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<z.infer<typeof signUpSchema>>({
+    resolver: zodResolver(signUpSchema),
+  });
 
   //Toggle password show/hide
   const togglePasswordVisibility = useCallback(() => {
@@ -31,48 +49,13 @@ const Signup = () => {
     setShowConfirmPassword(!showConfirmPassword);
   }, [showConfirmPassword]);
 
-  //Update first name in real time
-  const handleFirstNameChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
-    setFirstName(event.target.value);
-  }, []);
-
-  //Update last name in real time
-  const handleLastNameChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
-    setLastName(event.target.value);
-  }, []);
-
-  //Update email in real time
-  const handleUsernameChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
-    setEmail(event.target.value);
-  }, []);
-
-  //Update password in real time
-  const handlePasswordChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
-    setPassword(event.target.value);
-  }, []);
-
-  //Update confirm password in real time
-  const handleConfirmPasswordChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
-    setConfirmPassword(event.target.value);
-  }, []);
-
   //Handle submission
-  const handleSubmission = async (event: FormEvent) => {
-    event.preventDefault();
-
-    if (password !== confirmPassword) return alert("Password does not match");
-
-    if (!email || !password) {
-      return alert("Email and password are required");
-    }
-
-    if (!firstName || !lastName) {
-      return alert("First name and last name is required");
-    }
-
-    // if (email === "admin" && password === "123")
-    signUp(firstName, lastName, email, password);
-  };
+  const obSubmit = useCallback(
+    async (data: z.infer<typeof signUpSchema>) => {
+      // await signUp(data.firstName, data.lastName, data.email, data.password);
+    },
+    [signUp]
+  );
 
   //Reroute base on singin state
   useEffect(() => {
@@ -85,15 +68,10 @@ const Signup = () => {
 
   return (
     signInState === "unauthorized" && (
-      <div className={styles["login-container"]}>
-        <div className={styles["return"]}>
-          <IoClose
-            className={styles["return-icon"]}
-            onClick={() => {
-              navigate("/");
-            }}
-          />
-        </div>
+      <div className={styles["signin-container"]}>
+        <Link to="/" className={styles["return"]}>
+          <IoClose className={styles["return-icon"]} />
+        </Link>
 
         <div className={styles["title"]}>
           <img src="/src/assets/happy-recipe-logo-text.png" className={styles["title-logo"]} />
@@ -104,54 +82,48 @@ const Signup = () => {
           Welcome to our community of passionate chefs all around the world
         </div>
 
-        <div className={styles["log-in-menu"]}>
-          <form
-            onSubmit={(event) => {
-              handleSubmission(event);
-            }}
-          >
+        <div className={styles["signin-menu"]}>
+          <form className={styles["signin-form"]} onSubmit={handleSubmit(obSubmit)}>
             {/*Username Input*/}
 
             <div className={styles["input-wrapper"]}>
               <input
                 type="text"
                 placeholder="First Name"
-                value={firstName}
                 alt="Enter your username"
                 autoComplete="off"
                 className={`${styles["input-field"]} ${styles["name-field"]}`}
-                onChange={(event) => {
-                  handleFirstNameChange(event);
-                }}
+                {...register("firstName")}
               />
 
               <input
                 type="text"
                 placeholder="Last Name"
-                value={lastName}
                 alt="Enter your username"
                 autoComplete="off"
                 className={`${styles["input-field"]} ${styles["name-field"]}`}
-                onChange={(event) => {
-                  handleLastNameChange(event);
-                }}
+                {...register("lastName")}
               />
             </div>
+            {errors.firstName && (
+              <div className={styles["error-text"]}>{errors.firstName.message}</div>
+            )}
+            {errors.lastName && (
+              <div className={styles["error-text"]}>{errors.lastName.message}</div>
+            )}
 
             <div className={styles["input-wrapper"]}>
               <FaUser className={styles["input-icon"]} />
               <input
                 type="text"
                 placeholder="Enter your email"
-                value={email}
                 alt="Enter your username"
                 autoComplete="off"
                 className={styles["input-field"]}
-                onChange={(event) => {
-                  handleUsernameChange(event);
-                }}
-              ></input>
+                {...register("email")}
+              />
             </div>
+            {errors.email && <div className={styles["error-text"]}>{errors.email.message}</div>}
 
             {/*Password Input*/}
             <div className={styles["input-wrapper"]}>
@@ -159,14 +131,11 @@ const Signup = () => {
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter your password"
-                value={password}
                 alt="Enter your password"
                 autoComplete="off"
                 className={styles["input-field"]}
-                onChange={(event) => {
-                  handlePasswordChange(event);
-                }}
-              ></input>
+                {...register("password")}
+              />
 
               {/* Show/Hide password*/}
               <button
@@ -177,20 +146,20 @@ const Signup = () => {
                 {showPassword ? <FaEye /> : <FaEyeSlash />}
               </button>
             </div>
+            {errors.password && (
+              <div className={styles["error-text"]}>{errors.password.message}</div>
+            )}
 
             <div className={styles["input-wrapper"]}>
               <FaLock className={styles["input-icon"]} />
               <input
                 type={showConfirmPassword ? "text" : "password"}
                 placeholder="Retype your password"
-                value={confirmPassword}
                 alt="Enter your username"
                 autoComplete="off"
                 className={styles["input-field"]}
-                onChange={(event) => {
-                  handleConfirmPasswordChange(event);
-                }}
-              ></input>
+                {...register("confirmPassword")}
+              />
 
               <button
                 type="button"
@@ -201,6 +170,10 @@ const Signup = () => {
               </button>
             </div>
 
+            {errors.confirmPassword && (
+              <div className={styles["error-text"]}>{errors.confirmPassword.message}</div>
+            )}
+
             {/*Submit*/}
             <Button variant="primary" size="small" type="submit" fullWidth={true}>
               Sign Up
@@ -209,7 +182,7 @@ const Signup = () => {
 
           <div className={styles["signup-quote"]}>
             Already have an accrount?&nbsp;
-            <NavLink to="/login" className={styles["signup-btn"]}>
+            <NavLink to="/signin" className={styles["signup-btn"]}>
               Log in
             </NavLink>
             &nbsp;now.
