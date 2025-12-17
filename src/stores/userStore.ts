@@ -42,7 +42,6 @@ export const useUserStore = create<UserContextType>()(
           }
 
           const data = await res.json();
-          console.log("Fetched user info:", data);
 
           //Set user information state
           set({

@@ -182,7 +182,6 @@ export const useAuthStore = create<authStoreType>()(
           get().setUpToken(data.accessToken, data.refreshToken);
           get().setTwoFactorToken("");
           queryClient.invalidateQueries();
-          console.log("2FA successful:", data);
 
           return true;
         } catch (e) {
@@ -205,10 +204,8 @@ export const useAuthStore = create<authStoreType>()(
           if (!res.ok) throw get().authError(res.status);
 
           const data = await res.json();
-          console.log("Sign in successful:", data);
 
           if (data.status === "require2FA") {
-            console.log("2FA required");
             get().setTwoFactorToken(data.twoFactorToken);
             get().setSignInState("2FA");
           } else {

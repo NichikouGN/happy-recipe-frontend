@@ -54,6 +54,8 @@
     height: 2rem;
     padding: 0.5rem;
 
+    color: var(--theme-text-primary);
+
     background: var(--theme-body-secondary-bg);
     border-radius: 50%;
 
@@ -79,6 +81,8 @@
   .search-input {
     height: 100%;
     width: 100%;
+
+    color: var(--theme-text-secondary);
 
     border: none;
     outline: none;
@@ -124,7 +128,7 @@
 
   .search-result-count {
     font-weight: bold;
-    color: var(--neutral-900);
+    color: var(--theme-text-secondary);
     text-align: center;
     font-size: clamp(0.75rem, 4dvw, 1rem);
     margin: 0 1rem 1rem;

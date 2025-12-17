@@ -1,4 +1,9 @@
 import { Route, Routes, BrowserRouter } from "react-router-dom";
+import { useAuthStore } from "./stores/authStore";
+import { useUserStore } from "./stores/userStore";
+import { useEffect } from "react";
+import { ToastRenderer } from "./components/Toast/ToastRenderer";
+import { useThemeStore } from "./stores/themeStore";
 import Home from "./pages/Home/Home";
 import Upload from "./pages/Upload/Upload";
 import Notifications from "./pages/Notifications/Notifications";
@@ -11,14 +16,8 @@ import Discover from "./pages/Discover/Discover";
 import Search from "./pages/Search/Search";
 import Post from "./pages/Post/Post";
 import Layout from "./components/Layout/Layout";
-import { useAuthStore } from "./stores/authStore";
-import { useUserStore } from "./stores/userStore";
-import { useEffect } from "react";
-import { ToastRenderer } from "./components/Toast/ToastRenderer";
-import { useThemeStore } from "./stores/themeStore";
 import EditProfile from "./pages/EditProfile/EditProfile";
 import Settings from "./pages/Settings/Settings";
-import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 
 const App = () => {
   // Store subscription to fetch user info upon authorization
@@ -49,6 +48,9 @@ const App = () => {
       <BrowserRouter>
         <Routes>
           <Route path="/post/:postId" element={<Post />} />
+          <Route path="/signin/2fa" element={<TwoFactorAuth />} />
+          <Route path="/signin" element={<Signin />} />
+          <Route path="/signup" element={<Signup />} />
 
           <Route element={<Layout />}>
             <Route path="/" element={<Home />} />
@@ -60,23 +62,8 @@ const App = () => {
 
             <Route path="/profile" element={<Profile />} />
             <Route path="/settings" element={<Settings />} />
-          </Route>
 
-          <Route element={<ProtectedRoute requireAuthorization="unauthorized" />}>
-            <Route path="/signin" element={<Signin />} />
-            <Route path="/signup" element={<Signup />} />
-          </Route>
-
-          <Route
-            element={
-              <ProtectedRoute requireAuthorization="authorized" customRedirectPath="/profile" />
-            }
-          >
             <Route path="/profile/edit" element={<EditProfile />} />
-          </Route>
-
-          <Route element={<ProtectedRoute requireAuthorization="2FA" />}>
-            <Route path="/signin/2fa" element={<TwoFactorAuth />} />
           </Route>
 
           <Route path="*" element={<NotFound />} />

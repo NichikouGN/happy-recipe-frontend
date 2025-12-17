@@ -111,9 +111,6 @@ export const uploadUserAction = async (
   });
 
   if (!res.ok) throw new Error("Action failed");
-
-  const data = await res.json();
-  console.log("Backend Message:", data);
 };
 
 export const computeReactionState = (

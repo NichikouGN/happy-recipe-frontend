@@ -1,4 +1,4 @@
-import { useCallback, useState, type ChangeEvent } from "react";
+import { useCallback, useEffect, useState, type ChangeEvent } from "react";
 import styles from "./Upload.module.css";
 import { IoAdd } from "react-icons/io5";
 import Preview from "./Preview";
@@ -7,6 +7,8 @@ import type { FullPostStructure } from "../../types/PostType";
 import { Toast } from "../../stores/toastStore";
 import { pushPost } from "../../api/upload";
 import { formatConsoleError } from "../../consoleError";
+import { useAuthStore } from "../../stores/authStore";
+import { useNavigate } from "react-router-dom";
 
 export interface uploadPostStructure
   extends Omit<
@@ -16,6 +18,8 @@ export interface uploadPostStructure
 
 const Upload = () => {
   const userInformation = useUserStore((state) => state.userInformation);
+  const signInState = useAuthStore((state) => state.signInState);
+  const navigate = useNavigate();
 
   const [uploadPost, setUploadPost] = useState<uploadPostStructure>({
     title: "",
@@ -117,6 +121,25 @@ const Upload = () => {
         });
       });
   }, [uploadPost, Toast]);
+
+  useEffect(() => {
+    if (signInState !== "authorized") {
+      navigate("/profile");
+    }
+  });
+
+  useEffect(() => {
+    return () => {
+      if (uploadPost.coverImgUrl && uploadPost.coverImgUrl.startsWith("blob:")) {
+        URL.revokeObjectURL(uploadPost.coverImgUrl);
+      }
+      uploadPost.steps.forEach((step) => {
+        if (step.stepImgURL && step.stepImgURL.startsWith("blob:")) {
+          URL.revokeObjectURL(step.stepImgURL);
+        }
+      });
+    };
+  }, [uploadPost]);
 
   return (
     <>

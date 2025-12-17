@@ -79,8 +79,6 @@ export const PostProvider: FC<{ children: ReactNode }> = ({ children }) => {
    */
   const handleUserReaction = useCallback(
     (sourcePost: string, newReaction: ReactionType) => {
-      console.log("Handling reaction:", sourcePost, newReaction);
-
       // Trigger the mutation hook
       if (pendingMutation.current.has(sourcePost)) return;
 

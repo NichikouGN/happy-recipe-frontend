@@ -3,14 +3,96 @@ import { useUserStore } from "../../stores/userStore";
 import styles from "./Profile.module.css";
 import { IoCopySharp, IoSettingsSharp } from "react-icons/io5";
 import { MdEdit } from "react-icons/md";
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import Card from "../../components/Card/Card";
+import type { PostStructure } from "../../types/PostType";
+import { Toast } from "../../stores/toastStore";
 
 const ProfileContent = ({ handleShare }: { handleShare: (text: string) => void }) => {
   const userInformation = useUserStore.getState().userInformation;
-
   const [postListType, setPostListType] = useState<"posts" | "bookmarks">("posts");
+
+  const [bookmarkedPosts, setBookmarkedPosts] = useState<PostStructure[]>([]);
+  const [bookmarkedPage, setBookmarkedPage] = useState(1);
+
+  const [userPosts, setUserPosts] = useState<PostStructure[]>([]);
+  const [userPostsPage, setUserPostsPage] = useState(1);
+
+  const postTrigger = useRef<HTMLDivElement>(null);
+  const bookmarkTrigger = useRef<HTMLDivElement>(null);
+
+  const fetchBookmarkedPosts = useCallback(async () => {
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/profile/${
+          userInformation.userId
+        }/bookmarks?page=${bookmarkedPage}`
+      );
+      const data = await res.json();
+      setBookmarkedPosts(data.bookmarkedPosts);
+    } catch (error) {
+      Toast({ type: "error", title: "Error", message: "Unable to Fetch" });
+    }
+  }, [bookmarkedPage]);
+
+  const fetchUserPosts = useCallback(async () => {
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/profile/${
+          userInformation.userId
+        }/posts?page=${userPostsPage}`
+      );
+      const data = await res.json();
+      setUserPosts(data.userPosts);
+    } catch (error) {
+      Toast({ type: "error", title: "Error", message: "Unable to Fetch" });
+    }
+  }, [userPostsPage]);
+
+  useEffect(() => {
+    const postObserver = new IntersectionObserver(
+      (entries) => {
+        const target = entries[0];
+
+        if (target.isIntersecting) {
+          postObserver.disconnect();
+
+          setUserPostsPage((prev) => prev + 1);
+          fetchUserPosts();
+        }
+      },
+      { threshold: 0.5 } //half of the reference is needed to trigger observer
+    );
+
+    if (postTrigger.current) postObserver.observe(postTrigger.current);
+
+    return () => {
+      if (postObserver) postObserver.disconnect();
+    };
+  }, [postListType]);
+
+  useEffect(() => {
+    const bookmarkObserver = new IntersectionObserver(
+      (entries) => {
+        const target = entries[0];
+
+        if (target.isIntersecting) {
+          bookmarkObserver.disconnect();
+          setBookmarkedPage((prev) => prev + 1);
+          fetchBookmarkedPosts();
+        }
+      },
+      { threshold: 0.5 }
+    );
+
+    if (bookmarkTrigger.current) bookmarkObserver.observe(bookmarkTrigger.current);
+
+    return () => {
+      if (bookmarkObserver) bookmarkObserver.disconnect();
+    };
+  }, [postListType]);
+
   return (
     <>
       <header className={styles["header"]}>
@@ -39,9 +121,8 @@ const ProfileContent = ({ handleShare }: { handleShare: (text: string) => void }
           </div>
         </section>
 
-        <section className={styles["follow-info"]}>
-          <span>Followers</span>
-          <span>Following</span>
+        <section className={styles["bio"]}>
+          <span>{userInformation.bio}</span>
         </section>
 
         <section className={styles["post-list"]}>
@@ -66,18 +147,57 @@ const ProfileContent = ({ handleShare }: { handleShare: (text: string) => void }
           </div>
 
           <div className={styles["post-list-content"]}>
-            {Array.from({ length: 4 }).map((_, i) => {
-              return (
-                <Card
-                  key={i}
-                  postId={i.toString()}
-                  cardType="post"
-                  cardLoaded={false}
-                  excludeReactionSection={true}
-                  rounded={true}
-                />
-              );
-            })}
+            {postListType === "posts"
+              ? userPosts && userPosts.length > 0
+                ? userPosts.map((post, index) => (
+                    <>
+                      <Card
+                        key={post.postId}
+                        postId={post.postId}
+                        cardLoaded={true}
+                        cardType="post"
+                        excludeReactionSection={true}
+                      />
+                      {index === userPosts.length - 4 ? (
+                        <div ref={postTrigger} style={{ height: "0" }} />
+                      ) : undefined}
+                    </>
+                  ))
+                : Array.from({ length: 3 }).map((_, index) => (
+                    <Card
+                      key={`${index}`}
+                      postId={`${index}`}
+                      cardLoaded={false}
+                      cardType="post"
+                      rounded={true}
+                      excludeReactionSection={true}
+                    />
+                  ))
+              : bookmarkedPosts && bookmarkedPosts.length > 0
+              ? bookmarkedPosts.map((post, index) => (
+                  <>
+                    <Card
+                      key={post.postId}
+                      postId={post.postId}
+                      cardLoaded={true}
+                      cardType="post"
+                      excludeReactionSection={true}
+                    />
+                    {index === userPosts.length - 4 ? (
+                      <div ref={bookmarkTrigger} style={{ height: "0" }} />
+                    ) : undefined}
+                  </>
+                ))
+              : Array.from({ length: 3 }).map((_, index) => (
+                  <Card
+                    key={`${index + 3}`}
+                    postId={`${index + 3}`}
+                    cardLoaded={false}
+                    cardType="post"
+                    rounded={true}
+                    excludeReactionSection={true}
+                  />
+                ))}
           </div>
         </section>
       </main>

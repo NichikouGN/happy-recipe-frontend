@@ -130,7 +130,7 @@ const Card = ({
       </button>
 
       {!excludeReactionSection && (
-        <div className={`${styles["reaction-wrapper"]}`}>
+        <div className={`${styles["reaction-wrapper"]} ${rounded ? styles["rounded"] : ""}`}>
           {reactionType.map(({ reactionType, icon: Icon, color }) => {
             return (
               <button

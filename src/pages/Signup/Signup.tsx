@@ -79,142 +79,144 @@ const Signup = () => {
     if (signInState === "2FA") {
       navigate("/authentication");
     } else if (signInState === "authorized") {
-      navigate(-1);
+      navigate("/");
     }
   }, [signInState, navigate]);
 
   return (
-    <div className={styles["login-container"]}>
-      <div className={styles["return"]}>
-        <IoClose
-          className={styles["return-icon"]}
-          onClick={() => {
-            navigate("/");
-          }}
-        />
-      </div>
+    signInState === "unauthorized" && (
+      <div className={styles["login-container"]}>
+        <div className={styles["return"]}>
+          <IoClose
+            className={styles["return-icon"]}
+            onClick={() => {
+              navigate("/");
+            }}
+          />
+        </div>
 
-      <div className={styles["title"]}>
-        <img src="/src/assets/happy-recipe-logo-text.png" className={styles["title-logo"]} />
-        <div className={styles["title-text"]}>Happy Recipe</div>
-      </div>
+        <div className={styles["title"]}>
+          <img src="/src/assets/happy-recipe-logo-text.png" className={styles["title-logo"]} />
+          <div className={styles["title-text"]}>Happy Recipe</div>
+        </div>
 
-      <div className={styles["quote"]}>
-        Welcome to our community of passionate chefs all around the world
-      </div>
+        <div className={styles["quote"]}>
+          Welcome to our community of passionate chefs all around the world
+        </div>
 
-      <div className={styles["log-in-menu"]}>
-        <form
-          onSubmit={(event) => {
-            handleSubmission(event);
-          }}
-        >
-          {/*Username Input*/}
+        <div className={styles["log-in-menu"]}>
+          <form
+            onSubmit={(event) => {
+              handleSubmission(event);
+            }}
+          >
+            {/*Username Input*/}
 
-          <div className={styles["input-wrapper"]}>
-            <input
-              type="text"
-              placeholder="First Name"
-              value={firstName}
-              alt="Enter your username"
-              autoComplete="off"
-              className={`${styles["input-field"]} ${styles["name-field"]}`}
-              onChange={(event) => {
-                handleFirstNameChange(event);
-              }}
-            />
+            <div className={styles["input-wrapper"]}>
+              <input
+                type="text"
+                placeholder="First Name"
+                value={firstName}
+                alt="Enter your username"
+                autoComplete="off"
+                className={`${styles["input-field"]} ${styles["name-field"]}`}
+                onChange={(event) => {
+                  handleFirstNameChange(event);
+                }}
+              />
 
-            <input
-              type="text"
-              placeholder="Last Name"
-              value={lastName}
-              alt="Enter your username"
-              autoComplete="off"
-              className={`${styles["input-field"]} ${styles["name-field"]}`}
-              onChange={(event) => {
-                handleLastNameChange(event);
-              }}
-            />
+              <input
+                type="text"
+                placeholder="Last Name"
+                value={lastName}
+                alt="Enter your username"
+                autoComplete="off"
+                className={`${styles["input-field"]} ${styles["name-field"]}`}
+                onChange={(event) => {
+                  handleLastNameChange(event);
+                }}
+              />
+            </div>
+
+            <div className={styles["input-wrapper"]}>
+              <FaUser className={styles["input-icon"]} />
+              <input
+                type="text"
+                placeholder="Enter your email"
+                value={email}
+                alt="Enter your username"
+                autoComplete="off"
+                className={styles["input-field"]}
+                onChange={(event) => {
+                  handleUsernameChange(event);
+                }}
+              ></input>
+            </div>
+
+            {/*Password Input*/}
+            <div className={styles["input-wrapper"]}>
+              <FaLock className={styles["input-icon"]} />
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter your password"
+                value={password}
+                alt="Enter your password"
+                autoComplete="off"
+                className={styles["input-field"]}
+                onChange={(event) => {
+                  handlePasswordChange(event);
+                }}
+              ></input>
+
+              {/* Show/Hide password*/}
+              <button
+                type="button"
+                className={styles["toggle-password"]}
+                onClick={togglePasswordVisibility}
+              >
+                {showPassword ? <FaEye /> : <FaEyeSlash />}
+              </button>
+            </div>
+
+            <div className={styles["input-wrapper"]}>
+              <FaLock className={styles["input-icon"]} />
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                placeholder="Retype your password"
+                value={confirmPassword}
+                alt="Enter your username"
+                autoComplete="off"
+                className={styles["input-field"]}
+                onChange={(event) => {
+                  handleConfirmPasswordChange(event);
+                }}
+              ></input>
+
+              <button
+                type="button"
+                className={styles["toggle-password"]}
+                onClick={toggleConfirmPasswordVisibility}
+              >
+                {showConfirmPassword ? <FaEye /> : <FaEyeSlash />}
+              </button>
+            </div>
+
+            {/*Submit*/}
+            <Button variant="primary" size="small" type="submit" fullWidth={true}>
+              Sign Up
+            </Button>
+          </form>
+
+          <div className={styles["signup-quote"]}>
+            Already have an accrount?&nbsp;
+            <NavLink to="/login" className={styles["signup-btn"]}>
+              Log in
+            </NavLink>
+            &nbsp;now.
           </div>
-
-          <div className={styles["input-wrapper"]}>
-            <FaUser className={styles["input-icon"]} />
-            <input
-              type="text"
-              placeholder="Enter your email"
-              value={email}
-              alt="Enter your username"
-              autoComplete="off"
-              className={styles["input-field"]}
-              onChange={(event) => {
-                handleUsernameChange(event);
-              }}
-            ></input>
-          </div>
-
-          {/*Password Input*/}
-          <div className={styles["input-wrapper"]}>
-            <FaLock className={styles["input-icon"]} />
-            <input
-              type={showPassword ? "text" : "password"}
-              placeholder="Enter your password"
-              value={password}
-              alt="Enter your password"
-              autoComplete="off"
-              className={styles["input-field"]}
-              onChange={(event) => {
-                handlePasswordChange(event);
-              }}
-            ></input>
-
-            {/* Show/Hide password*/}
-            <button
-              type="button"
-              className={styles["toggle-password"]}
-              onClick={togglePasswordVisibility}
-            >
-              {showPassword ? <FaEye /> : <FaEyeSlash />}
-            </button>
-          </div>
-
-          <div className={styles["input-wrapper"]}>
-            <FaLock className={styles["input-icon"]} />
-            <input
-              type={showConfirmPassword ? "text" : "password"}
-              placeholder="Retype your password"
-              value={confirmPassword}
-              alt="Enter your username"
-              autoComplete="off"
-              className={styles["input-field"]}
-              onChange={(event) => {
-                handleConfirmPasswordChange(event);
-              }}
-            ></input>
-
-            <button
-              type="button"
-              className={styles["toggle-password"]}
-              onClick={toggleConfirmPasswordVisibility}
-            >
-              {showConfirmPassword ? <FaEye /> : <FaEyeSlash />}
-            </button>
-          </div>
-
-          {/*Submit*/}
-          <Button variant="primary" size="small" type="submit" fullWidth={true}>
-            Sign Up
-          </Button>
-        </form>
-
-        <div className={styles["signup-quote"]}>
-          Already have an accrount?&nbsp;
-          <NavLink to="/login" className={styles["signup-btn"]}>
-            Log in
-          </NavLink>
-          &nbsp;now.
         </div>
       </div>
-    </div>
+    )
   );
 };
 

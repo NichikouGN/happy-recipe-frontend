@@ -46,94 +46,96 @@ const Signin = () => {
     if (signInState === "2FA") {
       navigate("/signin/2fa");
     } else if (signInState === "authorized") {
-      navigate(-1);
+      navigate("/");
     }
   }, [signInState, navigate]);
 
   return (
-    <div className={styles["signin-container"]}>
-      <div className={styles["return"]}>
-        <IoClose
-          className={styles["return-icon"]}
-          onClick={() => {
-            navigate("/");
-          }}
-        />
-      </div>
+    signInState === "unauthorized" && (
+      <div className={styles["signin-container"]}>
+        <div className={styles["return"]}>
+          <IoClose
+            className={styles["return-icon"]}
+            onClick={() => {
+              navigate("/");
+            }}
+          />
+        </div>
 
-      <div className={styles["title"]}>
-        <img src="/src/assets/happy-recipe-logo-text.png" className={styles["title-logo"]} />
-        <div className={styles["title-text"]}>Happy Recipe</div>
-      </div>
+        <div className={styles["title"]}>
+          <img src="/src/assets/happy-recipe-logo-text.png" className={styles["title-logo"]} />
+          <div className={styles["title-text"]}>Happy Recipe</div>
+        </div>
 
-      <div className={styles["quote"]}>
-        Sign in to join our community of passionate chefs all around the world
-      </div>
+        <div className={styles["quote"]}>
+          Sign in to join our community of passionate chefs all around the world
+        </div>
 
-      <div className={styles["log-in-menu"]}>
-        <form
-          onSubmit={(event) => {
-            handleSubmission(event);
-          }}
-        >
-          {/*Email Input*/}
-          <div className={styles["input-wrapper"]}>
-            <FaUser className={styles["input-icon"]} />
-            <input
-              type="text"
-              placeholder="Enter your username"
-              value={email}
-              alt="Enter your username"
-              autoComplete="off"
-              className={styles["input-field"]}
-              onChange={(event) => {
-                handleUsernameChange(event);
-              }}
-              // required
-            ></input>
+        <div className={styles["log-in-menu"]}>
+          <form
+            onSubmit={(event) => {
+              handleSubmission(event);
+            }}
+          >
+            {/*Email Input*/}
+            <div className={styles["input-wrapper"]}>
+              <FaUser className={styles["input-icon"]} />
+              <input
+                type="text"
+                placeholder="Enter your username"
+                value={email}
+                alt="Enter your username"
+                autoComplete="off"
+                className={styles["input-field"]}
+                onChange={(event) => {
+                  handleUsernameChange(event);
+                }}
+                // required
+              ></input>
+            </div>
+
+            {/*Password Input*/}
+            <div className={styles["input-wrapper"]}>
+              <FaLock className={styles["input-icon"]} />
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter your password"
+                value={password}
+                alt="Enter your password"
+                autoComplete="off"
+                className={styles["input-field"]}
+                onChange={(event) => {
+                  handlePasswordChange(event);
+                }}
+                // required
+              ></input>
+
+              {/* Show/Hide password*/}
+              <button
+                type="button"
+                className={styles["toggle-password"]}
+                onClick={togglePasswordVisibility}
+              >
+                {showPassword ? <FaEye /> : <FaEyeSlash />}
+              </button>
+            </div>
+
+            {/*Submit*/}
+            <Button variant="primary" size="small" type="submit" fullWidth={true}>
+              Sign In
+            </Button>
+          </form>
+
+          <div className={styles["signup-quote"]}>
+            New to Happy Recipe?&nbsp;
+            <NavLink to="/sign-up" className={styles["signup-btn"]}>
+              Sign Up
+            </NavLink>
+            &nbsp;today
           </div>
-
-          {/*Password Input*/}
-          <div className={styles["input-wrapper"]}>
-            <FaLock className={styles["input-icon"]} />
-            <input
-              type={showPassword ? "text" : "password"}
-              placeholder="Enter your password"
-              value={password}
-              alt="Enter your password"
-              autoComplete="off"
-              className={styles["input-field"]}
-              onChange={(event) => {
-                handlePasswordChange(event);
-              }}
-              // required
-            ></input>
-
-            {/* Show/Hide password*/}
-            <button
-              type="button"
-              className={styles["toggle-password"]}
-              onClick={togglePasswordVisibility}
-            >
-              {showPassword ? <FaEye /> : <FaEyeSlash />}
-            </button>
-          </div>
-
-          {/*Submit*/}
-          <Button variant="primary" size="small" type="submit" fullWidth={true}>
-            Sign In
-          </Button>
-        </form>
-
-        <div className={styles["signup-quote"]}>
-          New to Happy Recipe?&nbsp;
-          <NavLink to="/sign-up" className={styles["signup-btn"]}>
-            Sign Up
-          </NavLink>
-          &nbsp;today
         </div>
       </div>
-    </div>
+    )
   );
 };
 

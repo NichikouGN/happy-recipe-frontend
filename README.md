@@ -16,6 +16,20 @@ To execute the front end, type 'npm run dev' on the into the console and open an
 
 # Version
 
+## v0.8.0 (2025-12-17)
+
+- Introduced some small UI color touch up to majority of the page.
+- Small change to the homepage UI.
+- Rework the UI of the /profile page.
+- Added my posts and bookmarks section to view user own post as well as bookmarked posts.
+- Added /settings page.
+- Added support for dark mode.
+- Added /profile/edit page to customize avatar, display name and bio.
+- Added routing guards to following url:
+  1. /signin, /signup requires unauthorized state.
+  2. /2fa requires 2FA state.
+  3. /profile/edit, /upload requires authorized state.
+
 ## v0.7.1 (2025-12-11)
 
 - Converted majority of react context to zustand.

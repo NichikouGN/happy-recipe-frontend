@@ -7,8 +7,7 @@
   aspect-ratio: 2/1;
   padding: 0.5rem;
 
-  background: var(--theme-card-primary-bg);
-
+  background: var(--neutral-200);
   background-blend-mode: multiply;
   background-size: cover;
   background-repeat: no-repeat;
@@ -25,7 +24,7 @@
 }
 
 .card-item.loaded {
-  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0) 70%),
+  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0)),
     var(--post-img);
 }
 
@@ -98,9 +97,9 @@
 }
 
 .card-title {
-  font-size: clamp(1rem, 4dvw, 1.4rem);
+  font-size: clamp(0.8rem, 4.5dvw, 1.8rem);
   font-weight: bold;
-  color: var(--theme-text-primary);
+  color: var(--neutral-50);
   text-align: left;
 
   display: -webkit-box;
@@ -122,7 +121,7 @@
   height: 50px;
   z-index: 2;
 
-  color: rgba(var(--theme-text-secondary-rgba), 0.8);
+  color: var(--neutral-50);
 
   background: transparent;
 }
@@ -132,8 +131,8 @@
   align-items: center;
   justify-content: center;
 
-  color: rgba(var(--theme-text-primary-rgba), 0.8);
-  font-size: clamp(0.9rem, 3dvw, 1.2rem);
+  color: var(--neutral-50);
+  font-size: clamp(0.6rem, 3.5dvw, 1.5rem);
 }
 
 .other-info-item span {
@@ -161,10 +160,13 @@
 /* Reaction Section */
 .reaction-wrapper {
   display: flex;
-  gap: 0.75rem;
+  align-items: center;
+  gap: 0.5rem;
+
+  height: 100%;
 
   background: var(--theme-card-secondary-bg);
-  padding: 0.5rem 0.5rem 1rem;
+  padding: 0.5rem;
 }
 
 .reaction-item {

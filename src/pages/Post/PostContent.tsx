@@ -141,7 +141,6 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
       }
 
       const data = await res.json();
-      console.log(data);
       SetComments((prev) => {
         const curComments = prev.find((c) => c.commentId === parentCommentID);
         if (curComments) {
@@ -155,10 +154,6 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
       formatConsoleError("PostContent.tsx", "fetchReplies", error);
     }
   };
-
-  useEffect(() => {
-    console.log(comments);
-  }, [comments]);
 
   // Intersection Observer to fetch comments when in view
   useEffect(() => {
