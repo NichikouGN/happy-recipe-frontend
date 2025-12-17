@@ -1,32 +1,51 @@
 import { Link } from "react-router-dom";
 import styles from "./EditProfile.module.css";
 import { IoClose } from "react-icons/io5";
-import type { userInformation } from "../../types/userType";
 import { useUserStore } from "../../stores/userStore";
-import { useCallback, useState, type ChangeEvent } from "react";
 import { uploadProfileChanges } from "../../api/editProfile";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-interface newUserInformation
-  extends Omit<userInformation, "userId" | "username" | "isVerified" | "email"> {}
+const EditProfileSchema = z.object({
+  displayName: z.string().min(3, "Display name must be at least 3 characters long"),
+  bio: z.string().max(160, "Bio must be at most 160 characters long"),
+  profileImageUrl: z.instanceof(File).refine((file) => !file || file.size <= 5000000, {
+    message: "Profile image must be less than 5MB",
+  }),
+});
+
+interface newUserInformation {
+  displayName: string;
+  bio: string;
+  profileImageUrl: File;
+}
 
 const EditProfile = () => {
   const userInformation = useUserStore.getState().userInformation;
 
-  const [newUserInformation, setNewUserInformation] = useState<newUserInformation>({
-    displayName: userInformation.displayName,
-    bio: userInformation.bio || "",
-    profileImageUrl: userInformation.profileImageUrl,
+  const {
+    register,
+    handleSubmit,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm<z.infer<typeof EditProfileSchema>>({
+    resolver: zodResolver(EditProfileSchema),
+    defaultValues: {
+      displayName: userInformation.displayName,
+      bio: userInformation.bio || "",
+    },
   });
 
-  const handleUserProfileImage = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setNewUserInformation((prev) => ({
-        ...prev,
-        profileImageUrl: URL.createObjectURL(file),
-      }));
-    }
-  }, []);
+  const onSubmit = (data: z.infer<typeof EditProfileSchema>) => {
+    const updatedInfo: newUserInformation = {
+      displayName: data.displayName,
+      bio: data.bio,
+      profileImageUrl: data.profileImageUrl ? data.profileImageUrl : new File([], ""),
+    };
+    uploadProfileChanges(updatedInfo);
+  };
 
   return (
     <div className={styles["edit-profile-page"]}>
@@ -43,10 +62,14 @@ const EditProfile = () => {
             className={styles["input"]}
             type="file"
             accept="image/*"
-            onChange={handleUserProfileImage}
+            {...register("profileImageUrl")}
           />
           <img
-            src={newUserInformation.profileImageUrl}
+            src={
+              watch("profileImageUrl") instanceof File
+                ? URL.createObjectURL(watch("profileImageUrl"))
+                : watch("profileImageUrl")
+            }
             className={styles["preview-profile-image"]}
           />
         </section>
@@ -56,13 +79,10 @@ const EditProfile = () => {
         <section className={styles["edit-section"]}>
           <h2>Display Name</h2>
           <input
-            value={newUserInformation.displayName}
             className={styles["input"]}
             type="text"
             placeholder="Enter display name..."
-            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              setNewUserInformation((prev) => ({ ...prev, displayName: e.target.value }))
-            }
+            {...register("displayName")}
           />
         </section>
 
@@ -71,12 +91,9 @@ const EditProfile = () => {
         <section className={styles["edit-section"]}>
           <h2>Bio</h2>
           <textarea
-            value={newUserInformation.bio}
             className={`${styles["input"]} ${styles["bio-input"]}`}
             placeholder="Enter bio..."
-            onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
-              setNewUserInformation((prev) => ({ ...prev, bio: e.target.value }))
-            }
+            {...register("bio")}
           />
         </section>
 
@@ -84,21 +101,16 @@ const EditProfile = () => {
           <button
             className={styles["revert-button"]}
             onClick={() =>
-              setNewUserInformation({
+              reset({
                 displayName: userInformation.displayName,
                 bio: userInformation.bio || "",
-                profileImageUrl: userInformation.profileImageUrl,
+                profileImageUrl: new File([], userInformation.profileImageUrl),
               })
             }
           >
             Revert
           </button>
-          <button
-            className={styles["save-button"]}
-            onClick={() => {
-              uploadProfileChanges(newUserInformation);
-            }}
-          >
+          <button className={styles["save-button"]} onClick={handleSubmit(onSubmit)}>
             Save Changes
           </button>
         </section>
