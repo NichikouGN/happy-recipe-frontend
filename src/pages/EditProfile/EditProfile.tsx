@@ -1,121 +1,132 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styles from "./EditProfile.module.css";
 import { IoClose } from "react-icons/io5";
 import { useUserStore } from "../../stores/userStore";
+import { useCallback, useEffect, useMemo, useState, type ChangeEvent } from "react";
 import { uploadProfileChanges } from "../../api/editProfile";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-
-const EditProfileSchema = z.object({
-  displayName: z.string().min(3, "Display name must be at least 3 characters long"),
-  bio: z.string().max(160, "Bio must be at most 160 characters long"),
-  profileImageUrl: z.instanceof(File).refine((file) => !file || file.size <= 5000000, {
-    message: "Profile image must be less than 5MB",
-  }),
-});
+import { useAuthStore } from "../../stores/authStore";
 
 interface newUserInformation {
   displayName: string;
   bio: string;
-  profileImageUrl: File;
+  profileImageFile: File | null;
 }
 
 const EditProfile = () => {
-  const userInformation = useUserStore.getState().userInformation;
+  const signInState = useAuthStore((state) => state.signInState);
+  const userInformation = useUserStore((state) => state.userInformation);
+  const navigate = useNavigate();
 
-  const {
-    register,
-    handleSubmit,
-    watch,
-    reset,
-    formState: { errors },
-  } = useForm<z.infer<typeof EditProfileSchema>>({
-    resolver: zodResolver(EditProfileSchema),
-    defaultValues: {
-      displayName: userInformation.displayName,
-      bio: userInformation.bio || "",
-    },
+  const [newUserInformation, setNewUserInformation] = useState<newUserInformation>({
+    displayName: userInformation.displayName,
+    bio: userInformation.bio || "",
+    profileImageFile: null,
   });
 
-  const onSubmit = (data: z.infer<typeof EditProfileSchema>) => {
-    const updatedInfo: newUserInformation = {
-      displayName: data.displayName,
-      bio: data.bio,
-      profileImageUrl: data.profileImageUrl ? data.profileImageUrl : new File([], ""),
+  const handleUserProfileImage = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setNewUserInformation((prev) => ({
+        ...prev,
+        profileImageFile: file,
+      }));
+    }
+  }, []);
+
+  const handleSubmission = useCallback(() => {
+    uploadProfileChanges(newUserInformation);
+  }, [newUserInformation]);
+
+  const previewURL = useMemo(() => {
+    return newUserInformation.profileImageFile
+      ? URL.createObjectURL(newUserInformation.profileImageFile)
+      : userInformation.profileImageUrl;
+  }, [newUserInformation.profileImageFile, userInformation.profileImageUrl]);
+
+  const handleRevert = useCallback(() => {
+    setNewUserInformation({
+      displayName: userInformation.displayName,
+      bio: userInformation.bio || "",
+      profileImageFile: null,
+    });
+  }, [userInformation]);
+
+  useEffect(() => {
+    return () => {
+      // Revoke the object URL to avoid memory leaks
+      if (previewURL && previewURL.startsWith("blob:")) {
+        URL.revokeObjectURL(previewURL);
+      }
     };
-    uploadProfileChanges(updatedInfo);
-  };
+  }, [previewURL, newUserInformation.profileImageFile]);
+
+  useEffect(() => {
+    if (signInState !== "authorized") {
+      navigate("/profile");
+    }
+  }, [signInState]);
 
   return (
-    <div className={styles["edit-profile-page"]}>
-      <header className={styles["header"]}>
-        <h1>Edit Profile</h1>
-        <Link to="/profile" className={styles["return-btn"]}>
-          <IoClose className={styles["return-btn-icon"]} />
-        </Link>
-      </header>
-      <main className={styles["content"]}>
-        <section className={styles["edit-section"]}>
-          <h2>Profile Image</h2>
-          <input
-            className={styles["input"]}
-            type="file"
-            accept="image/*"
-            {...register("profileImageUrl")}
-          />
-          <img
-            src={
-              watch("profileImageUrl") instanceof File
-                ? URL.createObjectURL(watch("profileImageUrl"))
-                : watch("profileImageUrl")
-            }
-            className={styles["preview-profile-image"]}
-          />
-        </section>
+    signInState === "authorized" && (
+      <div className={styles["edit-profile-page"]}>
+        <header className={styles["header"]}>
+          <h1>Edit Profile</h1>
+          <Link to="/profile" className={styles["return-btn"]}>
+            <IoClose className={styles["return-btn-icon"]} />
+          </Link>
+        </header>
+        <main className={styles["content"]}>
+          <section className={styles["edit-section"]}>
+            <h2>Profile Image</h2>
+            <input
+              className={styles["input"]}
+              type="file"
+              accept="image/*"
+              onChange={handleUserProfileImage}
+            />
+            <img src={previewURL} className={styles["preview-profile-image"]} />
+          </section>
 
-        <div className={styles["divider"]}>•</div>
+          <div className={styles["divider"]}>•</div>
 
-        <section className={styles["edit-section"]}>
-          <h2>Display Name</h2>
-          <input
-            className={styles["input"]}
-            type="text"
-            placeholder="Enter display name..."
-            {...register("displayName")}
-          />
-        </section>
+          <section className={styles["edit-section"]}>
+            <h2>Display Name</h2>
+            <input
+              value={newUserInformation.displayName}
+              className={styles["input"]}
+              type="text"
+              placeholder="Enter display name..."
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setNewUserInformation((prev) => ({ ...prev, displayName: e.target.value }))
+              }
+            />
+          </section>
 
-        <div className={styles["divider"]}>•</div>
+          <div className={styles["divider"]}>•</div>
 
-        <section className={styles["edit-section"]}>
-          <h2>Bio</h2>
-          <textarea
-            className={`${styles["input"]} ${styles["bio-input"]}`}
-            placeholder="Enter bio..."
-            {...register("bio")}
-          />
-        </section>
+          <section className={styles["edit-section"]}>
+            <h2>Bio</h2>
+            <textarea
+              value={newUserInformation.bio}
+              className={`${styles["input"]} ${styles["bio-input"]}`}
+              placeholder="Enter bio..."
+              onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
+                setNewUserInformation((prev) => ({ ...prev, bio: e.target.value }))
+              }
+            />
+          </section>
 
-        <section className={styles["action-section"]}>
-          <button
-            className={styles["revert-button"]}
-            onClick={() =>
-              reset({
-                displayName: userInformation.displayName,
-                bio: userInformation.bio || "",
-                profileImageUrl: new File([], userInformation.profileImageUrl),
-              })
-            }
-          >
-            Revert
-          </button>
-          <button className={styles["save-button"]} onClick={handleSubmit(onSubmit)}>
-            Save Changes
-          </button>
-        </section>
-      </main>
-    </div>
+          <section className={styles["action-section"]}>
+            <button className={styles["revert-button"]} onClick={handleRevert}>
+              Revert
+            </button>
+            <button className={styles["save-button"]} onClick={handleSubmission}>
+              Save Changes
+            </button>
+          </section>
+        </main>
+      </div>
+    )
   );
 };
 

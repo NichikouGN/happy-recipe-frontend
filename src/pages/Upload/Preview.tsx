@@ -14,9 +14,7 @@ const Preview = ({
   authorName: string;
   setShowPreview: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  const [isCollapsed, setIsCollapsed] = useState(
-    Array(uploadPost.steps.length + 1).fill(false)
-  );
+  const [isCollapsed, setIsCollapsed] = useState(Array(uploadPost.steps.length + 1).fill(false));
 
   const heightRef = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -38,14 +36,11 @@ const Preview = ({
          rgba(0, 0, 0, 0.25) 0%,
          rgba(0, 0, 0, 0.25) 100%
       ),
-       url("${uploadPost.coverImgUrl}")`,
+       url("${uploadPost.coverImgFile && URL.createObjectURL(uploadPost.coverImgFile)}")`,
         }}
       >
         <div className={styles["close-preview-container"]}>
-          <button
-            className={styles["close-preview"]}
-            onClick={() => setShowPreview(false)}
-          >
+          <button className={styles["close-preview"]} onClick={() => setShowPreview(false)}>
             <IoClose size={32} />
           </button>
         </div>
@@ -113,17 +108,13 @@ const Preview = ({
                 heightRef.current[0] = el;
               }}
               style={{
-                height: isCollapsed[0]
-                  ? "0"
-                  : heightRef.current[0]?.scrollHeight,
+                height: isCollapsed[0] ? "0" : heightRef.current[0]?.scrollHeight,
               }}
               className={`${postStyles["card-content"]} ${
                 postStyles[`${isCollapsed[0] ? "collapsed" : "expanded"}`]
               }`}
             >
-              <div className={postStyles["card-content-inner"]}>
-                {uploadPost.description}
-              </div>
+              <div className={postStyles["card-content-inner"]}>{uploadPost.description}</div>
             </div>
           </div>
 
@@ -136,14 +127,10 @@ const Preview = ({
                     handleCollapse(index + 1);
                   }}
                 >
-                  <div className={postStyles["card-title"]}>
-                    Step {item.stepNum}
-                  </div>
+                  <div className={postStyles["card-title"]}>Step {item.stepNum}</div>
                   <IoClose
                     className={`${postStyles["card-title-icon"]} ${
-                      postStyles[
-                        `${isCollapsed[index + 1] ? "collapsed" : "expanded"}`
-                      ]
+                      postStyles[`${isCollapsed[index + 1] ? "collapsed" : "expanded"}`]
                     }`}
                   />
                 </button>
@@ -157,22 +144,18 @@ const Preview = ({
                       : heightRef.current[index + 1]?.scrollHeight,
                   }}
                   className={`${postStyles["card-content"]} ${
-                    postStyles[
-                      `${isCollapsed[index + 1] ? "collapsed" : "expanded"}`
-                    ]
+                    postStyles[`${isCollapsed[index + 1] ? "collapsed" : "expanded"}`]
                   }`}
                 >
-                  {item.stepImgURL && (
+                  {item.stepImgFile && (
                     <img
                       height="auto"
                       className={postStyles["card-image"]}
-                      src={item.stepImgURL}
+                      src={URL.createObjectURL(item.stepImgFile)}
                     />
                   )}
 
-                  <div className={postStyles["card-content-inner"]}>
-                    {item.stepDesc}
-                  </div>
+                  <div className={postStyles["card-content-inner"]}>{item.stepDesc}</div>
                 </div>
               </div>
             );

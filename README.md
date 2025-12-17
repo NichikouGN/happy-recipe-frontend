@@ -10,11 +10,39 @@ This repository contains the front end of the website "Happy Recipe", a project 
 - Dinh Luan (Designer) - 23120059
 - Nhat Khang (Dev) - 23120050
 
-# How to use
+# How to setup
 
-To execute the front end, type 'npm run dev' on the into the console and open any search engine and access [localhost](localhost:5173)
+1. Open up the terminal and type in
+
+```bash
+git clone https://github.com/NichikouGN/happy-recipe-frontend.git
+```
+
+2. After that, run
+
+```bash
+npm install
+```
+
+3. Change the .env file to point to the backend
+
+```js
+VITE_API_URL = "http://localhost:4000"; //default
+```
+
+4. Start up the server
+
+```bash
+npm run dev
+```
 
 # Version
+
+## v0.8.1 (2025-12-17)
+
+- Fixed an issue with /upload page sending a string instead of an image file.
+- Fixed an issue with /profile/edit page sending a string instead of an image file.
+- Migrate /signin and /signup to using react-hook-form with zod.
 
 ## v0.8.0 (2025-12-17)
 
@@ -110,3 +138,7 @@ To execute the front end, type 'npm run dev' on the into the console and open an
 
 - Added components to build the website such as Button, Card.
 - Added the main menu page.
+
+```
+
+```

@@ -3,7 +3,7 @@ import { Toast } from "../stores/toastStore";
 export const uploadProfileChanges = async (profileData: {
   displayName?: string;
   bio?: string;
-  avatarFile?: File;
+  avatarFile?: File | null;
 }) => {
   try {
     const formData = new FormData();

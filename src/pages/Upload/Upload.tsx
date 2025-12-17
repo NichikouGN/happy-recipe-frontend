@@ -3,18 +3,25 @@ import styles from "./Upload.module.css";
 import { FaPlus, FaMinus } from "react-icons/fa";
 import Preview from "./Preview";
 import { useUserStore } from "../../stores/userStore";
-import type { FullPostStructure } from "../../types/PostType";
 import { Toast } from "../../stores/toastStore";
 import { pushPost } from "../../api/upload";
 import { formatConsoleError } from "../../consoleError";
 import { useAuthStore } from "../../stores/authStore";
 import { useNavigate } from "react-router-dom";
 
-export interface uploadPostStructure
-  extends Omit<
-    FullPostStructure,
-    "postId" | "authorID" | "authorName" | "reactions" | "userActions"
-  > {}
+export interface uploadPostStructure {
+  title: string;
+  coverImgFile: File | null;
+  cookTime: number;
+  servings: number;
+  difficulty: "easy" | "medium" | "hard";
+  description: string;
+  steps: {
+    stepNum: number;
+    stepDesc: string;
+    stepImgFile?: File | null;
+  }[];
+}
 
 const Upload = () => {
   const userInformation = useUserStore((state) => state.userInformation);
@@ -23,12 +30,12 @@ const Upload = () => {
 
   const [uploadPost, setUploadPost] = useState<uploadPostStructure>({
     title: "",
-    coverImgUrl: "",
+    coverImgFile: null,
     cookTime: 0,
     servings: 1,
     difficulty: "easy",
     description: "",
-    steps: [{ stepNum: 1, stepDesc: "", stepImgURL: "" }],
+    steps: [{ stepNum: 1, stepDesc: "", stepImgFile: null }],
   });
 
   const [showPreview, setShowPreview] = useState<boolean>(false);
@@ -37,7 +44,7 @@ const Upload = () => {
   const addSteps = useCallback(() => {
     setUploadPost((prev) => ({
       ...prev,
-      steps: [...prev.steps, { stepNum: prev.steps.length + 1, stepDesc: "", stepImgURL: "" }],
+      steps: [...prev.steps, { stepNum: prev.steps.length + 1, stepDesc: "", stepImgFile: null }],
     }));
   }, []);
 
@@ -73,7 +80,7 @@ const Upload = () => {
     if (file) {
       setUploadPost((prev) => {
         const updatedSteps = [...prev.steps];
-        updatedSteps[index].stepImgURL = URL.createObjectURL(file);
+        updatedSteps[index].stepImgFile = file;
         return {
           ...prev,
           steps: updatedSteps,
@@ -88,7 +95,7 @@ const Upload = () => {
     if (file) {
       setUploadPost((prev) => ({
         ...prev,
-        coverImgUrl: URL.createObjectURL(file),
+        coverImgFile: file,
       }));
     }
   }, []);
@@ -99,7 +106,7 @@ const Upload = () => {
       !uploadPost.title ||
       !uploadPost.description ||
       uploadPost.steps.length === 0 ||
-      !uploadPost.coverImgUrl
+      !uploadPost.coverImgFile
     ) {
       Toast({
         title: "Missing Fields",
@@ -118,12 +125,12 @@ const Upload = () => {
         });
         setUploadPost({
           title: "",
-          coverImgUrl: "",
+          coverImgFile: null,
           cookTime: 0,
           servings: 1,
           difficulty: "easy",
           description: "",
-          steps: [{ stepNum: 1, stepDesc: "", stepImgURL: "" }],
+          steps: [{ stepNum: 1, stepDesc: "", stepImgFile: null }],
         });
       })
       .catch((error) => {
@@ -142,18 +149,18 @@ const Upload = () => {
     }
   });
 
-  useEffect(() => {
-    return () => {
-      if (uploadPost.coverImgUrl && uploadPost.coverImgUrl.startsWith("blob:")) {
-        URL.revokeObjectURL(uploadPost.coverImgUrl);
-      }
-      uploadPost.steps.forEach((step) => {
-        if (step.stepImgURL && step.stepImgURL.startsWith("blob:")) {
-          URL.revokeObjectURL(step.stepImgURL);
-        }
-      });
-    };
-  }, [uploadPost]);
+  // useEffect(() => {
+  //   return () => {
+  //     if (uploadPost.coverImgFile && uploadPost.coverImgFile.startsWith("blob:")) {
+  //       URL.revokeObjectURL(uploadPost.coverImgFile);
+  //     }
+  //     uploadPost.steps.forEach((step) => {
+  //       if (step.stepImgFile && step.stepImgFile.startsWith("blob:")) {
+  //         URL.revokeObjectURL(step.stepImgFile);
+  //       }
+  //     });
+  //   };
+  // }, [uploadPost]);
 
   return (
     <>
@@ -167,8 +174,12 @@ const Upload = () => {
             onChange={handleHeaderImage}
           />
 
-          {uploadPost.coverImgUrl && (
-            <img src={uploadPost.coverImgUrl} alt="Preview" className={styles["cover-image"]} />
+          {uploadPost.coverImgFile && (
+            <img
+              src={URL.createObjectURL(uploadPost.coverImgFile)}
+              alt="Preview"
+              className={styles["cover-image"]}
+            />
           )}
         </section>
 
@@ -275,7 +286,9 @@ const Upload = () => {
                   onChange={(e: ChangeEvent<HTMLInputElement>) => handleStepImage(index, e)}
                 />
               </div>
-              {step.stepImgURL && <img className={styles["step-image"]} src={step.stepImgURL} />}
+              {step.stepImgFile && (
+                <img className={styles["step-image"]} src={URL.createObjectURL(step.stepImgFile)} />
+              )}
             </div>
           ))}
           <div className={styles["action-container"]}>
@@ -301,12 +314,12 @@ const Upload = () => {
             onClick={() => {
               setUploadPost({
                 title: "",
-                coverImgUrl: "",
+                coverImgFile: null,
                 cookTime: 0,
                 servings: 1,
                 difficulty: "easy",
                 description: "",
-                steps: [{ stepNum: 1, stepDesc: "", stepImgURL: "" }],
+                steps: [{ stepNum: 1, stepDesc: "", stepImgFile: null }],
               });
             }}
           >
