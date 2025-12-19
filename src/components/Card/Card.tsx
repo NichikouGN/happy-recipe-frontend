@@ -1,13 +1,12 @@
 import styles from "./Card.module.css";
 import { FaClock, FaFire, FaBookmark, FaRegBookmark } from "react-icons/fa";
 import { MdDinnerDining } from "react-icons/md";
-import { FaCircleUser, FaHeart } from "react-icons/fa6";
+import { FaCircleUser } from "react-icons/fa6";
 import { LuText } from "react-icons/lu";
-import { AiFillLike } from "react-icons/ai";
-import { GiForkKnifeSpoon } from "react-icons/gi";
 import { usePosts } from "../../context/PostContext";
 import type { Reaction, UserActions } from "../../types/PostType";
-import { computeReactionState } from "../../api/posts";
+import { computeReactionState } from "../../api/discover";
+import { reactionType } from "../../types/PostType";
 
 interface CardProps {
   postId: string;
@@ -26,12 +25,6 @@ interface CardProps {
   excludeReactionSection?: boolean;
   onClick?: () => void;
 }
-
-export const reactionType = [
-  { reactionType: "like", icon: AiFillLike, color: "var(--sky-500)" },
-  { reactionType: "heart", icon: FaHeart, color: "var(--red-500)" },
-  { reactionType: "yum", icon: GiForkKnifeSpoon, color: "var(--yellow-600)" },
-] as const;
 
 /**
  * This components take in all the info to construct a card

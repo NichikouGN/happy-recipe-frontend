@@ -5,8 +5,8 @@
 
   background-color: var(--theme-body-bg);
 
-  width: 100dvw;
-  min-height: 100dvh;
+  width: 100svw;
+  min-height: 100svh;
   padding: 1rem;
 
   background: radial-gradient(circle at 10% 10%, rgba(239, 68, 68, 0.3) 0%, transparent 20%),
@@ -73,7 +73,7 @@
 
   width: 100%;
   padding: 1rem;
-  margin-bottom: calc(7.5dvh + 2rem);
+  margin-bottom: calc(7.5svh + 2rem);
 
   background: rgba(var(--theme-body-secondary-bg-rgba), 0.5);
   backdrop-filter: blur(10px);

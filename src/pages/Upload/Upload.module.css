@@ -1,6 +1,6 @@
 .upload-page {
-  width: 100dvw;
-  margin-bottom: 7.5dvh;
+  width: 100svw;
+  margin-bottom: 7.5svh;
   padding: 1rem;
   background: var(--theme-body-bg);
 }
@@ -118,7 +118,7 @@
 .step-image,
 .cover-image {
   width: 100%;
-  max-height: 28dvh;
+  max-height: 28svh;
   object-fit: cover;
 
   border: 1px solid var(--neutral-500);
@@ -127,7 +127,7 @@
 
 .step-image-preview {
   width: 100%;
-  max-height: 40dvh;
+  max-height: 40svh;
   object-fit: cover;
 }
 
@@ -177,10 +177,10 @@
   align-items: center;
 
   position: fixed;
-  top: 5dvh;
-  left: 5dvw;
-  width: 90dvw;
-  height: calc(100dvh - 17.5dvh);
+  top: 5svh;
+  left: 5svw;
+  width: 90svw;
+  height: calc(100svh - 17.5svh);
 
   background: rgba(0, 0, 0, 0.5);
   border-radius: 0.5rem;

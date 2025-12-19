@@ -5,14 +5,11 @@
   gap: 16px;
 
   position: fixed;
-  width: 100dvw;
-  height: 100dvh;
+  width: 100svw;
+  height: 100svh;
   padding: 1rem;
 
-  background-image: radial-gradient(
-      rgba(0, 0, 0, 0.25) 25%,
-      rgba(0, 0, 0, 0.75) 100%
-    ),
+  background-image: radial-gradient(rgba(0, 0, 0, 0.25) 25%, rgba(0, 0, 0, 0.75) 100%),
     url("/src/assets/search-menu.jpg");
   background-blend-mode: multiply;
   background-size: cover;

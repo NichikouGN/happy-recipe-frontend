@@ -14,7 +14,7 @@ import { useToastStore } from "../stores/toastStore";
  * @returns a posts object with a nextPage cursor`
  */
 export const fetchPosts = async (pageParam: number) => {
-  const { accessToken } = useAuthStore.getState();
+  const accessToken = useAuthStore.getState().accessToken;
 
   //Build headers
   const headers: Record<string, string> = {

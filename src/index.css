@@ -45,6 +45,18 @@ body {
   --red-900: #7f1d1d; /* rgb(127, 29, 29) */
   --red-950: #450a0a; /* rgb(69, 10, 10) */
 
+  --orange-50: #fff7ed; /* rgb(255, 247, 237) */
+  --orange-100: #ffedd5; /* rgb(255, 237, 213) */
+  --orange-200: #fed7aa; /* rgb(254, 215, 170) */
+  --orange-300: #fdba74; /* rgb(253, 186, 116) */
+  --orange-400: #fb923c; /* rgb(251, 146, 60) */
+  --orange-500: #f97316; /* rgb(249, 115, 22) */
+  --orange-600: #ea580c; /* rgb(234, 88, 12) */
+  --orange-700: #c2410c; /* rgb(196, 65, 12) */
+  --orange-800: #9a3412; /* rgb(154, 52, 18) */
+  --orange-900: #7c2d12; /* rgb(124, 45, 18) */
+  --orange-950: #431407; /* rgb(67, 20, 7) */
+
   --yellow-50: #fefce8; /* rgb(254, 252, 232) */
   --yellow-100: #fef9c3; /* rgb(254, 249, 195) */
   --yellow-200: #fef08a; /* rgb(254, 240, 138) */
@@ -82,6 +94,7 @@ body {
   --sky-950: #082f49; /* rgb(8, 47, 73) */
 
   background: var(--theme-body-bg);
+  position: relative;
 }
 
 :root[data-theme="light"] {

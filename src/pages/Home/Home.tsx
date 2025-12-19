@@ -3,9 +3,8 @@ import { useState, useEffect, useMemo } from "react";
 import { FaSquareFacebook, FaSquareGithub, FaYoutube } from "react-icons/fa6";
 import Card from "../../components/Card/Card";
 import { formatConsoleError } from "../../consoleError";
-import { useThemeStore } from "../../stores/themeStore";
 
-interface popularDishStructure {
+interface popularIngredientsStructure {
   id: string;
   title: string;
   coverImg: string;
@@ -36,7 +35,7 @@ const Home = () => {
   const [headerHeight, setHeaderHeight] = useState<number>(0);
 
   //Popular Dish State
-  const [popularDish, setPopularDish] = useState<popularDishStructure[]>([]);
+  const [popularIngredients, setPopularIngredients] = useState<popularIngredientsStructure[]>([]);
   const [loaded, setLoaded] = useState<boolean>(false);
 
   //Parallax Effect - Update scrollY state on scroll;
@@ -68,7 +67,7 @@ const Home = () => {
         if (!res.ok) throw new Error("Unable to fetch popular dish data");
         const data = await res.json();
 
-        setPopularDish(data.popularDish);
+        setPopularIngredients(data.popularIngredients);
       } catch (e) {
         formatConsoleError("Home.tsx", "fetchPopularIngredients", e);
       }
@@ -77,22 +76,15 @@ const Home = () => {
     // fetchPopularIngredients();
   }, []);
 
-  //Set loaded state based on popularDish data
+  //Set loaded state based on popularIngredients data
   useEffect(() => {
-    popularDish.length !== 0 ? setLoaded(true) : setLoaded(false);
-  }, [popularDish]);
+    popularIngredients.length !== 0 ? setLoaded(true) : setLoaded(false);
+  }, [popularIngredients]);
 
   return (
     <div className={styles["container"]}>
       {/*Banner Image with parallax inline styling*/}
-      <header
-        className={styles["header"]}
-        style={{ transform: `translateY(${translateVal}px)` }}
-        onClick={() => {
-          const theme = useThemeStore.getState().theme;
-          useThemeStore.getState().setTheme(theme === "light" ? "dark" : "light");
-        }}
-      >
+      <header className={styles["header"]} style={{ transform: `translateY(${translateVal}px)` }}>
         <h1 className={styles["header-title"]}>
           Bring&nbsp;
           <span style={{ color: "#ef4444", fontWeight: "900" }}>joy</span>
@@ -108,7 +100,7 @@ const Home = () => {
 
             <div className={styles["popular-dish-container"]}>
               {loaded
-                ? popularDish.map((item) => {
+                ? popularIngredients.map((item) => {
                     return (
                       <Card
                         key={item.id}

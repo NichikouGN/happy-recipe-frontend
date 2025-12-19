@@ -3,14 +3,15 @@ import { useUserStore } from "../../stores/userStore";
 import styles from "./Profile.module.css";
 import { IoCopySharp, IoSettingsSharp } from "react-icons/io5";
 import { MdEdit } from "react-icons/md";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import Card from "../../components/Card/Card";
 import type { PostStructure } from "../../types/PostType";
-import { Toast } from "../../stores/toastStore";
+import { handleUIDShare } from "../../utils/Profile";
+import { fetchBookmarkedPosts, fetchUserPosts } from "../../api/profile";
 
-const ProfileContent = ({ handleShare }: { handleShare: (text: string) => void }) => {
-  const userInformation = useUserStore.getState().userInformation;
+const ProfileContent = () => {
+  const userInformation = useUserStore((state) => state.userInformation);
   const [postListType, setPostListType] = useState<"posts" | "bookmarks">("posts");
 
   const [bookmarkedPosts, setBookmarkedPosts] = useState<PostStructure[]>([]);
@@ -22,33 +23,16 @@ const ProfileContent = ({ handleShare }: { handleShare: (text: string) => void }
   const postTrigger = useRef<HTMLDivElement>(null);
   const bookmarkTrigger = useRef<HTMLDivElement>(null);
 
-  const fetchBookmarkedPosts = useCallback(async () => {
-    try {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/profile/${
-          userInformation.userId
-        }/bookmarks?page=${bookmarkedPage}`
-      );
-      const data = await res.json();
-      setBookmarkedPosts(data.bookmarkedPosts);
-    } catch (error) {
-      Toast({ type: "error", title: "Error", message: "Unable to Fetch" });
-    }
-  }, [bookmarkedPage]);
+  // Initial fetch
+  useEffect(() => {
+    if (!userInformation.userId) return;
 
-  const fetchUserPosts = useCallback(async () => {
-    try {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/profile/${
-          userInformation.userId
-        }/posts?page=${userPostsPage}`
-      );
-      const data = await res.json();
-      setUserPosts(data.userPosts);
-    } catch (error) {
-      Toast({ type: "error", title: "Error", message: "Unable to Fetch" });
-    }
-  }, [userPostsPage]);
+    fetchUserPosts(userInformation.userId, 1, setUserPosts);
+    setUserPostsPage(1);
+
+    fetchBookmarkedPosts(userInformation.userId, 1, setBookmarkedPosts);
+    setBookmarkedPage(1);
+  }, [userInformation]);
 
   useEffect(() => {
     const postObserver = new IntersectionObserver(
@@ -59,7 +43,7 @@ const ProfileContent = ({ handleShare }: { handleShare: (text: string) => void }
           postObserver.disconnect();
 
           setUserPostsPage((prev) => prev + 1);
-          fetchUserPosts();
+          fetchUserPosts(userInformation.userId, userPostsPage, setUserPosts);
         }
       },
       { threshold: 0.5 } //half of the reference is needed to trigger observer
@@ -80,7 +64,7 @@ const ProfileContent = ({ handleShare }: { handleShare: (text: string) => void }
         if (target.isIntersecting) {
           bookmarkObserver.disconnect();
           setBookmarkedPage((prev) => prev + 1);
-          fetchBookmarkedPosts();
+          fetchBookmarkedPosts(userInformation.userId, bookmarkedPage, setBookmarkedPosts);
         }
       },
       { threshold: 0.5 }
@@ -112,7 +96,7 @@ const ProfileContent = ({ handleShare }: { handleShare: (text: string) => void }
         <section
           className={styles["username"]}
           onClick={() => {
-            handleShare(userInformation.userId);
+            handleUIDShare(userInformation.userId);
           }}
         >
           <div>{userInformation.username}</div>

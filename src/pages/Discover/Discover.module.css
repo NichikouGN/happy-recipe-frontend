@@ -4,8 +4,8 @@
   position: fixed;
   top: 0%;
   left: 0%;
-  width: 100dvw;
-  height: 7.5dvh;
+  width: 100svw;
+  height: 7.5svh;
 
   display: flex;
   justify-content: space-evenly;
@@ -32,7 +32,7 @@
 
 .content {
   grid-area: "content";
-  margin-top: 7.5dvh;
+  margin-top: 7.5svh;
 
   background-color: var(--theme-body-bg);
 }

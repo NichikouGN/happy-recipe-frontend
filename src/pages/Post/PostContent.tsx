@@ -1,70 +1,17 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { usePosts } from "../../context/PostContext";
-import styles from "./Post.module.css";
 import { IoClose } from "react-icons/io5";
 import { IoIosShareAlt } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
-import { FaBookmark, FaHeart, FaRegBookmark } from "react-icons/fa";
+import { FaBookmark, FaRegBookmark } from "react-icons/fa";
 import type { CommentStructure, FullPostStructure } from "../../types/PostType";
+import { reactionType } from "../../types/PostType";
 import Button from "../../components/Button/Button";
 import Comments from "../../components/Comments/Comments";
 import { formatConsoleError } from "../../consoleError";
-import { Toast } from "../../stores/toastStore";
-import { computeReactionState } from "../../api/posts";
-import { AiFillLike } from "react-icons/ai";
-import { GiForkKnifeSpoon } from "react-icons/gi";
-
-export const reactionType = [
-  { reactionType: "like", icon: AiFillLike, color: "var(--sky-500)" },
-  { reactionType: "heart", icon: FaHeart, color: "var(--red-500)" },
-  { reactionType: "yum", icon: GiForkKnifeSpoon, color: "var(--yellow-600)" },
-] as const;
-
-export const Donut = ({ size = 120, strokeWidth = 10, progress = 30, text = "" }) => {
-  const radius = (size - strokeWidth) / 2;
-  const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (progress / 100) * circumference;
-
-  return (
-    <svg width={size} height={size}>
-      {/* Background circle */}
-      <circle
-        cx={size / 2}
-        cy={size / 2}
-        r={radius}
-        stroke="#ddd"
-        strokeWidth={strokeWidth}
-        fill="none"
-      />
-
-      {/* Progress circle */}
-      <circle
-        cx={size / 2}
-        cy={size / 2}
-        r={radius}
-        stroke="#f87171"
-        strokeWidth={strokeWidth}
-        fill="none"
-        strokeDasharray={circumference}
-        strokeDashoffset={offset}
-        strokeLinecap="round"
-        transform={`rotate(-90 ${size / 2} ${size / 2})`} // start from top
-      />
-
-      <text
-        x="50%"
-        y="50%"
-        textAnchor="middle"
-        dominantBaseline="middle"
-        fontSize="1.25rem"
-        fill="black"
-        fontWeight="bolder"
-      >
-        {text}
-      </text>
-    </svg>
-  );
-};
+import { computeReactionState } from "../../api/discover";
+import { Donut, handlePostShare } from "../../utils/Post";
+import styles from "./Post.module.css";
 
 const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
   const { handleUserBookmark, handleUserReaction } = usePosts();
@@ -191,47 +138,6 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
 
   const translateVal = Math.min(headerHeight / 4, scrollY / 4);
 
-  /**
-   * Copy text to clipboard
-   * @param text The text to copy to the clipboard
-   */
-  const copyToClipboard = (text: string) => {
-    const textarea = document.createElement("textarea");
-    textarea.value = text;
-
-    // Prevent keyboard from showing
-    textarea.setAttribute("readonly", "");
-    textarea.style.position = "absolute";
-    textarea.style.left = "-9999px";
-
-    document.body.appendChild(textarea);
-
-    textarea.select();
-    document.execCommand("copy");
-    document.body.removeChild(textarea);
-  };
-
-  // Handle share functionality
-  const handleShare = async () => {
-    if (!navigator.share) {
-      copyToClipboard(window.location.href);
-      Toast({
-        type: "info",
-        title: "Share",
-        message: "Copied link to clipboard",
-      });
-    } else {
-      navigator
-        .share({
-          title: detailedPost.title,
-          url: window.location.href,
-        })
-        .catch((error) => {
-          formatConsoleError("PostContent.tsx", "handleShare", error);
-        });
-    }
-  };
-
   // Handle collapse/expand of card content
   const handleCollapse = useCallback(
     (index: number) => {
@@ -263,7 +169,13 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
             <IoClose className={styles["btn-icon"]} />
           </Button>
 
-          <Button variant="rounded" size="medium" onClick={handleShare}>
+          <Button
+            variant="rounded"
+            size="medium"
+            onClick={() => {
+              handlePostShare(detailedPost.title);
+            }}
+          >
             <IoIosShareAlt className={styles["btn-icon"]} />
           </Button>
         </div>
