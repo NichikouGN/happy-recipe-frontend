@@ -1,10 +1,22 @@
 import { Toast } from "../stores/toastStore";
+import { useAuthStore } from "../stores/authStore";
 
 export const uploadProfileChanges = async (profileData: {
   displayName?: string;
   bio?: string;
   avatarFile?: File | null;
 }) => {
+  const accessToken = useAuthStore.getState().accessToken;
+
+  if (!accessToken) {
+    Toast({
+      type: "error",
+      title: "Authentication Error",
+      message: "You must be signed in to edit your profile.",
+    });
+    return;
+  }
+
   try {
     const formData = new FormData();
     if (profileData.displayName) {
@@ -18,6 +30,9 @@ export const uploadProfileChanges = async (profileData: {
     }
 
     const res = await fetch(`${import.meta.env.VITE_API_URL}/api/profile/edit`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
       method: "POST",
       body: formData,
     });

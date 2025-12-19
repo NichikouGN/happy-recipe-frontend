@@ -38,6 +38,11 @@ npm run dev
 
 # Version
 
+## v0.8.2 (2025-12-19)
+
+- Fixed an issue with /profile page stale data.
+- Fixed an issue with /profile/edit page missing authorization token.
+
 ## v0.8.1 (2025-12-17)
 
 - Fixed an issue with /upload page sending a string instead of an image file.

@@ -3,14 +3,15 @@ import { useUserStore } from "../../stores/userStore";
 import styles from "./Profile.module.css";
 import { IoCopySharp, IoSettingsSharp } from "react-icons/io5";
 import { MdEdit } from "react-icons/md";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Fragment, useCallback, useEffect, useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import Card from "../../components/Card/Card";
 import type { PostStructure } from "../../types/PostType";
 import { Toast } from "../../stores/toastStore";
 
 const ProfileContent = ({ handleShare }: { handleShare: (text: string) => void }) => {
-  const userInformation = useUserStore.getState().userInformation;
+  const navigate = useNavigate();
+  const userInformation = useUserStore((state) => state.userInformation);
   const [postListType, setPostListType] = useState<"posts" | "bookmarks">("posts");
 
   const [bookmarkedPosts, setBookmarkedPosts] = useState<PostStructure[]>([]);
@@ -19,36 +20,75 @@ const ProfileContent = ({ handleShare }: { handleShare: (text: string) => void }
   const [userPosts, setUserPosts] = useState<PostStructure[]>([]);
   const [userPostsPage, setUserPostsPage] = useState(1);
 
+  const [isFetchingPosts, setIsFetchingPosts] = useState(false);
+  const [isFetchingBookmarks, setIsFetchingBookmarks] = useState(false);
+
   const postTrigger = useRef<HTMLDivElement>(null);
   const bookmarkTrigger = useRef<HTMLDivElement>(null);
 
+  // Initial fetch
+  useEffect(() => {
+    if (!userInformation.userId) return;
+
+    console.log("Fetching initial profile content", userInformation.userId);
+
+    setUserPosts([]);
+    setBookmarkedPosts([]);
+
+    setUserPostsPage(1);
+    setBookmarkedPage(1);
+
+    fetchUserPosts();
+    fetchBookmarkedPosts();
+  }, [userInformation.userId]);
+
   const fetchBookmarkedPosts = useCallback(async () => {
+    if (isFetchingBookmarks) return;
+    setIsFetchingBookmarks(true);
     try {
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/api/profile/${
           userInformation.userId
         }/bookmarks?page=${bookmarkedPage}`
       );
-      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const data: { bookmarkedPosts: PostStructure[] } = await res.json();
+      console.log(data);
       setBookmarkedPosts(data.bookmarkedPosts);
     } catch (error) {
       Toast({ type: "error", title: "Error", message: "Unable to Fetch" });
+    } finally {
+      setIsFetchingBookmarks(false);
     }
-  }, [bookmarkedPage]);
+  }, [bookmarkedPage, userInformation.userId]);
 
   const fetchUserPosts = useCallback(async () => {
+    if (isFetchingPosts) return;
+    setIsFetchingPosts(true);
+
     try {
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/api/profile/${
           userInformation.userId
         }/posts?page=${userPostsPage}`
       );
-      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const data: { userPosts: PostStructure[] } = await res.json();
+      console.log(data);
       setUserPosts(data.userPosts);
     } catch (error) {
       Toast({ type: "error", title: "Error", message: "Unable to Fetch" });
+    } finally {
+      setIsFetchingPosts(false);
     }
-  }, [userPostsPage]);
+  }, [userPostsPage, userInformation.userId]);
 
   useEffect(() => {
     const postObserver = new IntersectionObserver(
@@ -147,34 +187,9 @@ const ProfileContent = ({ handleShare }: { handleShare: (text: string) => void }
           </div>
 
           <div className={styles["post-list-content"]}>
-            {postListType === "posts"
-              ? userPosts && userPosts.length > 0
-                ? userPosts.map((post, index) => (
-                    <>
-                      <Card
-                        key={post.postId}
-                        postId={post.postId}
-                        cardLoaded={true}
-                        cardType="post"
-                        excludeReactionSection={true}
-                      />
-                      {index === userPosts.length - 4 ? (
-                        <div ref={postTrigger} style={{ height: "0" }} />
-                      ) : undefined}
-                    </>
-                  ))
-                : Array.from({ length: 3 }).map((_, index) => (
-                    <Card
-                      key={`${index}`}
-                      postId={`${index}`}
-                      cardLoaded={false}
-                      cardType="post"
-                      rounded={true}
-                      excludeReactionSection={true}
-                    />
-                  ))
-              : bookmarkedPosts && bookmarkedPosts.length > 0
-              ? bookmarkedPosts.map((post, index) => (
+            {postListType === "posts" ? (
+              userPosts && userPosts.length > 0 ? (
+                userPosts.map((post, index) => (
                   <>
                     <Card
                       key={post.postId}
@@ -184,20 +199,49 @@ const ProfileContent = ({ handleShare }: { handleShare: (text: string) => void }
                       excludeReactionSection={true}
                     />
                     {index === userPosts.length - 4 ? (
-                      <div ref={bookmarkTrigger} style={{ height: "0" }} />
+                      <div ref={postTrigger} style={{ height: "0" }} />
                     ) : undefined}
                   </>
                 ))
-              : Array.from({ length: 3 }).map((_, index) => (
+              ) : (
+                <div>No posts yet.</div>
+              )
+            ) : bookmarkedPosts && bookmarkedPosts.length > 0 ? (
+              bookmarkedPosts.map((post, index) => (
+                <Fragment key={post.postId}>
                   <Card
-                    key={`${index + 3}`}
-                    postId={`${index + 3}`}
-                    cardLoaded={false}
+                    key={post.postId}
+                    postId={post.postId}
+                    onClick={() => {
+                      navigate(`/post/${post.postId}`);
+                    }}
                     cardType="post"
-                    rounded={true}
+                    cardLoaded={true}
                     excludeReactionSection={true}
+                    postImg={post.coverImgUrl}
+                    title={post.title}
+                    author={post.authorName}
+                    time={post.cookTime}
+                    difficulty={post.difficulty}
+                    serving={post.servings}
                   />
-                ))}
+                  {index === userPosts.length - 4 ? (
+                    <div ref={bookmarkTrigger} style={{ height: "0" }} />
+                  ) : undefined}
+                </Fragment>
+              ))
+            ) : (
+              Array.from({ length: 3 }).map((_, index) => (
+                <Card
+                  key={`${index + 3}`}
+                  postId={`${index + 3}`}
+                  cardLoaded={false}
+                  cardType="post"
+                  rounded={true}
+                  excludeReactionSection={true}
+                />
+              ))
+            )}
           </div>
         </section>
       </main>
