@@ -58,7 +58,7 @@ const Home = () => {
     //Fetch popular dish from backend
     const fetchPopularIngredients = async () => {
       try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/ranking/popular-dish`, {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/posts/discover`, {
           headers: {
             "ngrok-skip-browser-warning": "true",
           },
