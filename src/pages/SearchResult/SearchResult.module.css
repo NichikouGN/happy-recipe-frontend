@@ -31,7 +31,7 @@
 
     font-size: clamp(0.75rem, 4svw, 1rem);
     border: none;
-    border-radius: 0.75rem;
+    border-radius: 3rem;
     outline: none;
 
     background: var(--theme-body-bg);

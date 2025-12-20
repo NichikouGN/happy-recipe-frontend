@@ -3,14 +3,15 @@ import { useUserStore } from "../../stores/userStore";
 import styles from "./Profile.module.css";
 import { IoCopySharp, IoSettingsSharp } from "react-icons/io5";
 import { MdEdit } from "react-icons/md";
-import { use, useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Fragment, useEffect, useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import Card from "../../components/Card/Card";
 import type { PostStructure } from "../../types/PostType";
 import { handleUIDShare } from "../../utils/Profile";
 import { fetchBookmarkedPosts, fetchUserPosts } from "../../api/profile";
 
 const ProfileContent = () => {
+  const navigate = useNavigate();
   const userInformation = useUserStore((state) => state.userInformation);
   const [postListType, setPostListType] = useState<"posts" | "bookmarks">("posts");
 
@@ -27,11 +28,13 @@ const ProfileContent = () => {
   useEffect(() => {
     if (!userInformation.userId) return;
 
-    fetchUserPosts(userInformation.userId, 1, setUserPosts);
+    setUserPosts([]);
     setUserPostsPage(1);
+    fetchUserPosts(userInformation.userId, userPostsPage, setUserPosts);
 
-    fetchBookmarkedPosts(userInformation.userId, 1, setBookmarkedPosts);
+    setBookmarkedPosts([]);
     setBookmarkedPage(1);
+    fetchBookmarkedPosts(userInformation.userId, bookmarkedPage, setBookmarkedPosts);
   }, [userInformation]);
 
   useEffect(() => {
@@ -131,57 +134,73 @@ const ProfileContent = () => {
           </div>
 
           <div className={styles["post-list-content"]}>
-            {postListType === "posts"
-              ? userPosts && userPosts.length > 0
-                ? userPosts.map((post, index) => (
-                    <>
-                      <Card
-                        key={post.postId}
-                        postId={post.postId}
-                        cardLoaded={true}
-                        cardType="post"
-                        excludeReactionSection={true}
-                      />
-                      {index === userPosts.length - 4 ? (
-                        <div ref={postTrigger} style={{ height: "0" }} />
-                      ) : undefined}
-                    </>
-                  ))
-                : Array.from({ length: 3 }).map((_, index) => (
-                    <Card
-                      key={`${index}`}
-                      postId={`${index}`}
-                      cardLoaded={false}
-                      cardType="post"
-                      rounded={true}
-                      excludeReactionSection={true}
-                    />
-                  ))
-              : bookmarkedPosts && bookmarkedPosts.length > 0
-              ? bookmarkedPosts.map((post, index) => (
-                  <>
+            {postListType === "posts" ? (
+              userPosts && userPosts.length > 0 ? (
+                userPosts.map((post, index) => (
+                  <Fragment key={post.postId}>
                     <Card
                       key={post.postId}
                       postId={post.postId}
-                      cardLoaded={true}
+                      onClick={() => {
+                        navigate(`/post/${post.postId}`);
+                      }}
                       cardType="post"
+                      cardLoaded={true}
                       excludeReactionSection={true}
+                      postImg={post.coverImgUrl}
+                      title={post.title}
+                      author={post.authorName}
+                      time={post.cookTime}
+                      difficulty={post.difficulty}
+                      serving={post.servings}
                     />
                     {index === userPosts.length - 4 ? (
-                      <div ref={bookmarkTrigger} style={{ height: "0" }} />
+                      <div ref={postTrigger} style={{ height: "0" }} />
                     ) : undefined}
-                  </>
+                  </Fragment>
                 ))
-              : Array.from({ length: 3 }).map((_, index) => (
+              ) : (
+                <div className={styles["post-list-content-no-result"]}>
+                  You haven't posted anything yet.
+                </div>
+              )
+            ) : bookmarkedPosts && bookmarkedPosts.length > 0 ? (
+              bookmarkedPosts.map((post, index) => (
+                <Fragment key={post.postId}>
                   <Card
-                    key={`${index + 3}`}
-                    postId={`${index + 3}`}
-                    cardLoaded={false}
+                    key={post.postId}
+                    postId={post.postId}
+                    onClick={() => {
+                      navigate(`/post/${post.postId}`);
+                    }}
                     cardType="post"
-                    rounded={true}
+                    cardLoaded={true}
                     excludeReactionSection={true}
+                    postImg={post.coverImgUrl}
+                    title={post.title}
+                    author={post.authorName}
+                    time={post.cookTime}
+                    difficulty={post.difficulty}
+                    serving={post.servings}
+                    rounded={true}
                   />
-                ))}
+                  {index === userPosts.length - 4 ? (
+                    <div ref={bookmarkTrigger} style={{ height: "0" }} />
+                  ) : undefined}
+                </Fragment>
+              ))
+            ) : (
+              Array.from({ length: 3 }).map((_, index) => (
+                <Card
+                  key={`${index + 3}`}
+                  postId={`${index + 3}`}
+                  cardLoaded={false}
+                  cardType="post"
+                  rounded={true}
+                  excludeReactionSection={true}
+                />
+              ))
+            )}
           </div>
         </section>
       </main>

@@ -1,37 +1,46 @@
 import { Toast } from "../stores/toastStore";
+import { useAuthStore } from "../stores/authStore";
 
+/**
+ * Upload profile changes to the backend
+ * @param profileData - Profile changes
+ */
 export const uploadProfileChanges = async (profileData: {
   displayName?: string;
   bio?: string;
   avatarFile?: File | null;
 }) => {
-  try {
-    const formData = new FormData();
-    if (profileData.displayName) {
-      formData.append("displayName", profileData.displayName);
-    }
-    if (profileData.bio) {
-      formData.append("bio", profileData.bio);
-    }
-    if (profileData.avatarFile) {
-      formData.append("avatar", profileData.avatarFile);
-    }
+  const accessToken = useAuthStore.getState().accessToken;
 
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/profile/edit`, {
-      method: "POST",
-      body: formData,
-    });
-
-    if (!res.ok) {
-      throw new Error("Failed to upload profile changes");
-    }
-
-    return res.json();
-  } catch (error) {
+  if (!accessToken) {
     Toast({
       type: "error",
-      title: "Upload Error",
-      message: "Error uploading profile changes. Please try again later",
+      title: "Authentication Error",
+      message: "You must be signed in to edit your profile.",
     });
+    return;
+  }
+
+  const formData = new FormData();
+  if (profileData.displayName) {
+    formData.append("displayName", profileData.displayName);
+  }
+  if (profileData.bio) {
+    formData.append("bio", profileData.bio);
+  }
+  if (profileData.avatarFile) {
+    formData.append("avatar", profileData.avatarFile);
+  }
+
+  const res = await fetch(`${import.meta.env.VITE_API_URL}/api/profile/edit`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+    method: "POST",
+    body: formData,
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to upload profile changes");
   }
 };

@@ -18,7 +18,9 @@ const SearchResult = () => {
       console.log("Fetching search results for query:", searchQuery);
       try {
         const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/search?query=${encodeURIComponent(searchQuery)}`
+          `${import.meta.env.VITE_API_URL}/api/search/results?query=${encodeURIComponent(
+            searchQuery
+          )}`
         );
 
         if (!res.ok) throw new Error("Failed to fetch search results");

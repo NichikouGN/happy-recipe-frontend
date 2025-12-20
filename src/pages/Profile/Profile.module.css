@@ -263,3 +263,11 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.1);
 }
+
+.post-list-content-no-result {
+  align-self: center;
+  justify-self: center;
+
+  font-size: 1.1rem;
+  color: var(--theme-text-primary);
+}

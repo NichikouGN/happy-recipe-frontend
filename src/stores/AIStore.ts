@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { formatConsoleError } from "../consoleError";
 
 interface ChatContent {
   role: "user" | "assistant";
@@ -31,7 +32,6 @@ export const useAIStore = create<AIStoreType>()((set, get) => ({
     {
       role: "assistant",
       content: "Hello! I'm your AI assistant. How can I help you today?",
-      redirect: "xddhub",
     },
   ],
   userInput: "",
@@ -46,6 +46,7 @@ export const useAIStore = create<AIStoreType>()((set, get) => ({
   setUserInput: (input: string) => set({ userInput: input }),
   setAILoading: (loading: boolean) => set({ aiLoading: loading }),
 
+  /*Fetches AI response based on the user input */
   fetchAIResponse: async () => {
     const { chatList, userInput, aiLoading, addChatContent, setAILoading, setUserInput } = get();
 
@@ -56,14 +57,18 @@ export const useAIStore = create<AIStoreType>()((set, get) => ({
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 seconds timeout
+    const contextWindow = 10;
+    const recentChats = chatList.slice(-contextWindow);
+
+    console.log({ chatList: [...recentChats, { role: "user", content: userInput }] });
 
     try {
-      const response = await fetch("/api/ai/chat", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/ai/chat`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ chatList: [...chatList, { role: "user", content: userInput }] }),
+        body: JSON.stringify({ chatList: [...recentChats, { role: "user", content: userInput }] }),
         signal: controller.signal,
       });
 
@@ -71,13 +76,13 @@ export const useAIStore = create<AIStoreType>()((set, get) => ({
         throw new Error(`Error: ${response.statusText}`);
       }
 
-      const data = await response.json();
-      addChatContent({ role: "assistant", content: data.reply });
+      const data: { reply: string; redirect?: string } = await response.json();
+      addChatContent({ role: "assistant", content: data.reply, redirect: data.redirect });
     } catch (error) {
-      console.error("Failed to fetch AI response:", error);
+      formatConsoleError("AiStore", "fetchAIResponse", error);
       addChatContent({
         role: "assistant",
-        content: "Sorry, something went wrong.",
+        content: "Sorry, something went wrong. Please try again later.",
       });
     } finally {
       setAILoading(false);

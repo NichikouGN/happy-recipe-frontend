@@ -8,23 +8,29 @@ import { FaExternalLinkAlt } from "react-icons/fa";
 import { Toast } from "../../stores/toastStore";
 
 const AIChatBox = () => {
+  // Zustand state selectors
   const aiWindowOpen = useAIStore((state) => state.aiWindowOpen);
   const chatList = useAIStore((state) => state.chatList);
   const userInput = useAIStore((state) => state.userInput);
   const setUserInput = useAIStore.getState().setUserInput;
   const aiLoading = useAIStore((state) => state.aiLoading);
 
+  //Ref for scrolling
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [chatList, aiLoading, aiWindowOpen]);
 
   const handleSubmisison = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (userInput.trim() === "" || aiLoading) return;
 
-    if (userInput.length > 250) {
+    if (userInput.length > 200) {
       Toast({
         type: "error",
         title: "Message Too Long",
-        message: "Your message is too long. Please limit it to 250 characters.",
+        message: "Your message is too long. Please limit it to 200 characters.",
       });
       return;
     }
@@ -102,6 +108,16 @@ const AIChatBox = () => {
                   style={{ color: "var(--red-500)" }}
                 >
                   Dietary restrictions
+                </button>
+
+                <button
+                  className={styles["preset-action-button"]}
+                  onClick={() => {
+                    setUserInput("Fast and easy recipes");
+                  }}
+                  style={{ color: "var(--yellow-500)" }}
+                >
+                  Fast & Easy
                 </button>
               </div>
             )}

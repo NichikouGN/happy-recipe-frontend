@@ -164,17 +164,17 @@
 
   font-size: clamp(0.75rem, 4svw, 1rem);
   border: none;
-  border-radius: 0.75rem;
+  border-radius: 3rem;
   outline: none;
 
   background: var(--theme-body-bg);
-  box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.1), inset -2px -2px 4px rgba(255, 255, 255, 0.9);
+  box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.08), inset -2px -2px 4px rgba(255, 255, 255, 0.9);
 
   animation: search-input-container-intro 1s ease-in-out;
 }
 
 [data-theme="dark"] .search-input-container {
-  box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.75), inset -2px -2px 4px rgba(255, 255, 255, 0.16);
+  box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.75), inset -2px -2px 4px rgba(255, 255, 255, 0.08);
 }
 
 @keyframes search-input-container-intro {

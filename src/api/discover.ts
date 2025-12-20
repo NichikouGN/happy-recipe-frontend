@@ -16,18 +16,15 @@ import { useToastStore } from "../stores/toastStore";
 export const fetchPosts = async (pageParam: number) => {
   const accessToken = useAuthStore.getState().accessToken;
 
-  //Build headers
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
     "ngrok-skip-browser-warning": "true",
   };
 
-  //Add authorization if token exists
   if (accessToken) {
     headers["authorization"] = `Bearer ${accessToken}`;
   }
 
-  //Fetch posts from backend
   const res = await fetch(`${import.meta.env.VITE_API_URL}/api/posts/discover?page=${pageParam}`, {
     headers: headers,
   });
@@ -35,7 +32,7 @@ export const fetchPosts = async (pageParam: number) => {
   if (!res.ok) throw new Error("Failed to fetch posts");
 
   const data = await res.json();
-  const newPosts: PostStructure[] = data.postList; //Retrieve the list
+  const newPosts: PostStructure[] = data.postList;
 
   return {
     posts: newPosts,
@@ -55,13 +52,11 @@ export const fetchDetailedPost: QueryFunction<FullPostStructure, [string, string
   const [, postId] = queryKey;
   const { accessToken } = useAuthStore.getState();
 
-  //Build headers
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
     "ngrok-skip-browser-warning": "true",
   };
 
-  //Add authorization if token exists
   if (accessToken) {
     headers["authorization"] = `Bearer ${accessToken}`;
   }
@@ -73,7 +68,7 @@ export const fetchDetailedPost: QueryFunction<FullPostStructure, [string, string
   if (!res.ok) throw new Error("Failed to fetch posts");
 
   const data = await res.json();
-  const detailedPost: FullPostStructure = data.post; //Retrieve the list
+  const detailedPost: FullPostStructure = data.post;
 
   return detailedPost;
 };
@@ -90,7 +85,6 @@ export const uploadUserAction = async (
   controller: AbortController,
   { action, postId, newReaction, newBookmark }: ActionPayload
 ) => {
-  //Construct body with full ActionPayload format
   const body = JSON.stringify({
     action,
     postId,
@@ -98,7 +92,6 @@ export const uploadUserAction = async (
     newBookmark,
   });
 
-  //Upload user action to unified endpoint
   const res = await fetch(`${import.meta.env.VITE_API_URL}/api/user-action/user-action`, {
     method: "POST",
     headers: {
@@ -113,19 +106,25 @@ export const uploadUserAction = async (
   if (!res.ok) throw new Error("Action failed");
 };
 
+/**
+ * Compute new reaction state based on user input that will be sent to the backend
+ * @param newReaction
+ * @param currentReaction
+ * @returns
+ */
 export const computeReactionState = (
   newReaction: string | null,
   currentReaction: string | null
 ): ReactionType | null => {
   if (newReaction != "like" && newReaction != "heart" && newReaction != "yum") {
-    return null; // Invalid reaction type
+    return null;
   }
 
   if (currentReaction === newReaction) {
-    return null; // Remove reaction
+    return null;
   }
 
-  return newReaction; // Set new reaction
+  return newReaction;
 };
 
 /**
