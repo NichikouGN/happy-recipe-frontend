@@ -8,7 +8,7 @@ import { useAuthStore } from "../stores/authStore";
 export const uploadProfileChanges = async (profileData: {
   displayName?: string;
   bio?: string;
-  avatarFile?: File | null;
+  profileImageFile?: File | null;
 }) => {
   const accessToken = useAuthStore.getState().accessToken;
 
@@ -28,8 +28,8 @@ export const uploadProfileChanges = async (profileData: {
   if (profileData.bio) {
     formData.append("bio", profileData.bio);
   }
-  if (profileData.avatarFile) {
-    formData.append("avatar", profileData.avatarFile);
+  if (profileData.profileImageFile) {
+    formData.append("avatar", profileData.profileImageFile);
   }
 
   const res = await fetch(`${import.meta.env.VITE_API_URL}/api/profile/edit`, {

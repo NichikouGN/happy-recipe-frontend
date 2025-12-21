@@ -298,8 +298,8 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
                     styles[`${isCollapsed[index + 1] ? "collapsed" : "expanded"}`]
                   }`}
                 >
-                  {item.stepImgURL && (
-                    <img height="auto" className={styles["card-image"]} src={item.stepImgURL} />
+                  {item.stepImgUrl && (
+                    <img height="auto" className={styles["card-image"]} src={item.stepImgUrl} />
                   )}
                   <div className={styles["card-content-inner"]}>{item.stepDesc}</div>
                 </div>

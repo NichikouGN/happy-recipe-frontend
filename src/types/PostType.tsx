@@ -33,7 +33,7 @@ export interface FullPostStructure extends PostStructure {
   steps: {
     stepNum: number;
     stepDesc: string;
-    stepImgURL?: string | undefined;
+    stepImgUrl?: string | undefined;
   }[];
 }
 
