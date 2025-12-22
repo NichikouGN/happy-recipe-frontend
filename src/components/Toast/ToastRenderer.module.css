@@ -4,10 +4,10 @@
   justify-content: center;
 
   position: fixed;
-  top: 1dvh;
-  left: 50dvw;
+  top: 1svh;
+  left: 50svw;
   padding: 0.5rem;
-  max-width: 75dvw;
+  max-width: 75svw;
 
   border-radius: 0.25rem;
   transform: translateX(-50%);
@@ -42,7 +42,7 @@
 
   font-weight: bold;
   text-transform: capitalize;
-  font-size: clamp(0.8rem, 4dvw, 1rem);
+  font-size: clamp(0.8rem, 4svw, 1rem);
 }
 
 .error .title {
@@ -64,7 +64,7 @@
 .message {
   width: 100%;
 
-  font-size: clamp(0.7rem, 3.5dvw, 0.8rem);
+  font-size: clamp(0.7rem, 3.5svw, 0.8rem);
   word-wrap: break-word;
 }
 

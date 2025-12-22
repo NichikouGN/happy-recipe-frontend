@@ -5,6 +5,8 @@ import { useUserStore } from "../../stores/userStore";
 import { useCallback, useEffect, useMemo, useState, type ChangeEvent } from "react";
 import { uploadProfileChanges } from "../../api/editProfile";
 import { useAuthStore } from "../../stores/authStore";
+import { Toast } from "../../stores/toastStore";
+import { AuthError } from "../../errors/AuthError";
 
 interface newUserInformation {
   displayName: string;
@@ -33,9 +35,30 @@ const EditProfile = () => {
     }
   }, []);
 
-  const handleSubmission = useCallback(() => {
-    uploadProfileChanges(newUserInformation);
-  }, [newUserInformation]);
+  const handleSubmission = async () => {
+    try {
+      await uploadProfileChanges(newUserInformation);
+    } catch (error) {
+      if (error instanceof AuthError && error.status === 401) {
+        await useAuthStore.getState().requestNewAccessToken();
+        try {
+          await uploadProfileChanges(newUserInformation);
+        } catch (secondError) {
+          Toast({
+            type: "error",
+            title: "Upload Error",
+            message: "You aren't signed in. Please sign in again",
+          });
+        }
+      } else {
+        Toast({
+          type: "error",
+          title: "Upload Error",
+          message: "Error uploading profile changes. Please try again later",
+        });
+      }
+    }
+  };
 
   const previewURL = useMemo(() => {
     return newUserInformation.profileImageFile

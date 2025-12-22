@@ -7,7 +7,7 @@
 
   position: relative;
   width: 100%;
-  height: 28dvh;
+  height: 28svh;
   padding: 1rem;
 
   background-blend-mode: multiply;
@@ -31,7 +31,7 @@
 }
 
 .btn-icon {
-  font-size: clamp(1.5rem, 7.5dvw, 2rem);
+  font-size: clamp(1.5rem, 7.5svw, 2rem);
   color: var(--theme-text-primary);
 }
 
@@ -44,7 +44,7 @@
 
   position: relative;
   padding: 1rem;
-  margin-top: -5dvh;
+  margin-top: -5svh;
   width: 100%;
 
   border-radius: 20px 20px 0 0 / 16px 16px 0 0;
@@ -78,7 +78,7 @@
 
   color: var(--theme-text-primary);
   font-weight: 900;
-  font-size: clamp(1.25rem, 7dvw, 2rem);
+  font-size: clamp(1.25rem, 7svw, 2rem);
   text-align: center;
 }
 
@@ -94,7 +94,7 @@
 }
 
 .author-group span {
-  font-size: clamp(0.75rem, 4dvw, 1rem);
+  font-size: clamp(0.75rem, 4svw, 1rem);
 }
 
 .info-panel {
@@ -243,7 +243,7 @@
   background: var(--theme-card-secondary-bg);
 
   color: var(--theme-text-secondary);
-  font-size: clamp(0.9rem, 4dvw, 1.2rem);
+  font-size: clamp(0.9rem, 4svw, 1.2rem);
 
   border-radius: 0.5rem;
   outline: none;
@@ -319,7 +319,7 @@
 
 @keyframes content-animation {
   0% {
-    transform: translateY(2.5dvh);
+    transform: translateY(2.5svh);
   }
 
   100% {

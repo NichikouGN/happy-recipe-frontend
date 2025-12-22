@@ -3,9 +3,8 @@
  * @param query what the user is searching for
  * @returns a list of search results
  */
-
 export const fetchSearchSuggestions = async (query: string) => {
-  const res = await fetch(`${import.meta.env.VITE_API_URL}/search?query=${query}`, {
+  const res = await fetch(`${import.meta.env.VITE_API_URL}/api/search/results?query=${query}`, {
     headers: {
       "Content-Type": "application/json",
       "ngrok-skip-browser-warning": "true",

@@ -7,10 +7,11 @@ import { useAuthStore } from "../../stores/authStore";
 import { PiSignOutBold } from "react-icons/pi";
 
 const Settings = () => {
-  const signInState = useAuthStore.getState().signInState;
-  const theme = useThemeStore.getState().theme;
-  const setTheme = useThemeStore.getState().setTheme;
+  const signInState = useAuthStore((state) => state.signInState);
+  const theme = useThemeStore((state) => state.theme);
+  const setTheme = useThemeStore((state) => state.setTheme);
   const navigate = useNavigate();
+
   return (
     <div className={styles["edit-profile-page"]}>
       <header className={styles["header"]}>

@@ -64,7 +64,7 @@
 }
 
 .loading-text-icon {
-  font-size: clamp(2.5rem, 10dvw, 5rem);
+  font-size: clamp(2.5rem, 10svw, 5rem);
   color: rgba(var(--theme-text-secondary-rgba), 0.5);
   font-weight: bold;
 }
@@ -97,7 +97,7 @@
 }
 
 .card-title {
-  font-size: clamp(0.8rem, 4.5dvw, 1.8rem);
+  font-size: clamp(0.8rem, 4.5svw, 1.8rem);
   font-weight: bold;
   color: var(--neutral-50);
   text-align: left;
@@ -132,7 +132,7 @@
   justify-content: center;
 
   color: var(--neutral-50);
-  font-size: clamp(0.6rem, 3.5dvw, 1.5rem);
+  font-size: clamp(0.6rem, 3.5svw, 1.5rem);
 }
 
 .other-info-item span {
@@ -179,7 +179,7 @@
   background: var(--theme-card-secondary-bg);
 
   color: var(--theme-text-secondary);
-  font-size: clamp(0.9rem, 4dvw, 1.2rem);
+  font-size: clamp(0.9rem, 4svw, 1.2rem);
 
   border-radius: 0.5rem;
   outline: none;

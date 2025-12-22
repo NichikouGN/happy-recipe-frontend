@@ -1,7 +1,7 @@
 import styles from "./Upload.module.css";
 import postStyles from "../Post/Post.module.css";
 import { IoClose } from "react-icons/io5";
-import { Donut } from "../Post/PostContent";
+import { Donut } from "../../utils/Post";
 import { useCallback, useRef, useState } from "react";
 import type { uploadPostStructure } from "./Upload";
 

@@ -1,3 +1,7 @@
+import { AiFillLike } from "react-icons/ai";
+import { FaHeart } from "react-icons/fa";
+import { GiForkKnifeSpoon } from "react-icons/gi";
+
 export interface Reaction {
   like: number;
   heart: number;
@@ -29,7 +33,7 @@ export interface FullPostStructure extends PostStructure {
   steps: {
     stepNum: number;
     stepDesc: string;
-    stepImgURL?: string | undefined;
+    stepImgUrl?: string | undefined;
   }[];
 }
 
@@ -39,6 +43,12 @@ export interface ActionPayload {
   newReaction?: ReactionType;
   newBookmark?: boolean;
 }
+
+export const reactionType = [
+  { reactionType: "like", icon: AiFillLike, color: "var(--sky-500)" },
+  { reactionType: "heart", icon: FaHeart, color: "var(--red-500)" },
+  { reactionType: "yum", icon: GiForkKnifeSpoon, color: "var(--yellow-600)" },
+] as const;
 
 export interface CommentBase {
   commentId: string;

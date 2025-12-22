@@ -5,8 +5,8 @@
 
   background-color: var(--theme-body-bg);
 
-  width: 100dvw;
-  min-height: 100dvh;
+  width: 100svw;
+  min-height: 100svh;
   padding: 1rem;
 
   background: radial-gradient(circle at 10% 10%, rgba(239, 68, 68, 0.3) 0%, transparent 20%),
@@ -68,8 +68,8 @@
 
 .content {
   width: 100%;
-  min-height: 80dvh;
-  padding: 1rem 1rem calc(7.5dvh + 2rem) 1rem;
+  min-height: 80svh;
+  padding: 1rem 1rem calc(7.5svh + 2rem) 1rem;
 
   display: flex;
   flex-direction: column;
@@ -148,7 +148,7 @@
 
 .bio-input {
   align-items: flex-start;
-  height: 20dvh;
+  height: 20svh;
 }
 
 .action-section {

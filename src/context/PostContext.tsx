@@ -12,7 +12,7 @@ import { useToastStore } from "../stores/toastStore";
 import type { FullPostStructure, PostStructure, ReactionType } from "../types/PostType";
 
 //API & Hooks
-import { fetchDetailedPost, fetchPosts, confirmUserAction } from "../api/posts";
+import { fetchDetailedPost, fetchPosts, confirmUserAction } from "../api/discover";
 import { useReactionMutation } from "../hooks/useReactionMutation";
 import { useBookMarkMutation } from "../hooks/useBookMarkMutation";
 

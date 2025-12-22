@@ -38,6 +38,26 @@ npm run dev
 
 # Version
 
+## v0.9.1 (2025-12-21)
+
+- Fixed expired access token not refreshed when uploading post while refresh token is still valid.
+- Fixed expired access token not refreshed when uploading user edit information while refresh token is still valid.
+- Renamed stepImgURL to stepImgUrl in /upload page.
+- Change profileData.avata to profileData.profileImageFile in editProfile.ts.
+
+## v0.9.0 (2025-12-20)
+
+- Overhaul to the /search page. It will now use route instead of state.
+- Added /search/results?query route for the search results page.
+- Change the search api from ~~/search?query~~ to **/search/results?query**. The interface remains the same.
+- Split some of the code block from /profile/edit to its own file to clean up the component.
+- Added an AI chatbot to the website.
+  1. The AI chatbot toggle button will always be visible and accessible outside of settings, profile settings, sign in, sign out, 2fa and post.
+  2. The AI communicate via /api/ai/chat.
+  3. The interface that will be sent over contains the chat history with the context size of 10.
+  4. The expected interface is the respond with redirect (optional).
+  5. Redirect is a button that will perform a search with that query.
+
 ## v0.8.2 (2025-12-19)
 
 - Fixed an issue with /profile page stale data.

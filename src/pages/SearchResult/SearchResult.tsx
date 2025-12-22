@@ -1,43 +1,56 @@
-import React, { Fragment } from "react";
-import { TbMessageChatbot, TbMessageChatbotFilled } from "react-icons/tb";
+import React, { Fragment, useEffect, useState } from "react";
 import styles from "./SearchResult.module.css";
-import { useSearchStore } from "../../stores/searchStore";
 import Card from "../../components/Card/Card";
-import { useNavigate } from "react-router-dom";
-import { FaSearch, FaArrowLeft } from "react-icons/fa";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { FaArrowLeft } from "react-icons/fa";
+import type { PostStructure } from "../../types/PostType";
 
-interface searchResultProps {
-  searchQuery: string;
-  handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleFormSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-  engagedAI: boolean;
-  setEngagedAI: (engaged: boolean) => void;
-  searchInputPlaceholder: string;
-  handleSearch: (query: string) => void;
-  setSearchQuery: (query: string) => void;
-}
-
-const SearchResult = ({
-  searchQuery,
-  handleInputChange,
-  handleFormSubmit,
-  engagedAI,
-  setEngagedAI,
-  searchInputPlaceholder,
-  handleSearch,
-  setSearchQuery,
-}: searchResultProps) => {
-  const searchResults = useSearchStore((state) => state.searchResults);
-  const setEngagedSearch = useSearchStore((state) => state.setEngagedSearch);
+const SearchResult = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const searchQuery = searchParams.get("query") || "";
+
+  const [inputQuery, setInputQuery] = useState<string>(searchQuery);
+  const [searchResults, setSearchResults] = useState<PostStructure[]>([]);
+
+  useEffect(() => {
+    const fetchResulsts = async () => {
+      console.log("Fetching search results for query:", searchQuery);
+      try {
+        const res = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/search/results?query=${encodeURIComponent(
+            searchQuery
+          )}`
+        );
+
+        if (!res.ok) throw new Error("Failed to fetch search results");
+
+        const data = await res.json();
+        setSearchResults(data.searchResults);
+      } catch (error) {
+        setSearchResults([]);
+      }
+    };
+
+    fetchResulsts();
+  }, [searchQuery]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputQuery(e.target.value);
+  };
+
+  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    navigate(`/search/results?query=${encodeURIComponent(inputQuery)}`);
+  };
+
   return (
     <>
       <header className={styles["header"]}>
         <button
           className={styles["return-btn"]}
           onClick={() => {
-            setEngagedSearch(false);
-            setSearchQuery("");
+            navigate("/search");
           }}
         >
           <FaArrowLeft />
@@ -47,25 +60,12 @@ const SearchResult = ({
             <input
               type="text"
               className={styles["search-input"]}
-              placeholder={searchInputPlaceholder}
-              value={searchQuery}
+              value={inputQuery}
               onChange={(e) => {
                 handleInputChange(e);
               }}
             />
           </form>
-
-          <div className={styles["search-input-btn"]} onClick={() => setEngagedAI(!engagedAI)}>
-            {engagedAI ? (
-              <TbMessageChatbotFilled className={styles["search-input-btn-icon"]} />
-            ) : (
-              <TbMessageChatbot className={styles["search-input-btn-icon"]} />
-            )}
-          </div>
-
-          <div className={styles["search-input-btn"]} onClick={() => handleSearch(searchQuery)}>
-            <FaSearch className={styles["search-input-btn-icon"]} />
-          </div>
         </div>
       </header>
 

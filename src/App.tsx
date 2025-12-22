@@ -18,6 +18,8 @@ import Post from "./pages/Post/Post";
 import Layout from "./components/Layout/Layout";
 import EditProfile from "./pages/EditProfile/EditProfile";
 import Settings from "./pages/Settings/Settings";
+import User from "./pages/User/User";
+import SearchResult from "./pages/SearchResult/SearchResult";
 
 const App = () => {
   // Store subscription to fetch user info upon authorization
@@ -29,11 +31,8 @@ const App = () => {
     }
   }, [signInState]);
 
-  // Validate access token on app load
-  const validateAccessToken = useAuthStore((state) => state.validateAccessToken);
-
   useEffect(() => {
-    validateAccessToken();
+    useAuthStore.getState().validateAccessToken();
   }, []);
 
   // Apply theme to document root
@@ -56,15 +55,17 @@ const App = () => {
             <Route path="/" element={<Home />} />
             <Route path="/discover" element={<Discover />} />
             <Route path="/search" element={<Search />} />
+            <Route path="/search/results" element={<SearchResult />} />
 
             <Route path="/upload" element={<Upload />} />
             <Route path="/notices" element={<Notifications />} />
 
             <Route path="/profile" element={<Profile />} />
-            <Route path="/settings" element={<Settings />} />
-
-            <Route path="/profile/edit" element={<EditProfile />} />
           </Route>
+
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/profile/edit" element={<EditProfile />} />
+          <Route path="/user/:userId" element={<User />} />
 
           <Route path="*" element={<NotFound />} />
         </Routes>

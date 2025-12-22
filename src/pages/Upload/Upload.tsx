@@ -8,6 +8,7 @@ import { pushPost } from "../../api/upload";
 import { formatConsoleError } from "../../consoleError";
 import { useAuthStore } from "../../stores/authStore";
 import { useNavigate } from "react-router-dom";
+import { AuthError } from "../../errors/AuthError";
 
 export interface uploadPostStructure {
   title: string;
@@ -101,7 +102,7 @@ const Upload = () => {
   }, []);
 
   // Handle upload
-  const handleUpload = useCallback(() => {
+  const handleUpload = async () => {
     if (
       !uploadPost.title ||
       !uploadPost.description ||
@@ -116,51 +117,38 @@ const Upload = () => {
       return;
     }
 
-    pushPost(uploadPost)
-      .then(() => {
-        Toast({
-          title: "Upload Successful",
-          message: "Your post has been uploaded successfully.",
-          type: "success",
-        });
-        setUploadPost({
-          title: "",
-          coverImgFile: null,
-          cookTime: 0,
-          servings: 1,
-          difficulty: "easy",
-          description: "",
-          steps: [{ stepNum: 1, stepDesc: "", stepImgFile: null }],
-        });
-      })
-      .catch((error) => {
+    try {
+      await pushPost(uploadPost);
+    } catch (error) {
+      if (error instanceof AuthError && error.status === 401) {
+        await useAuthStore.getState().requestNewAccessToken();
+
+        try {
+          await pushPost(uploadPost);
+        } catch (error) {
+          formatConsoleError("upload.ts", "pushPost after token refresh", error);
+          Toast({
+            title: "Upload Failed",
+            message: "You aren't signed in. Please sign in again.",
+            type: "error",
+          });
+        }
+      } else {
         formatConsoleError("upload.ts", "pushPost", error);
         Toast({
           title: "Upload Failed",
           message: "There was an error uploading your post. Please try again.",
           type: "error",
         });
-      });
-  }, [uploadPost, Toast]);
+      }
+    }
+  };
 
   useEffect(() => {
     if (signInState !== "authorized") {
       navigate("/profile");
     }
   });
-
-  // useEffect(() => {
-  //   return () => {
-  //     if (uploadPost.coverImgFile && uploadPost.coverImgFile.startsWith("blob:")) {
-  //       URL.revokeObjectURL(uploadPost.coverImgFile);
-  //     }
-  //     uploadPost.steps.forEach((step) => {
-  //       if (step.stepImgFile && step.stepImgFile.startsWith("blob:")) {
-  //         URL.revokeObjectURL(step.stepImgFile);
-  //       }
-  //     });
-  //   };
-  // }, [uploadPost]);
 
   return (
     <>

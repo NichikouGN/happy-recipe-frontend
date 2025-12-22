@@ -61,9 +61,7 @@ const Comments = ({
         </div>
       ))
     : commentInitialized && (
-        <div style={{ textAlign: "center", padding: "0.5rem" }}>
-          No comments yet.
-        </div>
+        <div style={{ textAlign: "center", padding: "0.5rem" }}>No comments yet.</div>
       );
 };
 

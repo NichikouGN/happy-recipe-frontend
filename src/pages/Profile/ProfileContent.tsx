@@ -3,13 +3,14 @@ import { useUserStore } from "../../stores/userStore";
 import styles from "./Profile.module.css";
 import { IoCopySharp, IoSettingsSharp } from "react-icons/io5";
 import { MdEdit } from "react-icons/md";
-import { Fragment, useCallback, useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Card from "../../components/Card/Card";
 import type { PostStructure } from "../../types/PostType";
-import { Toast } from "../../stores/toastStore";
+import { handleUIDShare } from "../../utils/Profile";
+import { fetchBookmarkedPosts, fetchUserPosts } from "../../api/profile";
 
-const ProfileContent = ({ handleShare }: { handleShare: (text: string) => void }) => {
+const ProfileContent = () => {
   const navigate = useNavigate();
   const userInformation = useUserStore((state) => state.userInformation);
   const [postListType, setPostListType] = useState<"posts" | "bookmarks">("posts");
@@ -20,9 +21,6 @@ const ProfileContent = ({ handleShare }: { handleShare: (text: string) => void }
   const [userPosts, setUserPosts] = useState<PostStructure[]>([]);
   const [userPostsPage, setUserPostsPage] = useState(1);
 
-  const [isFetchingPosts, setIsFetchingPosts] = useState(false);
-  const [isFetchingBookmarks, setIsFetchingBookmarks] = useState(false);
-
   const postTrigger = useRef<HTMLDivElement>(null);
   const bookmarkTrigger = useRef<HTMLDivElement>(null);
 
@@ -30,65 +28,14 @@ const ProfileContent = ({ handleShare }: { handleShare: (text: string) => void }
   useEffect(() => {
     if (!userInformation.userId) return;
 
-    console.log("Fetching initial profile content", userInformation.userId);
-
     setUserPosts([]);
-    setBookmarkedPosts([]);
-
     setUserPostsPage(1);
+    fetchUserPosts(userInformation.userId, userPostsPage, setUserPosts);
+
+    setBookmarkedPosts([]);
     setBookmarkedPage(1);
-
-    fetchUserPosts();
-    fetchBookmarkedPosts();
-  }, [userInformation.userId]);
-
-  const fetchBookmarkedPosts = useCallback(async () => {
-    if (isFetchingBookmarks) return;
-    setIsFetchingBookmarks(true);
-    try {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/profile/${
-          userInformation.userId
-        }/bookmarks?page=${bookmarkedPage}`
-      );
-
-      if (!res.ok) {
-        throw new Error("Network response was not ok");
-      }
-      const data: { bookmarkedPosts: PostStructure[] } = await res.json();
-      console.log(data);
-      setBookmarkedPosts(data.bookmarkedPosts);
-    } catch (error) {
-      Toast({ type: "error", title: "Error", message: "Unable to Fetch" });
-    } finally {
-      setIsFetchingBookmarks(false);
-    }
-  }, [bookmarkedPage, userInformation.userId]);
-
-  const fetchUserPosts = useCallback(async () => {
-    if (isFetchingPosts) return;
-    setIsFetchingPosts(true);
-
-    try {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/profile/${
-          userInformation.userId
-        }/posts?page=${userPostsPage}`
-      );
-
-      if (!res.ok) {
-        throw new Error("Network response was not ok");
-      }
-
-      const data: { userPosts: PostStructure[] } = await res.json();
-      console.log(data);
-      setUserPosts(data.userPosts);
-    } catch (error) {
-      Toast({ type: "error", title: "Error", message: "Unable to Fetch" });
-    } finally {
-      setIsFetchingPosts(false);
-    }
-  }, [userPostsPage, userInformation.userId]);
+    fetchBookmarkedPosts(userInformation.userId, bookmarkedPage, setBookmarkedPosts);
+  }, [userInformation]);
 
   useEffect(() => {
     const postObserver = new IntersectionObserver(
@@ -99,7 +46,7 @@ const ProfileContent = ({ handleShare }: { handleShare: (text: string) => void }
           postObserver.disconnect();
 
           setUserPostsPage((prev) => prev + 1);
-          fetchUserPosts();
+          fetchUserPosts(userInformation.userId, userPostsPage, setUserPosts);
         }
       },
       { threshold: 0.5 } //half of the reference is needed to trigger observer
@@ -120,7 +67,7 @@ const ProfileContent = ({ handleShare }: { handleShare: (text: string) => void }
         if (target.isIntersecting) {
           bookmarkObserver.disconnect();
           setBookmarkedPage((prev) => prev + 1);
-          fetchBookmarkedPosts();
+          fetchBookmarkedPosts(userInformation.userId, bookmarkedPage, setBookmarkedPosts);
         }
       },
       { threshold: 0.5 }
@@ -152,7 +99,7 @@ const ProfileContent = ({ handleShare }: { handleShare: (text: string) => void }
         <section
           className={styles["username"]}
           onClick={() => {
-            handleShare(userInformation.userId);
+            handleUIDShare(userInformation.userId);
           }}
         >
           <div>{userInformation.username}</div>
@@ -190,21 +137,32 @@ const ProfileContent = ({ handleShare }: { handleShare: (text: string) => void }
             {postListType === "posts" ? (
               userPosts && userPosts.length > 0 ? (
                 userPosts.map((post, index) => (
-                  <>
+                  <Fragment key={post.postId}>
                     <Card
                       key={post.postId}
                       postId={post.postId}
-                      cardLoaded={true}
+                      onClick={() => {
+                        navigate(`/post/${post.postId}`);
+                      }}
                       cardType="post"
+                      cardLoaded={true}
                       excludeReactionSection={true}
+                      postImg={post.coverImgUrl}
+                      title={post.title}
+                      author={post.authorName}
+                      time={post.cookTime}
+                      difficulty={post.difficulty}
+                      serving={post.servings}
                     />
                     {index === userPosts.length - 4 ? (
                       <div ref={postTrigger} style={{ height: "0" }} />
                     ) : undefined}
-                  </>
+                  </Fragment>
                 ))
               ) : (
-                <div>No posts yet.</div>
+                <div className={styles["post-list-content-no-result"]}>
+                  You haven't posted anything yet.
+                </div>
               )
             ) : bookmarkedPosts && bookmarkedPosts.length > 0 ? (
               bookmarkedPosts.map((post, index) => (
@@ -224,6 +182,7 @@ const ProfileContent = ({ handleShare }: { handleShare: (text: string) => void }
                     time={post.cookTime}
                     difficulty={post.difficulty}
                     serving={post.servings}
+                    rounded={true}
                   />
                   {index === userPosts.length - 4 ? (
                     <div ref={bookmarkTrigger} style={{ height: "0" }} />
