@@ -38,7 +38,14 @@ npm run dev
 
 # Version
 
-## v0.9.0 (2025-12-21)
+## v0.9.1 (2025-12-21)
+
+- Fixed expired access token not refreshed when uploading post while refresh token is still valid.
+- Fixed expired access token not refreshed when uploading user edit information while refresh token is still valid.
+- Renamed stepImgURL to stepImgUrl in /upload page.
+- Change profileData.avata to profileData.profileImageFile in editProfile.ts.
+
+## v0.9.0 (2025-12-20)
 
 - Overhaul to the /search page. It will now use route instead of state.
 - Added /search/results?query route for the search results page.

@@ -22,7 +22,6 @@ export const pushPost = async (data: uploadPostStructure) => {
     formData.append("coverImgFile", data.coverImgFile);
   }
 
-  // Steps
   data.steps.forEach((step, index) => {
     formData.append(`steps[${index}][stepNum]`, String(step.stepNum));
     formData.append(`steps[${index}][stepDesc]`, step.stepDesc);
@@ -41,7 +40,7 @@ export const pushPost = async (data: uploadPostStructure) => {
   });
 
   if (!res.ok) {
-    throw new Error("Upload failed");
+    throw useAuthStore.getState().throwAuthError(res.status);
   }
 
   return res.json();

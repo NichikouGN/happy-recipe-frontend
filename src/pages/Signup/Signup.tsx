@@ -52,7 +52,7 @@ const Signup = () => {
   //Handle submission
   const obSubmit = useCallback(
     async (data: z.infer<typeof signUpSchema>) => {
-      // await signUp(data.firstName, data.lastName, data.email, data.password);
+      await signUp(data.firstName, data.lastName, data.email, data.password);
     },
     [signUp]
   );

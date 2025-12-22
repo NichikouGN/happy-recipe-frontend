@@ -29,7 +29,7 @@ export const uploadProfileChanges = async (profileData: {
     formData.append("bio", profileData.bio);
   }
   if (profileData.profileImageFile) {
-    formData.append("avatar", profileData.profileImageFile);
+    formData.append("profileImage", profileData.profileImageFile);
   }
 
   const res = await fetch(`${import.meta.env.VITE_API_URL}/api/profile/edit`, {
@@ -41,6 +41,6 @@ export const uploadProfileChanges = async (profileData: {
   });
 
   if (!res.ok) {
-    throw new Error("Failed to upload profile changes");
+    throw useAuthStore.getState().throwAuthError(res.status);
   }
 };

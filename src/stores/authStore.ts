@@ -3,6 +3,7 @@ import { persist } from "zustand/middleware";
 import { queryClient } from "../queryClient";
 import { formatConsoleError } from "../consoleError";
 import { Toast } from "./toastStore";
+import { AuthError } from "../errors/AuthError";
 
 interface authStoreType {
   accessToken: string;
@@ -13,7 +14,7 @@ interface authStoreType {
 
   setUpToken: (accessToken: string, refreshToken: string) => void;
   clearToken: () => void;
-  authError: (status: number) => Error;
+  throwAuthError: (status: number) => Error;
 
   validateAccessToken: () => Promise<boolean>;
   requestNewAccessToken: () => Promise<boolean>;
@@ -63,9 +64,8 @@ export const useAuthStore = create<authStoreType>()(
         });
       },
 
-      authError: (status: number) => {
-        const error: any = new Error("Failed to fetch");
-        error.status = status;
+      throwAuthError: (status: number) => {
+        const error: any = new AuthError(status, "Authentication Error");
         return error;
       },
 
@@ -85,7 +85,7 @@ export const useAuthStore = create<authStoreType>()(
             }
           );
 
-          if (!res.ok) throw get().authError(res.status);
+          if (!res.ok) throw get().throwAuthError(res.status);
           get().setSignInState("authorized");
 
           return true;
@@ -117,7 +117,7 @@ export const useAuthStore = create<authStoreType>()(
             }
           );
 
-          if (!res.ok) throw get().authError(res.status);
+          if (!res.ok) throw get().throwAuthError(res.status);
 
           const data = await res.json();
           get().setUpToken(data.accessToken, data.refreshToken);
@@ -151,7 +151,7 @@ export const useAuthStore = create<authStoreType>()(
             },
           });
 
-          if (!res.ok) throw get().authError(res.status);
+          if (!res.ok) throw get().throwAuthError(res.status);
 
           return true;
         } catch (e) {
@@ -176,7 +176,7 @@ export const useAuthStore = create<authStoreType>()(
             },
             body: JSON.stringify({ code: code }),
           });
-          if (!res.ok) throw get().authError(res.status);
+          if (!res.ok) throw get().throwAuthError(res.status);
 
           const data = await res.json();
           get().setUpToken(data.accessToken, data.refreshToken);
@@ -201,7 +201,7 @@ export const useAuthStore = create<authStoreType>()(
             body: JSON.stringify({ email: email, password: password }),
           });
 
-          if (!res.ok) throw get().authError(res.status);
+          if (!res.ok) throw get().throwAuthError(res.status);
 
           const data = await res.json();
 
