@@ -159,6 +159,7 @@
   align-items: center;
   gap: 0.5rem;
 
+  position: relative;
   width: 100%;
   padding: 0.5rem 0.75rem;
 
@@ -190,6 +191,23 @@
     opacity: 1;
     transform: scale(100%);
   }
+}
+
+.search-input-category-select {
+  height: 100%;
+  padding: 0.5rem;
+
+  border: none;
+  outline: none;
+  background: none;
+
+  font-size: inherit;
+  font-weight: bold;
+  color: var(--red-600);
+
+  background: var(--theme-body-primary-bg);
+  border-radius: 1rem;
+  cursor: pointer;
 }
 
 .search-form {

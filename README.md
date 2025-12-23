@@ -38,6 +38,20 @@ npm run dev
 
 # Version
 
+## v0.10.0 (2025-12-00)
+
+- Made changes to post structure to get more info and standardize code as following:
+  1. change author to authorName
+  2. added authorId, authorImgUrl
+- Added author image to card component instead of hard code like before.
+- Allow navigating to the user page from /post page and any page that uses the card component.
+- Changed card component to allow redirect to user page by clicking author image.
+- Added /user page that allow view other users profile including their name, bio, posts uploaded.
+- Replace AI button with a search category by post or user
+- Added paging for search results
+- Update search results to include a category search params. the API will look like /api/search/results?category=A&query=B&page=C
+- Update the AI chat to use the new search results URL.
+
 ## v0.9.1 (2025-12-21)
 
 - Fixed expired access token not refreshed when uploading post while refresh token is still valid.

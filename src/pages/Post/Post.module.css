@@ -85,12 +85,24 @@
 .author-group {
   display: flex;
   justify-content: center;
+  align-items: center;
 
   width: 100%;
   margin-bottom: 1rem;
 
   color: var(--theme-text-primary);
   text-align: center;
+}
+
+.author-avatar {
+  width: 28px;
+  height: 28px;
+  margin-right: 0.5rem;
+
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .author-group span {

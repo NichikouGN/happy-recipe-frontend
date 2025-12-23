@@ -55,7 +55,7 @@ const Home = () => {
   const translateVal = useMemo(() => Math.min(headerHeight, scrollY / 4), [headerHeight, scrollY]);
 
   useEffect(() => {
-    //Fetch popular dish from backend
+    //Fetch popular Ingredients from backend
     const fetchPopularIngredients = async () => {
       try {
         const res = await fetch(`${import.meta.env.VITE_API_URL}/posts/discover`, {
@@ -64,7 +64,7 @@ const Home = () => {
           },
         });
 
-        if (!res.ok) throw new Error("Unable to fetch popular dish data");
+        if (!res.ok) throw new Error("Unable to fetch popular Ingredients data");
         const data = await res.json();
 
         setPopularIngredients(data.popularIngredients);
@@ -96,7 +96,7 @@ const Home = () => {
       <main className={styles["content"]}>
         <div className={styles["content-wrapper"]}>
           <section className={styles["popular-dish-section"]}>
-            <h2>Popular Dishes</h2>
+            <h2>Popular Ingredients</h2>
 
             <div className={styles["popular-dish-container"]}>
               {loaded

@@ -1,6 +1,5 @@
 import styles from "./Search.module.css";
 import { Link, useNavigate } from "react-router-dom";
-import { TbMessageChatbot, TbMessageChatbotFilled } from "react-icons/tb";
 import { IoSearch } from "react-icons/io5";
 import { useEffect, useState } from "react";
 
@@ -19,13 +18,12 @@ const Search = () => {
 
   // State to manage transition animation
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [engagedAI, setEngagedAI] = useState<boolean>(false);
+  const [searchCategory, setSearchCategory] = useState<"post" | "user">("post");
 
   // Cleanup on unmount
   useEffect(() => {
     return () => {
       setSearchQuery("");
-      setEngagedAI(false);
     };
   }, []);
 
@@ -38,11 +36,7 @@ const Search = () => {
 
     if (searchQuery.trim() === "") return;
 
-    if (engagedAI) {
-      navigate(`/search/ai/results?query=${encodeURIComponent(searchQuery)}`);
-    } else {
-      navigate(`/search/results?query=${encodeURIComponent(searchQuery)}`);
-    }
+    navigate(`/search/results?category=${searchCategory}&query=${encodeURIComponent(searchQuery)}`);
   };
 
   return (
@@ -66,7 +60,9 @@ const Search = () => {
                   handleInputChange({
                     target: { value: tag },
                   } as React.ChangeEvent<HTMLInputElement>);
-                  navigate(`/search/results?query=${encodeURIComponent(tag)}`);
+                  navigate(
+                    `/search/results?category=${searchCategory}&query=${encodeURIComponent(tag)}`
+                  );
                 }}
               >
                 {tag}
@@ -74,13 +70,13 @@ const Search = () => {
             ))}
           </div>
           <div className={`${styles["search-input-container"]}`}>
-            <button className={styles["search-input-btn"]} onClick={() => setEngagedAI(!engagedAI)}>
-              {engagedAI ? (
-                <TbMessageChatbotFilled className={styles["search-input-btn-icon"]} />
-              ) : (
-                <TbMessageChatbot className={styles["search-input-btn-icon"]} />
-              )}
-            </button>
+            <select
+              className={styles["search-input-category-select"]}
+              onChange={(e) => setSearchCategory(e.target.value as "post" | "user")}
+            >
+              <option value="post">Post</option>
+              <option value="user">User</option>
+            </select>
             <form className={styles["search-form"]} onSubmit={handleFormSubmit}>
               <input
                 type="text"

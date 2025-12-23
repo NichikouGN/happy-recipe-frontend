@@ -13,7 +13,7 @@ export const Donut = ({ size = 120, strokeWidth = 10, progress = 30, text = "" }
         cx={size / 2}
         cy={size / 2}
         r={radius}
-        stroke="#ddd"
+        stroke="var(--theme-text-secondary)"
         strokeWidth={strokeWidth}
         fill="none"
       />
@@ -23,7 +23,7 @@ export const Donut = ({ size = 120, strokeWidth = 10, progress = 30, text = "" }
         cx={size / 2}
         cy={size / 2}
         r={radius}
-        stroke="#f87171"
+        stroke="var(--red-500)"
         strokeWidth={strokeWidth}
         fill="none"
         strokeDasharray={circumference}
@@ -37,9 +37,9 @@ export const Donut = ({ size = 120, strokeWidth = 10, progress = 30, text = "" }
         y="50%"
         textAnchor="middle"
         dominantBaseline="middle"
-        fontSize="1.25rem"
-        fill="black"
-        fontWeight="bolder"
+        fontSize="1.5rem"
+        fill="var(--theme-text-primary)"
+        fontWeight="900"
       >
         {text}
       </text>

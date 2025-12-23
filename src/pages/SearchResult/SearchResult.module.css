@@ -1,7 +1,5 @@
 @media (max-width: 767px) {
   .header {
-    grid-area: "header";
-
     position: fixed;
     top: 0%;
     left: 0%;
@@ -112,11 +110,10 @@
   }
 
   .content {
-    grid-area: "content";
-
     display: flex;
     flex-direction: column;
     align-items: center;
+    flex: 1;
 
     width: 100svw;
     max-height: calc(100svh - 7.5svh);
@@ -124,6 +121,32 @@
     padding: 1rem 0;
 
     background: var(--theme-body-bg);
+  }
+
+  .search-results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+
+    width: 90%;
+    margin: 0rem 2rem 1rem;
+  }
+  .search-input-category-select {
+    height: 100%;
+    padding: 0.5rem;
+
+    border: none;
+    outline: none;
+    background: none;
+
+    font-size: inherit;
+    font-weight: bold;
+    color: var(--red-600);
+
+    background: var(--theme-body-primary-bg);
+    border-radius: 1rem;
+    cursor: pointer;
   }
 
   .search-result-count {
@@ -159,4 +182,54 @@
       transform: translateY(0);
     }
   }
+}
+
+.card-item {
+  display: flex;
+  gap: 1rem;
+
+  width: 100%;
+
+  aspect-ratio: 2/1;
+  padding: 0.5rem;
+
+  background: var(--neutral-200);
+  background-blend-mode: multiply;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+
+  overflow: hidden;
+  will-change: background-position;
+
+  cursor: pointer;
+  overflow: hidden;
+  z-index: 1;
+
+  animation: card-intro 0.5s ease-in-out;
+}
+
+@keyframes card-intro {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.card-author-logo {
+  width: 80px;
+  height: 80px;
+  z-index: 2;
+
+  color: var(--theme-text-primary);
+
+  background: transparent;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }

@@ -9,8 +9,8 @@ export const ToastRenderer = () => {
     <>
       {toastList.map((toast) => (
         <div key={toast.id} className={`${styles["container"]} ${styles[toast.type]}`}>
-          <div className={styles["title"]}>{toast.title}</div>
-          <div className={styles["message"]}>{toast.message}</div>
+          <div className={`${styles["title"]} ${styles["color-code"]}`}>{toast.title}</div>
+          <div className={`${styles["message"]} ${styles["color-code"]}`}>{toast.message}</div>
         </div>
       ))}
     </>,

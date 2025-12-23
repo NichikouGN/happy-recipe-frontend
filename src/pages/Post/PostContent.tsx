@@ -12,6 +12,8 @@ import { formatConsoleError } from "../../consoleError";
 import { computeReactionState } from "../../api/discover";
 import { Donut, handlePostShare } from "../../utils/Post";
 import styles from "./Post.module.css";
+import { useUserStore } from "../../stores/userStore";
+import { FaCircleUser } from "react-icons/fa6";
 
 const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
   const { handleUserBookmark, handleUserReaction } = usePosts();
@@ -100,6 +102,18 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
     } catch (error) {
       formatConsoleError("PostContent.tsx", "fetchReplies", error);
     }
+  };
+
+  const handleNavigateToAuthorProfile = () => {
+    const currentUserId = useUserStore.getState().userInformation.userId;
+    if (!detailedPost.authorId) return;
+
+    if (detailedPost.authorId === currentUserId) {
+      navigate(`/profile`);
+      return;
+    }
+
+    navigate(`/user/${detailedPost.authorId}`);
   };
 
   // Intersection Observer to fetch comments when in view
@@ -200,6 +214,24 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
         <h1 className={styles["title"]}>{detailedPost.title}</h1>
 
         <section className={styles["author-group"]}>
+          {detailedPost.authorImgUrl ? (
+            <button
+              style={{ backgroundImage: `url('${detailedPost.authorImgUrl}')` }}
+              className={styles["author-avatar"]}
+              onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+                e.stopPropagation();
+                handleNavigateToAuthorProfile();
+              }}
+            />
+          ) : (
+            <FaCircleUser
+              className={styles["author-avatar"]}
+              onClick={(e: React.MouseEvent<SVGElement, MouseEvent>) => {
+                e.stopPropagation();
+                handleNavigateToAuthorProfile();
+              }}
+            />
+          )}
           <span className={styles["author-name"]}>{detailedPost.authorName}</span>
         </section>
 
@@ -223,7 +255,7 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
                   : detailedPost.difficulty === "medium"
                   ? 67
                   : 100,
-              // text: detailedPost?.difficulty[0]?.toUpperCase(),
+              text: detailedPost?.difficulty[0]?.toUpperCase(),
             })}
             <div className={styles["info"]}>Difficulty</div>
           </div>

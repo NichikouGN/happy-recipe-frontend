@@ -35,6 +35,8 @@ const DiscoverContent = () => {
         postId,
         title,
         authorName,
+        authorId,
+        authorImgUrl,
         cookTime,
         servings,
         difficulty,
@@ -51,13 +53,16 @@ const DiscoverContent = () => {
             postId={postId}
             onClick={() => {
               discoverScrollY.current = window.scrollY;
+
               navigate(`/post/${postId}`);
             }}
             cardType="post"
             cardLoaded={true}
             postImg={coverImgUrl}
             title={title}
-            author={authorName}
+            authorName={authorName}
+            authorId={authorId}
+            authorImgUrl={authorImgUrl}
             time={cookTime}
             difficulty={difficulty}
             serving={servings}

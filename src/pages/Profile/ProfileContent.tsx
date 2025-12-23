@@ -149,7 +149,9 @@ const ProfileContent = () => {
                       excludeReactionSection={true}
                       postImg={post.coverImgUrl}
                       title={post.title}
-                      author={post.authorName}
+                      authorName={post.authorName}
+                      authorId={post.authorId}
+                      authorImgUrl={post.authorImgUrl}
                       time={post.cookTime}
                       difficulty={post.difficulty}
                       serving={post.servings}
@@ -178,7 +180,9 @@ const ProfileContent = () => {
                     excludeReactionSection={true}
                     postImg={post.coverImgUrl}
                     title={post.title}
-                    author={post.authorName}
+                    authorName={post.authorName}
+                    authorId={post.authorId}
+                    authorImgUrl={post.authorImgUrl}
                     time={post.cookTime}
                     difficulty={post.difficulty}
                     serving={post.servings}

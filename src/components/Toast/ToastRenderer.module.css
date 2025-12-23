@@ -4,7 +4,7 @@
   justify-content: center;
 
   position: fixed;
-  top: 1svh;
+  top: 2.5svh;
   left: 50svw;
   padding: 0.5rem;
   max-width: 75svw;
@@ -18,22 +18,40 @@
 
 .error {
   background: var(--red-50);
-  border: 1px solid var(--red-300);
+  box-shadow: 4px 4px 8px var(--red-600);
 }
 
 .warning {
   background: var(--yellow-50);
-  border: 1px solid var(--yellow-300);
+  box-shadow: 0 0 16px var(--yellow-600);
 }
 
 .info {
   background: var(--sky-50);
-  border: 1px solid var(--sky-300);
+  box-shadow: 0 0 16px var(--sky-600);
 }
 
 .success {
   background: var(--green-50);
-  border: 1px solid var(--green-300);
+  box-shadow: 0 0 16px var(--green-600);
+}
+
+[data-theme="dark"] .error {
+  background: var(--red-900);
+  box-shadow: 0 0 16px var(--red-400);
+}
+
+[data-theme="dark"] .warning {
+  background: var(--yellow-900);
+  box-shadow: 0 0 16px var(--yellow-400);
+}
+[data-theme="dark"] .info {
+  background: var(--sky-900);
+  box-shadow: 0 0 16px var(--sky-400);
+}
+[data-theme="dark"] .success {
+  background: var(--green-900);
+  box-shadow: 0 0 16px var(--green-400);
 }
 
 .title {
@@ -42,56 +60,53 @@
 
   font-weight: bold;
   text-transform: capitalize;
-  font-size: clamp(0.8rem, 4svw, 1rem);
+  font-size: clamp(1.2rem, 5svw, 1.4rem);
 }
 
-.error .title {
+.error .color-code {
   color: var(--red-500);
 }
 
-.warning .title {
+.warning .color-code {
   color: var(--yellow-500);
 }
 
-.info .title {
+.info .color-code {
   color: var(--sky-500);
 }
 
-.success .title {
+.success .color-code {
   color: var(--green-500);
+}
+
+[data-theme="dark"] .error .color-code {
+  color: var(--red-100);
+}
+[data-theme="dark"] .warning .color-code {
+  color: var(--yellow-100);
+}
+[data-theme="dark"] .info .color-code {
+  color: var(--sky-100);
+}
+[data-theme="dark"] .success .color-code {
+  color: var(--green-100);
 }
 
 .message {
   width: 100%;
 
-  font-size: clamp(0.7rem, 3.5svw, 0.8rem);
+  font-size: clamp(0.9rem, 4svw, 1.1rem);
   word-wrap: break-word;
-}
-
-.error .message {
-  color: var(--red-400);
-}
-
-.warning .message {
-  color: var(--yellow-540);
-}
-
-.info .message {
-  color: var(--sky-400);
-}
-
-.success .message {
-  color: var(--green-400);
 }
 
 @keyframes noti {
   0% {
-    top: -5%;
+    top: -2.5%;
     opacity: 0%;
   }
 
   100% {
-    top: 1%;
+    top: 2.5%;
     opacity: 100%;
   }
 }

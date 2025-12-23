@@ -7,12 +7,16 @@ import { usePosts } from "../../context/PostContext";
 import type { Reaction, UserActions } from "../../types/PostType";
 import { computeReactionState } from "../../api/discover";
 import { reactionType } from "../../types/PostType";
+import { useNavigate } from "react-router-dom";
+import { useUserStore } from "../../stores/userStore";
 
 interface CardProps {
   postId: string;
   postImg?: string;
   title?: string;
-  author?: string;
+  authorName?: string;
+  authorId?: string;
+  authorImgUrl?: string;
   time?: number;
   serving?: number;
   difficulty?: "easy" | "medium" | "hard";
@@ -37,7 +41,9 @@ const Card = ({
   postId,
   postImg = "",
   title = "",
-  author = "",
+  authorName = "",
+  authorId = "",
+  authorImgUrl = "",
   time = 0,
   serving = 0,
   difficulty = "easy",
@@ -51,6 +57,20 @@ const Card = ({
   onClick,
 }: CardProps) => {
   const { handleUserReaction, handleUserBookmark } = usePosts();
+
+  const navigate = useNavigate();
+
+  const handleNavigateToAuthorProfile = () => {
+    const currentUserId = useUserStore.getState().userInformation.userId;
+    if (!authorId) return;
+
+    if (authorId === currentUserId) {
+      navigate(`/profile`);
+      return;
+    }
+
+    navigate(`/user/${authorId}`);
+  };
 
   return cardType === "ingredients" ? (
     <button
@@ -85,13 +105,23 @@ const Card = ({
         onClick={onClick}
       >
         <div className={styles["card-info-wrapper"]}>
-          {cardLoaded ? (
-            <img
-              src="/src/assets/happy-recipe-logo-text.png"
+          {cardLoaded && authorImgUrl ? (
+            <button
+              style={{ backgroundImage: `url('${authorImgUrl}')` }}
               className={styles["card-author-logo"]}
+              onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+                e.stopPropagation();
+                handleNavigateToAuthorProfile();
+              }}
             />
           ) : (
-            <FaCircleUser className={styles["card-author-logo"]} />
+            <FaCircleUser
+              className={styles["card-author-logo"]}
+              onClick={(e: React.MouseEvent<SVGElement, MouseEvent>) => {
+                e.stopPropagation();
+                cardLoaded ? handleNavigateToAuthorProfile() : null;
+              }}
+            />
           )}
 
           <div className={styles["card-details"]}>
@@ -100,7 +130,7 @@ const Card = ({
                 <span className={styles["card-title"]}>{title}</span>
 
                 <div className={styles["other-info-wrapper"]}>
-                  <div className={styles["other-info-item"]}>{author}</div>
+                  <div className={styles["other-info-item"]}>{authorName}</div>
                   <div className={styles["other-info-item"]}>
                     <FaClock /> <span>{time}</span>
                   </div>

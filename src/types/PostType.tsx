@@ -19,8 +19,9 @@ export interface PostStructure {
   postId: string;
   title: string;
   coverImgUrl: string;
-  authorID: number;
+  authorId: string;
   authorName: string;
+  authorImgUrl: string;
   cookTime: number;
   servings: number;
   difficulty: "easy" | "medium" | "hard";

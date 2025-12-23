@@ -70,7 +70,7 @@ const AIChatBox = () => {
                 <div className={styles["chat-message-content"]}>{chat.content}</div>
                 {chat.redirect && (
                   <Link
-                    to={`/search/results?query=${chat.redirect}`}
+                    to={`/search/results?category=post&query=${chat.redirect}`}
                     className={styles["chat-message-redirect"]}
                     onClick={() => useAIStore.setState({ aiWindowOpen: false })}
                   >
