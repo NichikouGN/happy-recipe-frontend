@@ -39,16 +39,17 @@ const SearchResult = () => {
       if (!res.ok) throw new Error("Failed to fetch search results");
 
       const data = await res.json();
+      console.log("[DEBUG] Fetched data:", data.data);
 
       if (category === "post") {
-        console.log("Search post results:", data.results);
+        console.log("Search post results:", data.data);
         setSearchPostResults(
-          searchPage === 1 ? data.results || [] : [...searchPostResults, ...(data.results || [])]
+          searchPage === 1 ? data.data || [] : [...searchPostResults, ...(data.results || [])]
         );
       } else if (category === "user") {
-        console.log("Search user results:", data.results);
+        console.log("Search user results:", data.data);
         setSearchUserResults(
-          searchPage === 1 ? data.results || [] : [...searchUserResults, ...(data.results || [])]
+          searchPage === 1 ? data.data || [] : [...searchUserResults, ...(data.results || [])]
         );
       }
     } catch (error) {
