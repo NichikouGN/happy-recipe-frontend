@@ -38,7 +38,13 @@ npm run dev
 
 # Version
 
-## v0.10.0 (2025-12-00)
+## v0.10.1 (2025-12-26)
+
+- Change the edit profile File field to avatar instead of profileImg to match with backend.
+- Fixed an issue author image not showing on the post card.
+- Added confirmation message when editing profile
+
+## v0.10.0 (2025-12-23)
 
 - Made changes to post structure to get more info and standardize code as following:
   1. change author to authorName

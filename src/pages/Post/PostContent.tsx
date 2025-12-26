@@ -152,7 +152,7 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
 
   const translateVal = Math.min(headerHeight / 4, scrollY / 4);
 
-  // Handle collapse/expand of card content
+  // Handle collapse/expand of step content
   const handleCollapse = useCallback(
     (index: number) => {
       setIsCollapsed((prev) =>
@@ -179,7 +179,7 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
         }}
       >
         <div className={styles["action-bar"]}>
-          <Button variant="rounded" size="medium" onClick={() => navigate("/discover")}>
+          <Button variant="rounded" size="medium" onClick={() => navigate(-1)}>
             <IoClose className={styles["btn-icon"]} />
           </Button>
 
@@ -243,7 +243,7 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
               progress: Math.min((Number(detailedPost.cookTime) / 60) * 100, 100),
               text: detailedPost.cookTime?.toString(),
             })}
-            <div className={styles["info"]}>Minute</div>
+            <div className={styles["info-text"]}>Minute</div>
           </div>
           <div className={styles["info"]}>
             {Donut({
@@ -257,7 +257,7 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
                   : 100,
               text: detailedPost?.difficulty[0]?.toUpperCase(),
             })}
-            <div className={styles["info"]}>Difficulty</div>
+            <div className={styles["info-text"]}>Difficulty</div>
           </div>
           <div className={styles["info"]}>
             {Donut({
@@ -266,21 +266,21 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
               progress: Math.min((detailedPost.servings / 8) * 100, 100),
               text: detailedPost.servings.toString(),
             })}
-            <div className={styles["info"]}>Servings</div>
+            <div className={styles["info-text"]}>Servings</div>
           </div>
         </section>
 
-        <section className={styles["card-container"]}>
-          <div className={styles["card"]} style={{ border: "none" }}>
+        <section className={styles["step-container"]}>
+          <div className={styles["step"]} style={{ border: "none" }}>
             <button
-              className={styles["card-title-group"]}
+              className={styles["step-title-group"]}
               onClick={() => {
                 handleCollapse(0);
               }}
             >
-              <div className={styles["card-title"]}>Description</div>
+              <div className={styles["step-title"]}>Description</div>
               <IoClose
-                className={`${styles["card-title-icon"]} ${
+                className={`${styles["step-title-icon"]} ${
                   styles[`${isCollapsed[0] ? "collapsed" : "expanded"}`]
                 }`}
               />
@@ -292,27 +292,27 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
               style={{
                 height: isCollapsed[0] ? "0" : heightRef.current[0]?.scrollHeight,
               }}
-              className={`${styles["card-content"]} ${
+              className={`${styles["step-content"]} ${
                 styles[`${isCollapsed[0] ? "collapsed" : "expanded"}`]
               }`}
             >
-              <div className={styles["card-content-inner"]}>{detailedPost.description}</div>
+              <div className={styles["step-content-inner"]}>{detailedPost.description}</div>
             </div>
           </div>
 
           {detailedPost.steps.map((item, index) => {
             return (
-              <div key={index + 1} className={styles["card"]}>
+              <div key={index + 1} className={styles["step"]}>
                 <button
-                  className={styles["card-title-group"]}
+                  className={styles["step-title-group"]}
                   onClick={() => {
                     handleCollapse(index + 1);
                   }}
                 >
-                  <div className={styles["card-title"]}>Step {item.stepNum}</div>
+                  <div className={styles["step-title"]}>Step {item.stepNum}</div>
 
                   <IoClose
-                    className={`${styles["card-title-icon"]} ${
+                    className={`${styles["step-title-icon"]} ${
                       styles[`${isCollapsed[index + 1] ? "collapsed" : "expanded"}`]
                     }`}
                   />
@@ -326,14 +326,14 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
                       ? "0"
                       : heightRef.current[index + 1]?.scrollHeight,
                   }}
-                  className={`${styles["card-content"]} ${
+                  className={`${styles["step-content"]} ${
                     styles[`${isCollapsed[index + 1] ? "collapsed" : "expanded"}`]
                   }`}
                 >
                   {item.stepImgUrl && (
-                    <img height="auto" className={styles["card-image"]} src={item.stepImgUrl} />
+                    <img height="auto" className={styles["step-image"]} src={item.stepImgUrl} />
                   )}
-                  <div className={styles["card-content-inner"]}>{item.stepDesc}</div>
+                  <div className={styles["step-content-inner"]}>{item.stepDesc}</div>
                 </div>
               </div>
             );

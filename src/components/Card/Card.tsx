@@ -92,7 +92,7 @@ const Card = ({
     </button>
   ) : (
     <>
-      <button
+      <div
         ref={fetchRef}
         style={
           {
@@ -108,7 +108,7 @@ const Card = ({
           {cardLoaded && authorImgUrl ? (
             <button
               style={{ backgroundImage: `url('${authorImgUrl}')` }}
-              className={styles["card-author-logo"]}
+              className={styles["card-author-avatar"]}
               onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
                 e.stopPropagation();
                 handleNavigateToAuthorProfile();
@@ -116,7 +116,7 @@ const Card = ({
             />
           ) : (
             <FaCircleUser
-              className={styles["card-author-logo"]}
+              className={styles["card-author-avatar"]}
               onClick={(e: React.MouseEvent<SVGElement, MouseEvent>) => {
                 e.stopPropagation();
                 cardLoaded ? handleNavigateToAuthorProfile() : null;
@@ -150,7 +150,7 @@ const Card = ({
             )}
           </div>
         </div>
-      </button>
+      </div>
 
       {!excludeReactionSection && (
         <div className={`${styles["reaction-wrapper"]} ${rounded ? styles["rounded"] : ""}`}>

@@ -102,7 +102,7 @@ const ProfileContent = () => {
             handleUIDShare(userInformation.userId);
           }}
         >
-          <div>{userInformation.username}</div>
+          <div>{userInformation.displayName}</div>
           <div className={styles["share-uid"]}>
             <IoCopySharp className={styles["share-uid-icon"]} />
           </div>
@@ -155,6 +155,7 @@ const ProfileContent = () => {
                       time={post.cookTime}
                       difficulty={post.difficulty}
                       serving={post.servings}
+                      rounded={true}
                     />
                     {index === userPosts.length - 4 ? (
                       <div ref={postTrigger} style={{ height: "0" }} />

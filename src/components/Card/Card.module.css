@@ -17,7 +17,6 @@
   will-change: background-position;
 
   cursor: pointer;
-  overflow: hidden;
   z-index: 1;
 
   animation: card-intro 0.5s ease-in-out;
@@ -88,7 +87,7 @@
 }
 
 .card-details {
-  width: 100%;
+  max-width: 100%;
 
   display: flex;
   flex-direction: column;
@@ -111,19 +110,23 @@
 }
 
 .other-info-wrapper {
+  padding: 0.25rem;
   display: flex;
   align-items: center;
   flex-wrap: nowrap;
 }
 
-.card-author-logo {
-  width: 40px;
-  height: 40px;
+.card-author-avatar {
+  width: 50px;
+  height: 50px;
+
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+
   z-index: 2;
-
+  border-radius: 50%;
   color: var(--theme-text-primary);
-
-  background: transparent;
 }
 
 .other-info-item {
@@ -166,7 +169,7 @@
   height: 100%;
 
   background: var(--theme-card-secondary-bg);
-  padding: 0.5rem;
+  padding: 0.5rem 0.5rem 1rem;
 }
 
 .reaction-item {

@@ -34,6 +34,8 @@ export const fetchPosts = async (pageParam: number) => {
   const data = await res.json();
   const newPosts: PostStructure[] = data.postList;
 
+  console.log("Fetched posts page:", newPosts);
+
   return {
     posts: newPosts,
     nextPage: pageParam + 1,
@@ -69,6 +71,7 @@ export const fetchDetailedPost: QueryFunction<FullPostStructure, [string, string
 
   const data = await res.json();
   const detailedPost: FullPostStructure = data.post;
+  console.log("Fetched detailed post:", data.post);
 
   return detailedPost;
 };

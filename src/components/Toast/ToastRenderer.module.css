@@ -18,7 +18,7 @@
 
 .error {
   background: var(--red-50);
-  box-shadow: 4px 4px 8px var(--red-600);
+  box-shadow: 0 0 16px var(--red-600);
 }
 
 .warning {
@@ -96,7 +96,6 @@
   width: 100%;
 
   font-size: clamp(0.9rem, 4svw, 1.1rem);
-  word-wrap: break-word;
 }
 
 @keyframes noti {

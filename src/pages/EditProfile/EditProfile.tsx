@@ -38,11 +38,27 @@ const EditProfile = () => {
   const handleSubmission = async () => {
     try {
       await uploadProfileChanges(newUserInformation);
+
+      Toast({
+        type: "success",
+        title: "Profile Updated",
+        message: "Your profile changes have been saved successfully.",
+      });
+
+      navigate("/profile");
     } catch (error) {
       if (error instanceof AuthError && error.status === 401) {
         await useAuthStore.getState().requestNewAccessToken();
         try {
           await uploadProfileChanges(newUserInformation);
+
+          Toast({
+            type: "success",
+            title: "Profile Updated",
+            message: "Your profile changes have been saved successfully.",
+          });
+
+          navigate("/profile");
         } catch (secondError) {
           Toast({
             type: "error",
