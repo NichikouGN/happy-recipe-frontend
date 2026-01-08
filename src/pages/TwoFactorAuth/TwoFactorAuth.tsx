@@ -38,7 +38,7 @@ const TwoFactorAuth = () => {
 
   return (
     signInState === "2FA" && (
-      <div className={styles["signin-container"]}>
+      <div className={styles["signin-bg"]}>
         <Link
           to="/"
           className={styles["return"]}
@@ -48,43 +48,44 @@ const TwoFactorAuth = () => {
         >
           <IoClose className={styles["return-icon"]} />
         </Link>
+        <div className={styles["signin-container"]}>
+          <div className={styles["title"]}>
+            <img src="/src/assets/happy-recipe-logo-text.png" className={styles["title-logo"]} />
+            <div className={styles["title-text"]}>Happy Recipe</div>
+          </div>
 
-        <div className={styles["title"]}>
-          <img src="/src/assets/happy-recipe-logo-text.png" className={styles["title-logo"]} />
-          <div className={styles["title-text"]}>Happy Recipe</div>
-        </div>
+          <div className={styles["quote"]}>Enter the 2FA code sent to your email</div>
 
-        <div className={styles["quote"]}>Enter the 2FA code sent to your email</div>
+          <div className={styles["signin-menu"]}>
+            <form
+              className={styles["signin-form"]}
+              onSubmit={(event) => {
+                handleSubmission(event);
+              }}
+            >
+              {/*Username Input*/}
 
-        <div className={styles["signin-menu"]}>
-          <form
-            className={styles["signin-form"]}
-            onSubmit={(event) => {
-              handleSubmission(event);
-            }}
-          >
-            {/*Username Input*/}
+              <div className={styles["input-wrapper"]}>
+                <TbAuth2Fa className={styles["input-icon"]} />
+                <input
+                  type="text"
+                  placeholder="verification code"
+                  value={twoFactor}
+                  alt="verification code"
+                  autoComplete="off"
+                  className={styles["input-field"]}
+                  onChange={(event) => {
+                    handleTwoFactorChanges(event);
+                  }}
+                ></input>
+              </div>
 
-            <div className={styles["input-wrapper"]}>
-              <TbAuth2Fa className={styles["input-icon"]} />
-              <input
-                type="text"
-                placeholder="verification code"
-                value={twoFactor}
-                alt="verification code"
-                autoComplete="off"
-                className={styles["input-field"]}
-                onChange={(event) => {
-                  handleTwoFactorChanges(event);
-                }}
-              ></input>
-            </div>
-
-            {/*Submit*/}
-            <Button variant="primary" size="small" type="submit" fullWidth={true}>
-              Log In
-            </Button>
-          </form>
+              {/*Submit*/}
+              <Button variant="primary" size="small" type="submit" fullWidth={true}>
+                Log In
+              </Button>
+            </form>
+          </div>
         </div>
       </div>
     )

@@ -1,5 +1,6 @@
 import styles from "./Comments.module.css";
 import type { CommentStructure } from "../../types/PostType";
+import { FaUser } from "react-icons/fa6";
 
 const Comments = ({
   comments,
@@ -27,7 +28,17 @@ const Comments = ({
           }
         >
           <div className={`${styles["comment-main-block"]}`}>
-            <div className={styles["comment-author-avatar"]} />
+            {comment.userImgUrl ? (
+              <div
+                className={styles["comment-author-avatar"]}
+                style={{ backgroundImage: `url(${comment.userImgUrl})` }}
+              />
+            ) : (
+              <FaUser
+                className={styles["comment-author-avatar"]}
+                style={{ backgroundColor: "var(--theme-text-secondary)" }}
+              />
+            )}
             <div className={styles["comment-author-group"]}>
               <div className={styles["comment-author"]}>
                 {comment.userName}
@@ -61,7 +72,11 @@ const Comments = ({
         </div>
       ))
     : commentInitialized && (
-        <div style={{ textAlign: "center", padding: "0.5rem" }}>No comments yet.</div>
+        <div
+          style={{ textAlign: "center", padding: "0.5rem", color: "var(--theme-text-secondary)" }}
+        >
+          No comments yet.
+        </div>
       );
 };
 

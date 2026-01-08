@@ -58,6 +58,14 @@ const AIChatBox = () => {
             <h1>Happy Recipe</h1>
           </header>
           <main className={styles["content"]}>
+            <div
+              key="initial-message"
+              className={`${styles["chat-message"]} ${styles["chat-message-assistant"]}`}
+            >
+              <div className={styles["chat-message-content"]}>
+                Hello! I'm your AI assistant. How can I help you today?
+              </div>
+            </div>
             {chatList.map((chat, index) => (
               <div
                 key={index}
@@ -70,7 +78,10 @@ const AIChatBox = () => {
                 <div className={styles["chat-message-content"]}>{chat.content}</div>
                 {chat.redirect && (
                   <Link
-                    to={`/search/results?category=post&query=${chat.redirect}`}
+                    to={`/search/results?category=post&query=${chat.redirect.replaceAll(
+                      " ",
+                      "%20"
+                    )}`}
                     className={styles["chat-message-redirect"]}
                     onClick={() => useAIStore.setState({ aiWindowOpen: false })}
                   >

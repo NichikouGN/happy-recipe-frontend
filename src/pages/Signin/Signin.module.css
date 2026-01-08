@@ -1,22 +1,84 @@
-.signin-container {
+.signin-bg {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  justify-content: center;
 
   position: fixed;
   width: 100svw;
   height: 100svh;
   padding: 2rem;
 
-  background-image: radial-gradient(rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.9) 100%),
-    url("/src/assets/search-menu.jpg");
-  background-blend-mode: multiply;
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
+  background: radial-gradient(circle at 10% 10%, rgba(74, 222, 128, 0.3) 0%, transparent 30%),
+    radial-gradient(circle at 90% 80%, rgba(239, 68, 68, 0.3) 0%, transparent 30%),
+    radial-gradient(circle at 35% 90%, rgba(56, 189, 248, 0.3) 0%, transparent 30%),
+    radial-gradient(circle at 60% 25%, rgba(250, 204, 21, 0.3) 0%, transparent 30%)
+      var(--neutral-900);
+
+  background-size: 150% 150%;
+
+  transition: background-color 0.3s ease-in-out;
+  animation: header-pulse 30s ease-in-out infinite;
+
+  will-change: background-position;
 
   overflow-x: hidden;
+}
+
+@keyframes header-pulse {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes entrance-animation {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.signin-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+
+  position: relative;
+  width: 100svw;
+  margin-top: -4rem;
+
+  border-radius: 2rem;
+  /* 
+  background-color: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(8px); */
+
+  transition: all 0.5s ease;
+  animation: container-entrance 1s ease forwards;
+}
+
+/* .signin-container:hover {
+  box-shadow: 0 0 16px rgba(255, 255, 255, 0.25);
+} */
+
+@keyframes container-entrance {
+  0% {
+    transform: scale(0.75);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .return {
@@ -24,7 +86,9 @@
   align-items: center;
   justify-content: flex-end;
 
-  width: 100%;
+  position: absolute;
+  top: 5svh;
+  right: 5svw;
   margin: -0.5rem -0.5rem 0 0;
 }
 
@@ -41,23 +105,23 @@
   gap: 4px;
 }
 
-.title-logo {
-  width: 3rem;
-  height: 3rem;
-  object-fit: cover;
-}
-
 .title-text {
   color: var(--neutral-100);
   font-size: 1.5rem;
   font-weight: 900;
 }
 
+.title-logo {
+  width: 40px;
+  height: auto;
+}
+
 .quote {
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
   color: var(--neutral-300);
   text-align: center;
   font-size: 1rem;
+  font-weight: 500;
 }
 
 .signin-menu {
@@ -86,34 +150,43 @@
 
   background-color: rgba(0, 0, 0, 0.15);
   border: 1px solid #666;
-  border-radius: 12px;
+  border-radius: 0.5rem;
   backdrop-filter: blur(4px);
   color: black;
 
   width: 100%;
   padding: 0.5rem;
 
-  overflow: hidden;
   transition: all 0.3s ease;
+}
+
+.name-field {
+  text-align: center;
+  width: 50%;
 }
 
 .input-wrapper:focus-within {
   border: 1px solid var(--red-500);
-  box-shadow: 0 0 5px 2px rgba(100, 100, 100, 0.5);
+  box-shadow: 0 0 8px rgba(239, 68, 68, 1);
 }
 
 .input-icon {
-  margin: 0 0.25rem;
+  flex-shrink: 0;
+
+  margin: 0 0.5rem 0 0.25rem;
+
   color: var(--neutral-100);
   font-size: 1.25rem;
 }
 
 .input-field {
-  transform: scale(0.95);
-  font-size: 16px;
-  color: var(--neutral-300);
   flex: 1;
+
   padding: 8px 0px;
+
+  font-size: 0.9rem;
+  color: var(--neutral-300);
+
   border: none;
   outline: none;
   resize: none;
@@ -129,11 +202,7 @@
   justify-content: center;
   align-items: center;
 
-  padding: 10px;
-
-  border: none;
-  background: none;
-  outline: none;
+  padding: 0.5rem;
 
   font-size: 16px;
   color: var(--neutral-100);
@@ -142,24 +211,26 @@
 }
 
 .submit-button {
-  padding: 15px 20px;
-  margin-top: 16px;
+  width: 100%;
+  padding: 0.75rem;
 
-  border-radius: 12px;
+  border-radius: 0.5rem;
+  background-color: var(--red-500);
+
+  font-size: 1rem;
 
   cursor: pointer;
-  pointer-events: none;
   transition: all 0.3s ease;
+
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.75), -2px -2px 4px rgba(255, 255, 255, 0.16);
 }
 
-.submit-button p {
-  font-size: 1rem;
-  font-weight: bold;
+.submit-button:hover {
+  background-color: var(--red-400);
 }
 
 .signup-quote {
   color: var(--neutral-100);
-  margin-top: 0.75rem;
 }
 
 .signup-btn {
@@ -175,14 +246,12 @@
   align-self: flex-start;
 }
 
-.name-field {
-  width: 50%;
-}
+.reroute {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
 
-.name-field:first-child {
-  border-right: 1px solid white;
-}
-
-.name-field::placeholder {
-  text-align: center;
+  width: 100%;
+  margin-top: 0.75rem;
 }

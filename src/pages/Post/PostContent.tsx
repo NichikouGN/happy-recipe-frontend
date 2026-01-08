@@ -14,13 +14,17 @@ import { Donut, handlePostShare } from "../../utils/Post";
 import styles from "./Post.module.css";
 import { useUserStore } from "../../stores/userStore";
 import { FaCircleUser } from "react-icons/fa6";
+import { IoSend } from "react-icons/io5";
+import { useAuthStore } from "../../stores/authStore";
 
 const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
   const { handleUserBookmark, handleUserReaction } = usePosts();
+  const userInformation = useUserStore((state) => state.userInformation);
 
   const [commentPage, setCommentPage] = useState<number>(1);
-  const [comments, SetComments] = useState<CommentStructure[]>([]);
+  const [comments, setComments] = useState<CommentStructure[]>([]);
   const [commentInitialized, setCommentInitialized] = useState<boolean>(false);
+  const [commentInput, setCommentInput] = useState<string>("");
 
   const [isCollapsed, setIsCollapsed] = useState(Array(detailedPost.steps.length + 1).fill(false));
   const [scrollY, setScrollY] = useState<number>(0); //Parallax Var
@@ -57,8 +61,9 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
 
       // Append new comments to existing list
       const data = await res.json();
+      console.log("Fetched comments:", data.comments);
 
-      SetComments((prev) => [...prev, ...data.comments]);
+      setComments((prev) => [...prev, ...data.comments]);
       setCommentPage((prev) => prev + 1);
       setCommentInitialized(true);
     } catch (error) {
@@ -69,7 +74,7 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
   /**
    * Fetch replies for a specific parent comment
    * @param parentCommentID The ID of the parent comment to fetch replies for
-   * @globals detailedPost, SetComments
+   * @globals detailedPost, setComments
    */
   const fetchReplies = async (parentCommentID: string) => {
     try {
@@ -90,7 +95,7 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
       }
 
       const data = await res.json();
-      SetComments((prev) => {
+      setComments((prev) => {
         const curComments = prev.find((c) => c.commentId === parentCommentID);
         if (curComments) {
           curComments.replies = data.replies;
@@ -164,6 +169,100 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
     [isCollapsed]
   );
 
+  const hanldeCommentInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setCommentInput(e.target.value);
+  };
+
+  const submitComment = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/posts/${detailedPost.postId}/comments`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "ngrok-skip-browser-warning": "true",
+            Authorization: `Bearer ${useAuthStore.getState().accessToken}`,
+          },
+          body: JSON.stringify({
+            content: commentInput,
+          }),
+        }
+      );
+      if (!res.ok) {
+        throw useAuthStore.getState().throwAuthError(res.status);
+      }
+
+      setComments((prev) => [
+        {
+          commentId: "temp-id-" + Date.now(),
+          postId: detailedPost.postId,
+          userId: Number(userInformation.userId),
+          userName: userInformation.displayName,
+          userImgUrl: userInformation.profileImageUrl,
+          content: commentInput,
+          createdAt: new Date().toISOString(),
+          parentCommentID: null,
+          replies: [],
+          replyCount: 0,
+          nextRepliesPage: 0,
+        },
+        ...prev,
+      ]);
+
+      setCommentInput("");
+    } catch (error) {
+      if (error instanceof Error && error.message.includes("401")) {
+        await useAuthStore.getState().requestNewAccessToken();
+
+        try {
+          const res = await fetch(
+            `${import.meta.env.VITE_API_URL}/api/posts/${detailedPost.postId}/comments`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "ngrok-skip-browser-warning": "true",
+                Authorization: `Bearer ${useAuthStore.getState().accessToken}`,
+              },
+              body: JSON.stringify({
+                content: commentInput,
+              }),
+            }
+          );
+
+          if (!res.ok) {
+            throw useAuthStore.getState().throwAuthError(res.status);
+          }
+
+          setComments((prev) => [
+            {
+              commentId: "temp-id-" + Date.now(),
+              postId: detailedPost.postId,
+              userId: Number(userInformation.userId),
+              userName: userInformation.displayName,
+              userImgUrl: userInformation.profileImageUrl,
+              content: commentInput,
+              createdAt: new Date().toISOString(),
+              parentCommentID: null,
+              replies: [],
+              replyCount: 0,
+              nextRepliesPage: 0,
+            },
+            ...prev,
+          ]);
+
+          setCommentInput("");
+        } catch (e) {
+          formatConsoleError("PostContent.tsx", "submitComment-after-refresh", e);
+          return;
+        }
+      }
+      formatConsoleError("PostContent.tsx", "submitComment", error);
+    }
+  };
+
   return (
     <>
       <header
@@ -179,7 +278,7 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
         }}
       >
         <div className={styles["action-bar"]}>
-          <Button variant="rounded" size="medium" onClick={() => navigate(-1)}>
+          <Button variant="rounded" size="medium" onClick={() => navigate("/")}>
             <IoClose className={styles["btn-icon"]} />
           </Button>
 
@@ -366,8 +465,29 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
 
         <section className={styles["comment-section"]} ref={fetchTrigger}>
           <div className={styles["user-comments"]}>
-            <div></div>
-            <input className={styles["comment-input"]} placeholder="Add a comment..." />
+            {userInformation.profileImageUrl ? (
+              <div
+                className={styles["user-image"]}
+                style={{ backgroundImage: `url(${userInformation.profileImageUrl})` }}
+              />
+            ) : (
+              <FaCircleUser className={styles["user-image"]} />
+            )}
+            <form className={styles["comment-form"]} onSubmit={submitComment}>
+              <textarea
+                className={styles["comment-input"]}
+                placeholder="Add a comment..."
+                onInput={(e) => {
+                  e.currentTarget.style.height = "0px";
+                  e.currentTarget.style.height = e.currentTarget.scrollHeight + "px";
+                }}
+                value={commentInput}
+                onChange={hanldeCommentInputChange}
+              />
+              <button type="submit" className={styles["comment-submit-btn"]}>
+                <IoSend className={styles["comment-submit-icon"]} />
+              </button>
+            </form>
           </div>
 
           <div className={styles["comment-list"]}>

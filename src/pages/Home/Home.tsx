@@ -3,6 +3,7 @@ import { useState, useEffect, useMemo } from "react";
 import { FaSquareFacebook, FaSquareGithub, FaYoutube } from "react-icons/fa6";
 import Card from "../../components/Card/Card";
 import { formatConsoleError } from "../../consoleError";
+import { useNavigate } from "react-router-dom";
 
 interface popularIngredientsStructure {
   id: string;
@@ -29,13 +30,21 @@ const contacts = [
   },
 ];
 
+const popularIngredients: popularIngredientsStructure[] = [
+  { id: "01", title: "Chicken", coverImg: "/src/assets/ingredients/Chicken.jpg" },
+  { id: "02", title: "Beef", coverImg: "/src/assets/ingredients/Beef.jpg" },
+  { id: "03", title: "Pork", coverImg: "/src/assets/ingredients/Pork.jpg" },
+  { id: "04", title: "Salmon", coverImg: "/src/assets/ingredients/Salmon.jpg" },
+  { id: "05", title: "Tuna", coverImg: "/src/assets/ingredients/Tuna.jpg" },
+  { id: "06", title: "Shrimp", coverImg: "/src/assets/ingredients/Shrimp.jpg" },
+  { id: "07", title: "Broccoli", coverImg: "/src/assets/ingredients/Broccoli.jpg" },
+  { id: "08", title: "Tomato", coverImg: "/src/assets/ingredients/Tomato.jpg" },
+];
+
 const Home = () => {
-  //Parallax Var
+  const navigate = useNavigate();
   const [scrollY, setScrollY] = useState<number>(0);
   const [headerHeight, setHeaderHeight] = useState<number>(0);
-
-  //Popular Dish State
-  const [popularIngredients, setPopularIngredients] = useState<popularIngredientsStructure[]>([]);
   const [loaded, setLoaded] = useState<boolean>(false);
 
   //Parallax Effect - Update scrollY state on scroll;
@@ -53,28 +62,6 @@ const Home = () => {
 
   //Transform translate value with hard limit tie to the header height
   const translateVal = useMemo(() => Math.min(headerHeight, scrollY / 4), [headerHeight, scrollY]);
-
-  useEffect(() => {
-    //Fetch popular Ingredients from backend
-    const fetchPopularIngredients = async () => {
-      try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/posts/discover`, {
-          headers: {
-            "ngrok-skip-browser-warning": "true",
-          },
-        });
-
-        if (!res.ok) throw new Error("Unable to fetch popular Ingredients data");
-        const data = await res.json();
-
-        setPopularIngredients(data.popularIngredients);
-      } catch (e) {
-        formatConsoleError("Home.tsx", "fetchPopularIngredients", e);
-      }
-    };
-
-    // fetchPopularIngredients();
-  }, []);
 
   //Set loaded state based on popularIngredients data
   useEffect(() => {
@@ -110,6 +97,9 @@ const Home = () => {
                         postImg={item.coverImg}
                         cardLoaded={true}
                         rounded={true}
+                        onClick={() => {
+                          navigate(`/search/results?category=post&query=${item.title}`);
+                        }}
                       />
                     );
                   })

@@ -286,34 +286,68 @@
   gap: 0.5rem;
 
   width: 100%;
-  padding: 1rem;
   margin-top: 1rem;
 }
 
 .user-comments {
   display: flex;
-  align-items: center;
   gap: 0.5rem;
 }
 
-.user-comments div {
+.user-image {
   width: 30px;
   height: 30px;
 
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
   border-radius: 50%;
-  background-color: var(--theme-text-secondary);
+  color: var(--theme-text-secondary);
 }
 
-.user-comments input {
+.comment-form {
+  display: flex;
   width: calc(100% - 30px - 0.5rem);
-  padding: 0.5rem 1rem;
+}
+
+.comment-input {
+  width: 100%;
+  padding: 0.5rem;
+  resize: none;
 
   border: none;
-  border-bottom: 1px solid var(--theme-text-secondary);
+  border: 1px solid rgba(var(--theme-text-secondary-rgba), 0.5);
+  border-radius: 0.5rem;
   outline: none;
   background: none;
 
+  color: var(--theme-text-primary);
   font-size: 1rem;
+  vertical-align: top;
+  overflow: hidden;
+}
+
+.comment-submit-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  height: fit-content;
+  width: fit-content;
+
+  margin-left: 0.5rem;
+  padding: 0.5rem;
+
+  border-radius: 0.5rem;
+  background: var(--theme-button-primary-bg);
+  color: var(--theme-text-primary);
+
+  transition: background-color 0.3s ease-in-out;
+}
+
+.comment-submit-icon {
+  font-size: 1.2rem;
 }
 
 .comment-list {
@@ -322,6 +356,7 @@
   gap: 1.5rem;
 
   margin-top: 1rem;
+  margin-bottom: 2rem;
 }
 
 @keyframes info-panel-entrance {

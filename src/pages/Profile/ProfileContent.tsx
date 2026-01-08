@@ -97,7 +97,7 @@ const ProfileContent = () => {
           <FaUser className={styles["avatar"]} />
         )}
         <section
-          className={styles["username"]}
+          className={styles["display-name"]}
           onClick={() => {
             handleUIDShare(userInformation.userId);
           }}
@@ -107,6 +107,8 @@ const ProfileContent = () => {
             <IoCopySharp className={styles["share-uid-icon"]} />
           </div>
         </section>
+
+        <section className={styles["username"]}>@{userInformation.username}</section>
 
         <section className={styles["bio"]}>
           <span>{userInformation.bio}</span>

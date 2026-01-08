@@ -46,11 +46,15 @@
 
 .comment-author-avatar {
   position: relative;
-  width: 20px;
-  height: 20px;
+  width: 25px;
+  height: 25px;
 
   border-radius: 50%;
-  background-color: var(--theme-text-secondary);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  border: 1px solid rgba(var(--theme-text-secondary-rgba), 0.5);
 }
 
 .comment-author-group {

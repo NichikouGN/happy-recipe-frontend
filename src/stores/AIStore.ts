@@ -28,12 +28,7 @@ interface AIStoreType {
 
 export const useAIStore = create<AIStoreType>()((set, get) => ({
   aiWindowOpen: false,
-  chatList: [
-    {
-      role: "assistant",
-      content: "Hello! I'm your AI assistant. How can I help you today?",
-    },
-  ],
+  chatList: [],
   userInput: "",
   aiLoading: false,
 
@@ -63,7 +58,7 @@ export const useAIStore = create<AIStoreType>()((set, get) => ({
     console.log({ chatList: [...recentChats, { role: "user", content: userInput }] });
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/ai/chat`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/ai/chat-gemini`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -73,10 +68,13 @@ export const useAIStore = create<AIStoreType>()((set, get) => ({
       });
 
       if (!response.ok) {
+        const errorText = await response.text();
+        console.error("AI Response Error:", errorText);
         throw new Error(`Error: ${response.statusText}`);
       }
 
-      const data: { reply: string; redirect?: string } = await response.json();
+      const data = await response.json();
+      console.log("AI Response Data:", data);
       addChatContent({ role: "assistant", content: data.reply, redirect: data.redirect });
     } catch (error) {
       formatConsoleError("AiStore", "fetchAIResponse", error);

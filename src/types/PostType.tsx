@@ -56,6 +56,7 @@ export interface CommentBase {
   postId: string;
   userId: number;
   userName: string;
+  userImgUrl?: string;
   content: string;
   createdAt: string;
   parentCommentID: string | null;

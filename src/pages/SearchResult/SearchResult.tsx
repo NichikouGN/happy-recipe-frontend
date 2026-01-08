@@ -1,6 +1,5 @@
 import React, { Fragment, useEffect, useState } from "react";
 import styles from "./SearchResult.module.css";
-import cardStyles from "../../components/Card/Card.module.css";
 import Card from "../../components/Card/Card";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa";
@@ -11,6 +10,7 @@ import { FaCircleUser } from "react-icons/fa6";
 interface searchUserType {
   userId: string;
   displayName: string;
+  username: string;
   userImgUrl: string;
   bio: string;
 }
@@ -134,7 +134,7 @@ const SearchResult = () => {
       <main className={styles["content"]}>
         <div className={styles["search-results-header"]}>
           <select
-            className={styles["search-input-category-select"]}
+            className={styles["search-category-select"]}
             onChange={(e) => handleNewParams(e.target.value, searchQuery)}
             value={category}
           >
@@ -202,7 +202,7 @@ const SearchResult = () => {
                 )
               : null
             : searchUserResults && searchUserResults.length > 0
-            ? searchUserResults.map(({ userId, displayName, userImgUrl, bio }, index) => (
+            ? searchUserResults.map(({ userId, displayName, username, userImgUrl, bio }, index) => (
                 <Fragment key={userId}>
                   <button
                     className={`${styles["card-item"]}`}
@@ -212,7 +212,7 @@ const SearchResult = () => {
                   >
                     {userImgUrl ? (
                       <div
-                        className={cardStyles["card-author-logo"]}
+                        className={styles["card-author-logo"]}
                         style={{ backgroundImage: `url(${userImgUrl})` }}
                       />
                     ) : (
@@ -220,7 +220,8 @@ const SearchResult = () => {
                     )}
 
                     <div className={styles["user-info"]}>
-                      <h2 className={styles["user-display-name"]}>{displayName}</h2>
+                      <h2 className={styles["display-name"]}>{displayName}</h2>
+                      <h3 className={styles["username"]}>@{username}</h3>
                       <p className={styles["user-bio"]}>{bio}</p>
                     </div>
                   </button>

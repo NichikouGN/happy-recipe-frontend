@@ -82,16 +82,18 @@ const UserContent = ({ userInformation }: { userInformation: userInformation }) 
           <FaUser className={styles["avatar"]} />
         )}
         <section
-          className={styles["username"]}
+          className={styles["display-name"]}
           onClick={() => {
             handleUIDShare(userInformation.userId);
           }}
         >
-          <div>{userInformation.username}</div>
+          <div>{userInformation.displayName}</div>
           <div className={styles["share-uid"]}>
             <IoCopySharp className={styles["share-uid-icon"]} />
           </div>
         </section>
+
+        <section className={styles["username"]}>@{userInformation.username}</section>
 
         <section className={styles["bio"]}>
           <span>{userInformation.bio}</span>

@@ -38,11 +38,21 @@ npm run dev
 
 # Version
 
+## v0.10.2 (2025-01-08)
+
+- Fixed some error with search result for user category.
+- Decorate the search results for user.
+- Changed home directory to use fixed value for ingredients instead of fetching.
+- Added a username field under the display name in the profile and user page.
+- Changed the AI chatbot initial message to not be part of the context for the API.
+- Small change to various UI elements.
+- Fix not being able to send comments under post
+
 ## v0.10.1 (2025-12-26)
 
 - Change the edit profile File field to avatar instead of profileImg to match with backend.
 - Fixed an issue author image not showing on the post card.
-- Added confirmation message when editing profile
+- Added confirmation message when editing profile.
 
 ## v0.10.0 (2025-12-23)
 

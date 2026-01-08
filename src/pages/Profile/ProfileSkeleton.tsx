@@ -15,14 +15,6 @@ const ProfileSkeleton = () => {
       </header>
       <main className={styles["content"]}>
         <FaUser className={styles["avatar"]} />
-        <div className={styles["username"]}>
-          <div>...</div>
-        </div>
-
-        <div className={styles["bio"]}>
-          <span>...</span>
-        </div>
-
         <div className={styles["actions"]}>
           <Button size="medium" variant="primary" onClick={() => navigate("/signin")}>
             Sign in

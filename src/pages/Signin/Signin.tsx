@@ -1,4 +1,4 @@
-import { FaUser, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaUser, FaLock, FaEye, FaEyeSlash, FaUnlock } from "react-icons/fa";
 import { useCallback, useEffect, useState } from "react";
 import { useAuthStore } from "../../stores/authStore";
 import { IoClose } from "react-icons/io5";
@@ -52,76 +52,76 @@ const Signin = () => {
 
   return (
     signInState === "unauthorized" && (
-      <div className={styles["signin-container"]}>
+      <div className={styles["signin-bg"]}>
         <Link to="/" className={styles["return"]}>
           <IoClose className={styles["return-icon"]} />
         </Link>
-
-        <div className={styles["title"]}>
-          <img src="/src/assets/happy-recipe-logo-text.png" className={styles["title-logo"]} />
-          <h1 className={styles["title-text"]}>Happy Recipe</h1>
-        </div>
-
-        <h2 className={styles["quote"]}>
-          Sign in to join our community of passionate chefs all around the world
-        </h2>
-
-        <div className={styles["signin-menu"]}>
-          <form className={styles["signin-form"]} onSubmit={handleSubmit(onSubmit)}>
-            {/*Email Input*/}
-            <div className={styles["input-wrapper"]}>
-              <FaUser className={styles["input-icon"]} />
-              <input
-                type="text"
-                placeholder="Enter your username"
-                alt="Enter your username"
-                autoComplete="off"
-                className={styles["input-field"]}
-                {...register("email")}
-                // required
-              />
-            </div>
-            {errors.email && <div className={styles["error-text"]}>{errors.email.message}</div>}
-
-            {/*Password Input*/}
-            <div className={styles["input-wrapper"]}>
-              <FaLock className={styles["input-icon"]} />
-              <input
-                type={showPassword ? "text" : "password"}
-                placeholder="Enter your password"
-                alt="Enter your password"
-                autoComplete="off"
-                className={styles["input-field"]}
-                {...register("password")}
-                // required
-              />
-
-              {/* Show/Hide password*/}
-              <button
-                type="button"
-                className={styles["toggle-password"]}
-                onClick={togglePasswordVisibility}
-              >
-                {showPassword ? <FaEye /> : <FaEyeSlash />}
-              </button>
-            </div>
-            {errors.password && (
-              <div className={styles["error-text"]}>{errors.password.message}</div>
-            )}
-
-            {/*Submit*/}
-            <Button variant="primary" size="small" type="submit" fullWidth={true}>
-              Sign In
-            </Button>
-          </form>
-
-          <div className={styles["signup-quote"]}>
-            New to Happy Recipe?&nbsp;
-            <NavLink to="/signup" className={styles["signup-btn"]}>
-              Sign Up
-            </NavLink>
-            &nbsp;today
+        <div className={styles["signin-container"]}>
+          <div className={styles["title"]}>
+            <img src="/src/assets/happy-recipe-logo-text.png" className={styles["title-logo"]} />
+            <h1 className={styles["title-text"]}>Happy Recipe</h1>
           </div>
+
+          <h2 className={styles["quote"]}>
+            Sign in to join our community of passionate chefs all around the world
+          </h2>
+
+          <div className={styles["signin-menu"]}>
+            <form className={styles["signin-form"]} onSubmit={handleSubmit(onSubmit)}>
+              {/*Email Input*/}
+              <div className={styles["input-wrapper"]}>
+                <FaUser className={styles["input-icon"]} />
+                <input
+                  type="text"
+                  placeholder="Enter your username"
+                  alt="Enter your username"
+                  autoComplete="off"
+                  className={styles["input-field"]}
+                  {...register("email")}
+                />
+              </div>
+              {errors.email && <div className={styles["error-text"]}>{errors.email.message}</div>}
+
+              {/*Password Input*/}
+              <div className={styles["input-wrapper"]}>
+                <FaUnlock className={styles["input-icon"]} />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Enter your password"
+                  alt="Enter your password"
+                  autoComplete="off"
+                  className={styles["input-field"]}
+                  {...register("password")}
+                />
+
+                {/* Show/Hide password*/}
+                <button
+                  type="button"
+                  className={styles["toggle-password"]}
+                  onClick={togglePasswordVisibility}
+                >
+                  {showPassword ? <FaEye /> : <FaEyeSlash />}
+                </button>
+              </div>
+              {errors.password && (
+                <div className={styles["error-text"]}>{errors.password.message}</div>
+              )}
+
+              {/*Submit*/}
+              <Button variant="primary" size="small" type="submit" fullWidth={true}>
+                Sign In
+              </Button>
+            </form>
+          </div>
+          <section className={styles["reroute"]}>
+            <div className={styles["signup-quote"]}>
+              New user?&nbsp;
+              <NavLink to="/signup" className={styles["signup-btn"]}>
+                Sign Up
+              </NavLink>
+              &nbsp;today
+            </div>
+          </section>
         </div>
       </div>
     )
