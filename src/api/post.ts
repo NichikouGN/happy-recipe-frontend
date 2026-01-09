@@ -19,6 +19,7 @@ export const deletePost = async ({
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
+        "ngrok-skip-browser-warning": "true",
         Authorization: `Bearer ${useAuthStore.getState().accessToken}`,
       },
     });

@@ -40,6 +40,7 @@ const Upload = () => {
   });
 
   const [showPreview, setShowPreview] = useState<boolean>(false);
+  const [isUploading, setIsUploading] = useState<boolean>(false);
 
   // Add new step
   const addSteps = useCallback(() => {
@@ -117,6 +118,10 @@ const Upload = () => {
       return;
     }
 
+    if (isUploading) return;
+
+    setIsUploading(true);
+
     try {
       await pushPost(uploadPost);
       Toast({
@@ -169,6 +174,8 @@ const Upload = () => {
           type: "error",
         });
       }
+    } finally {
+      setIsUploading(false);
     }
   };
 

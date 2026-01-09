@@ -54,7 +54,12 @@ const UserContent = ({ userInformation }: { userInformation: userInformation }) 
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/api/user/${
           userInformation.userId
-        }/posts?page=${userPostsPage}`
+        }/posts?page=${userPostsPage}`,
+        {
+          headers: {
+            "ngrok-skip-browser-warning": "true",
+          },
+        }
       );
 
       if (!res.ok) {

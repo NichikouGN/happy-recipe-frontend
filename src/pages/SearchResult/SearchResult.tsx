@@ -33,7 +33,12 @@ const SearchResult = () => {
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/api/search/results?category=${encodeURIComponent(
           category
-        )}&query=${encodeURIComponent(searchQuery)}&page=${searchPage}`
+        )}&query=${encodeURIComponent(searchQuery)}&page=${searchPage}`,
+        {
+          headers: {
+            "ngrok-skip-browser-warning": "true",
+          },
+        }
       );
 
       if (!res.ok) throw new Error("Failed to fetch search results");

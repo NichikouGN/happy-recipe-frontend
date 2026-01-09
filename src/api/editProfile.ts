@@ -38,6 +38,7 @@ export const uploadProfileChanges = async (profileData: {
   const res = await fetch(`${import.meta.env.VITE_API_URL}/api/profile/edit`, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
+      "ngrok-skip-browser-warning": "true",
     },
     method: "POST",
     body: formData,

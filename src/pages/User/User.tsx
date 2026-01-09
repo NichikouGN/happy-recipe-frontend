@@ -16,7 +16,11 @@ const User = () => {
     const fetchUserInformation = async () => {
       console.log("Fetching user information for userId:", userId);
       try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/users/${userId}`);
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/users/${userId}`, {
+          headers: {
+            "ngrok-skip-browser-warning": "true",
+          },
+        });
         if (!res.ok) {
           throw new Error("Network response was not ok");
         }

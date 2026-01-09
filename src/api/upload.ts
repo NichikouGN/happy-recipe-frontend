@@ -35,6 +35,7 @@ export const pushPost = async (data: uploadPostStructure) => {
     method: "POST",
     headers: {
       Authorization: `Bearer ${accessToken}`,
+      "ngrok-skip-browser-warning": "true",
     },
     body: formData,
   });

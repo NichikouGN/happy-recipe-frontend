@@ -38,6 +38,11 @@ npm run dev
 
 # Version
 
+## v0.11.0 (2025-01-09)
+
+- Added ability to delete your own post.
+- Added related posts to post details.
+
 ## v0.10.2 (2025-01-08)
 
 - Fixed some error with search result for user category.

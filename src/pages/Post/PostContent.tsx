@@ -2,7 +2,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react
 import { usePosts } from "../../context/PostContext";
 import { IoClose } from "react-icons/io5";
 import { IoIosShareAlt } from "react-icons/io";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { FaBookmark, FaRegBookmark } from "react-icons/fa";
 import type { CommentStructure, FullPostStructure } from "../../types/PostType";
 import { reactionType } from "../../types/PostType";
@@ -20,6 +20,7 @@ import { AuthError } from "../../errors/AuthError";
 import { RelatedPost } from "../../components/RelatedPost/RelatedPost";
 
 const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
+  const postID = useParams().postId;
   const { handleUserBookmark, handleUserReaction } = usePosts();
   const userInformation = useUserStore((state) => state.userInformation);
 
@@ -40,7 +41,8 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
 
   useLayoutEffect(() => {
     window.scrollTo(0, 0);
-  }, []);
+    heightRef.current = [];
+  }, [postID]);
 
   // Fetch comments
   const fetchComments = async () => {

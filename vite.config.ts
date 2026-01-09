@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     host: true,
-    allowedHosts: ["db27d7c8d2ba.ngrok-free.app"],
+    allowedHosts: ["dauby-mikki-violably.ngrok-free.dev"],
     port: 5173,
   },
 });

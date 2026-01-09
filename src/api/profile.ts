@@ -14,7 +14,12 @@ export const fetchBookmarkedPosts = async (
 ) => {
   try {
     const res = await fetch(
-      `${import.meta.env.VITE_API_URL}/api/profile/${userId}/bookmarks?page=${bookmarkedPage}`
+      `${import.meta.env.VITE_API_URL}/api/profile/${userId}/bookmarks?page=${bookmarkedPage}`,
+      {
+        headers: {
+          "ngrok-skip-browser-warning": "true",
+        },
+      }
     );
 
     if (!res.ok) {
@@ -41,7 +46,12 @@ export const fetchUserPosts = async (
 ) => {
   try {
     const res = await fetch(
-      `${import.meta.env.VITE_API_URL}/api/profile/${userId}/posts?page=${userPostsPage}`
+      `${import.meta.env.VITE_API_URL}/api/profile/${userId}/posts?page=${userPostsPage}`,
+      {
+        headers: {
+          "ngrok-skip-browser-warning": "true",
+        },
+      }
     );
 
     if (!res.ok) {
