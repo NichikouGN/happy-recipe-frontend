@@ -17,6 +17,7 @@ import { FaCircleUser } from "react-icons/fa6";
 import { IoSend } from "react-icons/io5";
 import { useAuthStore } from "../../stores/authStore";
 import { AuthError } from "../../errors/AuthError";
+import { RelatedPost } from "../../components/RelatedPost/RelatedPost";
 
 const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
   const { handleUserBookmark, handleUserReaction } = usePosts();
@@ -464,6 +465,9 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
             );
           })}
         </section>
+
+        {/* Show related post */}
+        <RelatedPost detailedPost={detailedPost} />
 
         <section className={styles["comment-section"]} ref={fetchTrigger}>
           <div className={styles["user-comments"]}>
