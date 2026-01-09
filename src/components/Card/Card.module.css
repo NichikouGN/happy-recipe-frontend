@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
 
+  position: relative;
   width: 100%;
 
   aspect-ratio: 2/1;
@@ -38,6 +39,61 @@
   100% {
     opacity: 1;
   }
+}
+
+.own-post-setting {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+
+  background: rgba(var(--theme-card-secondary-bg-rgba), 0.6);
+  color: var(--theme-text-primary);
+  font-size: 1.5rem;
+  font-weight: bold;
+
+  border: none;
+  border-radius: 0.25rem;
+  padding: 0.25rem 0.5rem;
+
+  cursor: pointer;
+  z-index: 3;
+
+  backdrop-filter: blur(5px);
+}
+
+.post-setting-dropdown {
+  position: absolute;
+  top: 3rem;
+  right: 0.5rem;
+  padding: 0.5rem 0;
+
+  background: var(--theme-body-secondary-bg);
+  color: var(--theme-text-primary);
+  font-size: 1rem;
+
+  border: none;
+  border-radius: 0.5rem;
+
+  z-index: 4;
+}
+
+.post-setting-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  width: 100%;
+  padding: 0.5rem 1rem;
+
+  background: transparent;
+  color: var(--red-500);
+  text-align: left;
+
+  font-size: 1rem;
+}
+
+.post-setting-icon {
+  font-size: 1.25rem;
 }
 
 /*Ingredients Card Style*/

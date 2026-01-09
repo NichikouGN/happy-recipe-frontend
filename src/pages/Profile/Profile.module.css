@@ -104,7 +104,6 @@
   padding: 1rem 1rem calc(7.5svh + 2rem) 1rem;
 
   background: var(--theme-body-bg);
-
   transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
 }
 
@@ -284,4 +283,5 @@
 
   font-size: 1.1rem;
   color: var(--theme-text-primary);
+  text-align: center;
 }

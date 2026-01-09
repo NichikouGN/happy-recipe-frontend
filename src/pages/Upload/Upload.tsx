@@ -119,12 +119,40 @@ const Upload = () => {
 
     try {
       await pushPost(uploadPost);
+      Toast({
+        title: "Upload Successful",
+        message: "Your post has been uploaded successfully.",
+        type: "success",
+      });
+      setUploadPost({
+        title: "",
+        coverImgFile: null,
+        cookTime: 0,
+        servings: 1,
+        difficulty: "easy",
+        description: "",
+        steps: [{ stepNum: 1, stepDesc: "", stepImgFile: null }],
+      });
     } catch (error) {
       if (error instanceof AuthError && error.status === 401) {
         await useAuthStore.getState().requestNewAccessToken();
 
         try {
           await pushPost(uploadPost);
+          Toast({
+            title: "Upload Successful",
+            message: "Your post has been uploaded successfully.",
+            type: "success",
+          });
+          setUploadPost({
+            title: "",
+            coverImgFile: null,
+            cookTime: 0,
+            servings: 1,
+            difficulty: "easy",
+            description: "",
+            steps: [{ stepNum: 1, stepDesc: "", stepImgFile: null }],
+          });
         } catch (error) {
           formatConsoleError("upload.ts", "pushPost after token refresh", error);
           Toast({

@@ -129,7 +129,7 @@ const UserContent = ({ userInformation }: { userInformation: userInformation }) 
               ))
             ) : (
               <div className={styles["post-list-content-no-result"]}>
-                {userInformation.username} has not posted any recipes yet.
+                {userInformation.displayName} has not posted any recipes yet.
               </div>
             )}
           </div>

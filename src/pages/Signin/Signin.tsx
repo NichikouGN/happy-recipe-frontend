@@ -1,4 +1,4 @@
-import { FaUser, FaLock, FaEye, FaEyeSlash, FaUnlock } from "react-icons/fa";
+import { FaUser, FaEye, FaEyeSlash, FaUnlock } from "react-icons/fa";
 import { useCallback, useEffect, useState } from "react";
 import { useAuthStore } from "../../stores/authStore";
 import { IoClose } from "react-icons/io5";
@@ -58,7 +58,7 @@ const Signin = () => {
         </Link>
         <div className={styles["signin-container"]}>
           <div className={styles["title"]}>
-            <img src="/src/assets/happy-recipe-logo-text.png" className={styles["title-logo"]} />
+            <img src="/src/assets/happy-recipe-logo.png" className={styles["title-logo"]} />
             <h1 className={styles["title-text"]}>Happy Recipe</h1>
           </div>
 

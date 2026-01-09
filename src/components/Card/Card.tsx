@@ -9,6 +9,9 @@ import { computeReactionState } from "../../api/discover";
 import { reactionType } from "../../types/PostType";
 import { useNavigate } from "react-router-dom";
 import { useUserStore } from "../../stores/userStore";
+import { useState } from "react";
+import { MdDeleteForever } from "react-icons/md";
+import PostDeleteConfirmation from "../PostDeleteConfirmation/PostDeleteConfirmation";
 
 interface CardProps {
   postId: string;
@@ -17,6 +20,7 @@ interface CardProps {
   authorName?: string;
   authorId?: string;
   authorImgUrl?: string;
+  currentUserId?: string;
   time?: number;
   serving?: number;
   difficulty?: "easy" | "medium" | "hard";
@@ -44,6 +48,7 @@ const Card = ({
   authorName = "",
   authorId = "",
   authorImgUrl = "",
+  currentUserId = "",
   time = 0,
   serving = 0,
   difficulty = "easy",
@@ -57,6 +62,8 @@ const Card = ({
   onClick,
 }: CardProps) => {
   const { handleUserReaction, handleUserBookmark } = usePosts();
+  const [postSetting, setPostSetting] = useState<boolean>(false);
+  const [deleteConfirmation, setDeleteConfirmation] = useState<boolean>(false);
 
   const navigate = useNavigate();
 
@@ -92,6 +99,13 @@ const Card = ({
     </button>
   ) : (
     <>
+      {deleteConfirmation && currentUserId && (
+        <PostDeleteConfirmation
+          postId={postId}
+          setDeleteConfirmation={setDeleteConfirmation}
+          setPostSetting={setPostSetting}
+        />
+      )}
       <div
         ref={fetchRef}
         style={
@@ -104,6 +118,35 @@ const Card = ({
         } `}
         onClick={onClick}
       >
+        {currentUserId && authorId && currentUserId === authorId && cardLoaded && (
+          <>
+            <button
+              className={styles["own-post-setting"]}
+              onClick={(e) => {
+                e.stopPropagation();
+                setPostSetting((prev) => !prev);
+              }}
+            >
+              :
+            </button>
+
+            {postSetting && (
+              <div className={styles["post-setting-dropdown"]}>
+                <button
+                  className={styles["post-setting-item"]}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setDeleteConfirmation(true);
+                  }}
+                >
+                  <MdDeleteForever className={styles["post-setting-icon"]} />
+                  Delete Post
+                </button>
+              </div>
+            )}
+          </>
+        )}
+
         <div className={styles["card-info-wrapper"]}>
           {cardLoaded && authorImgUrl ? (
             <button

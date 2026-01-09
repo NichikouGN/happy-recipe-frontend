@@ -2,8 +2,10 @@ import { useNavigate } from "react-router-dom";
 import Card from "../../components/Card/Card";
 import { Fragment, useEffect, useRef } from "react";
 import { usePosts } from "../../context/PostContext";
+import { useUserStore } from "../../stores/userStore";
 
 const DiscoverContent = () => {
+  const userInformation = useUserStore((state) => state.userInformation);
   const { postList, fetchNextPage, discoverScrollY } = usePosts();
   const fetchTrigger = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
@@ -63,6 +65,7 @@ const DiscoverContent = () => {
             authorName={authorName}
             authorId={authorId}
             authorImgUrl={authorImgUrl}
+            currentUserId={userInformation.userId}
             time={cookTime}
             difficulty={difficulty}
             serving={servings}

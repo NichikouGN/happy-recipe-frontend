@@ -2,7 +2,6 @@ import styles from "./Home.module.css";
 import { useState, useEffect, useMemo } from "react";
 import { FaSquareFacebook, FaSquareGithub, FaYoutube } from "react-icons/fa6";
 import Card from "../../components/Card/Card";
-import { formatConsoleError } from "../../consoleError";
 import { useNavigate } from "react-router-dom";
 
 interface popularIngredientsStructure {

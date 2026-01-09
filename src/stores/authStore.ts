@@ -14,7 +14,7 @@ interface authStoreType {
 
   setUpToken: (accessToken: string, refreshToken: string) => void;
   clearToken: () => void;
-  throwAuthError: (status: number) => Error;
+  throwAuthError: (status: number) => AuthError;
 
   validateAccessToken: () => Promise<boolean>;
   requestNewAccessToken: () => Promise<boolean>;

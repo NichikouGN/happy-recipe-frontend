@@ -24,6 +24,10 @@ const ProfileContent = () => {
   const postTrigger = useRef<HTMLDivElement>(null);
   const bookmarkTrigger = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   // Initial fetch
   useEffect(() => {
     if (!userInformation.userId) return;
@@ -154,6 +158,7 @@ const ProfileContent = () => {
                       authorName={post.authorName}
                       authorId={post.authorId}
                       authorImgUrl={post.authorImgUrl}
+                      currentUserId={userInformation.userId}
                       time={post.cookTime}
                       difficulty={post.difficulty}
                       serving={post.servings}
@@ -197,16 +202,9 @@ const ProfileContent = () => {
                 </Fragment>
               ))
             ) : (
-              Array.from({ length: 3 }).map((_, index) => (
-                <Card
-                  key={`${index + 3}`}
-                  postId={`${index + 3}`}
-                  cardLoaded={false}
-                  cardType="post"
-                  rounded={true}
-                  excludeReactionSection={true}
-                />
-              ))
+              <div className={styles["post-list-content-no-result"]}>
+                You haven't bookmarked anything yet.
+              </div>
             )}
           </div>
         </section>

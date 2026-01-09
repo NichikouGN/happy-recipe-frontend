@@ -16,6 +16,7 @@ import { useUserStore } from "../../stores/userStore";
 import { FaCircleUser } from "react-icons/fa6";
 import { IoSend } from "react-icons/io5";
 import { useAuthStore } from "../../stores/authStore";
+import { AuthError } from "../../errors/AuthError";
 
 const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
   const { handleUserBookmark, handleUserReaction } = usePosts();
@@ -213,7 +214,8 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
 
       setCommentInput("");
     } catch (error) {
-      if (error instanceof Error && error.message.includes("401")) {
+      if (error instanceof AuthError && error.status === 401) {
+        console.log("Access token expired, refreshing...");
         await useAuthStore.getState().requestNewAccessToken();
 
         try {

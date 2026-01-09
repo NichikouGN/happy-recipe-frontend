@@ -5,7 +5,6 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import UserError from "./UserError";
 import type { userInformation } from "../../types/userType";
-import { useUserStore } from "../../stores/userStore";
 
 const User = () => {
   const { userId } = useParams<{ userId: string }>();
