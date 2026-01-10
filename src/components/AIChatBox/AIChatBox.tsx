@@ -39,19 +39,6 @@ const AIChatBox = () => {
 
   return (
     <>
-      <button
-        className={`${styles["chat-box-toggle"]} ${
-          styles[`${aiWindowOpen ? "chat-box-toggle-open" : ""}`]
-        }`}
-        onClick={() => useAIStore.setState({ aiWindowOpen: !aiWindowOpen })}
-      >
-        {aiWindowOpen ? (
-          <IoClose size={24} className={styles["chat-box-toggle-icon"]} />
-        ) : (
-          <TbMessageChatbotFilled size={24} className={styles["chat-box-toggle-icon"]} />
-        )}
-      </button>
-
       {aiWindowOpen && (
         <div className={`${styles["chat-box-container"]} ${styles["intro"]}`}>
           <header className={styles["header"]}>
@@ -155,6 +142,19 @@ const AIChatBox = () => {
           </footer>
         </div>
       )}
+
+      <button
+        className={`${styles["chat-box-toggle"]} ${
+          styles[`${aiWindowOpen ? "chat-box-toggle-open" : ""}`]
+        }`}
+        onClick={() => useAIStore.setState({ aiWindowOpen: !aiWindowOpen })}
+      >
+        {aiWindowOpen ? (
+          <IoClose size={24} className={styles["chat-box-toggle-icon"]} />
+        ) : (
+          <TbMessageChatbotFilled size={24} className={styles["chat-box-toggle-icon"]} />
+        )}
+      </button>
     </>
   );
 };

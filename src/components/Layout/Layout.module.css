@@ -1,0 +1,11 @@
+.hovering-container {
+  position: fixed;
+  right: 2svh;
+  bottom: 10svh;
+  z-index: 1000;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1rem;
+}

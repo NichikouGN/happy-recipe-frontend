@@ -3,9 +3,6 @@
   justify-content: center;
   align-items: center;
 
-  position: fixed;
-  right: 2svh;
-  bottom: 10svh;
   width: 3rem;
   height: 3rem;
 
@@ -31,10 +28,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-
-  position: fixed;
-  right: 2svh;
-  bottom: calc(10svh + 4rem);
 
   width: 75svw;
   height: 60svh;

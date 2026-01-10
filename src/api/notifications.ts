@@ -1,5 +1,6 @@
 import { Toast } from "../stores/toastStore";
 import { useAuthStore } from "../stores/authStore";
+import { AuthError } from "../errors/AuthError";
 
 export interface NotificationPost {
   postId: string;
@@ -59,12 +60,41 @@ export const fetchNotifications = async (
     );
 
     if (!res.ok) {
-      throw new Error("Unable to fetch notifications");
+      throw useAuthStore.getState().throwAuthError(res.status);
     }
 
     const data: NotificationsResponse = await res.json();
     return data;
   } catch (error) {
+    if (error instanceof AuthError && error.status === 401) {
+      await useAuthStore.getState().requestNewAccessToken();
+
+      try {
+        const retryRes = await fetch(
+          `${
+            import.meta.env.VITE_API_URL
+          }/api/users/notifications/list?page=${page}&limit=${limit}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${useAuthStore.getState().accessToken}`,
+              "ngrok-skip-browser-warning": "true",
+            },
+          }
+        );
+
+        if (!retryRes.ok) {
+          throw useAuthStore.getState().throwAuthError(retryRes.status);
+        }
+
+        const retryData: NotificationsResponse = await retryRes.json();
+        return retryData;
+      } catch (retryError) {
+        Toast({ type: "error", title: "Error", message: "Unable to fetch notifications" });
+        return null;
+      }
+    }
     Toast({ type: "error", title: "Error", message: "Unable to fetch notifications" });
     return null;
   }
@@ -74,9 +104,7 @@ export const fetchNotifications = async (
  * Mark a notification as read
  * @param notificationId The ID of the notification to mark as read
  */
-export const markNotificationAsRead = async (
-  notificationId: string
-): Promise<boolean> => {
+export const markNotificationAsRead = async (notificationId: string): Promise<boolean> => {
   const accessToken = useAuthStore.getState().accessToken;
   try {
     const res = await fetch(
@@ -85,7 +113,7 @@ export const markNotificationAsRead = async (
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${accessToken}`,
+          Authorization: `Bearer ${accessToken}`,
           "ngrok-skip-browser-warning": "true",
         },
         credentials: "include",

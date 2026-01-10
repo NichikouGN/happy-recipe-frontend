@@ -1,5 +1,5 @@
 import styles from "./Navbar.module.css";
-import { FaHome, FaUser } from "react-icons/fa";
+import { FaBell, FaHome, FaUser } from "react-icons/fa";
 import { FaGlobe } from "react-icons/fa6";
 import { RiContactsBookUploadFill } from "react-icons/ri";
 import { Link, useLocation } from "react-router-dom";
@@ -19,6 +19,13 @@ const navItems = [
     icon: RiContactsBookUploadFill,
     label: "Upload",
   },
+
+  {
+    path: "/notices",
+    menu: "notices",
+    icon: FaBell,
+    label: "Notices",
+  },
   { path: "/profile", menu: "profile", icon: FaUser, label: "Profile" },
 ] as const;
 
@@ -33,8 +40,9 @@ export const Navbar = () => {
 
   //Sync navbar with url
   if (path.startsWith("/discover")) currentMenu = "discover";
-  else if (path.startsWith("/profile")) currentMenu = `profile`;
   else if (path.startsWith("/upload")) currentMenu = "upload";
+  else if (path.startsWith("/profile")) currentMenu = `profile`;
+  else if (path.startsWith("/notices")) currentMenu = "notices";
   else if (path.startsWith("/search")) currentMenu = "discover";
 
   return (
