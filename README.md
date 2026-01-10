@@ -38,10 +38,11 @@ npm run dev
 
 # Version
 
-## v0.11.0 (2025-01-09)
+## v0.11.0 (2025-01-10)
 
 - Added ability to delete your own post.
 - Added related posts to post details.
+- Added a new notifications page.
 
 ## v0.10.2 (2025-01-08)
 

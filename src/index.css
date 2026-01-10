@@ -107,6 +107,9 @@ body {
   --theme-body-secondary-bg: var(--neutral-300);
   --theme-body-secondary-bg-rgba: 212, 212, 212;
 
+  --theme-body-tertiary-bg: var(--neutral-400);
+  --theme-body-tertiary-bg-rgba: 161, 161, 161;
+
   --theme-text-primary: var(--neutral-900);
   --theme-text-primary-rgba: 24, 24, 24;
 
@@ -138,6 +141,9 @@ body {
 
   --theme-body-secondary-bg: var(--neutral-700);
   --theme-body-secondary-bg-rgba: 63, 63, 63;
+
+  --theme-body-tertiary-bg: var(--neutral-600);
+  --theme-body-tertiary-bg-rgba: 82, 82, 82;
 
   --theme-text-primary: var(--neutral-100);
   --theme-text-primary-rgba: 244, 244, 244;

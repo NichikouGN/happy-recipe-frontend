@@ -110,7 +110,7 @@ export const markNotificationAsRead = async (notificationId: string): Promise<bo
     const res = await fetch(
       `${import.meta.env.VITE_API_URL}/api/users/notifications/${notificationId}/read`,
       {
-        method: "PUT",
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${accessToken}`,
