@@ -121,11 +121,38 @@ export const markNotificationAsRead = async (notificationId: string): Promise<bo
     );
 
     if (!res.ok) {
-      throw new Error("Unable to mark notification as read");
+      throw useAuthStore.getState().throwAuthError(res.status);
     }
 
     return true;
   } catch (error) {
+    if (error instanceof AuthError && error.status === 401) {
+      await useAuthStore.getState().requestNewAccessToken();
+
+      try {
+        const retryRes = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/users/notifications/${notificationId}/read`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${useAuthStore.getState().accessToken}`,
+              "ngrok-skip-browser-warning": "true",
+            },
+            credentials: "include",
+          }
+        );
+
+        if (!retryRes.ok) {
+          throw useAuthStore.getState().throwAuthError(retryRes.status);
+        }
+
+        return true;
+      } catch (retryError) {
+        Toast({ type: "error", title: "Error", message: "Unable to mark notification as read" });
+        return false;
+      }
+    }
     Toast({ type: "error", title: "Error", message: "Unable to mark notification as read" });
     return false;
   }
