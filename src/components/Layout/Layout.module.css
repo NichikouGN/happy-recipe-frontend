@@ -9,3 +9,12 @@
   align-items: flex-end;
   gap: 1rem;
 }
+
+.container {
+  position: fixed;
+  width: 100svw;
+  height: 100svh;
+
+  display: grid;
+  grid-template-rows: 1fr auto;
+}

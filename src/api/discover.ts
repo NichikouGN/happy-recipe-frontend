@@ -6,7 +6,7 @@ import type {
   ReactionType,
 } from "../types/PostType";
 import { useAuthStore } from "../stores/authStore";
-import { useToastStore } from "../stores/toastStore";
+import { Toast, useToastStore } from "../stores/toastStore";
 
 /**
  * fetcher functions for tanstack useInfiniteQuery()
@@ -32,6 +32,32 @@ export const fetchPosts = async (pageParam: number) => {
   if (!res.ok) throw new Error("Failed to fetch posts");
 
   const data = await res.json();
+  if (data.tokenState && data.tokenState === "expired") {
+    await useAuthStore.getState().requestNewAccessToken();
+
+    try {
+      const retryRes = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/posts/discover?page=${pageParam}`,
+        {
+          headers: {
+            ...headers,
+            authorization: `Bearer ${useAuthStore.getState().accessToken}`,
+          },
+        }
+      );
+      if (!retryRes.ok) throw new Error("Failed to fetch posts on retry");
+
+      const retryData = await retryRes.json();
+      const newPosts: PostStructure[] = retryData.postList;
+
+      return {
+        posts: newPosts,
+        nextPage: pageParam + 1,
+      };
+    } catch (e) {
+      //
+    }
+  }
   const newPosts: PostStructure[] = data.postList;
 
   console.log("Fetched posts page:", newPosts);
@@ -94,6 +120,8 @@ export const uploadUserAction = async (
     newReaction,
     newBookmark,
   });
+
+  console.log("Uploading user action:", body);
 
   const res = await fetch(`${import.meta.env.VITE_API_URL}/api/user-action/user-action`, {
     method: "POST",
