@@ -9,7 +9,6 @@ import type { userInformation } from "../../types/userType";
 const User = () => {
   const { userId } = useParams<{ userId: string }>();
   const [userInformation, setUserInformation] = useState<userInformation | null>(null);
-  // const userInformation = useUserStore((state) => state.userInformation);
   const [loadState, setLoadState] = useState<"loading" | "loaded">("loading");
 
   useEffect(() => {

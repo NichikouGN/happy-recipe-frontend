@@ -3,6 +3,7 @@ import { usePosts } from "../../context/PostContext";
 
 import PostSkeleton from "./PostSkeleton";
 import PostContent from "./PostContent";
+import PostError from "./PostError";
 
 const Post = () => {
   const { useDetailedPost } = usePosts();
@@ -16,8 +17,9 @@ const Post = () => {
 
   return (
     <>
-      {isFetching && !detailedPost && <PostSkeleton />}
-      {detailedPost && <PostContent detailedPost={detailedPost} />}
+      {isFetching && <PostSkeleton />}
+      {!isFetching && detailedPost && <PostContent detailedPost={detailedPost} />}
+      {!isFetching && !detailedPost && <PostError />}
     </>
   );
 };

@@ -1,5 +1,5 @@
 import { FaUser, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useAuthStore } from "../../stores/authStore";
 import { IoClose } from "react-icons/io5";
 import styles from "../Signin/Signin.module.css";
@@ -52,19 +52,12 @@ const Signup = () => {
   //Handle submission
   const obSubmit = useCallback(
     async (data: z.infer<typeof signUpSchema>) => {
-      await signUp(data.firstName, data.lastName, data.email, data.password);
+      if (await signUp(data.firstName, data.lastName, data.email, data.password)) {
+        navigate("/signin");
+      }
     },
     [signUp]
   );
-
-  //Reroute base on singin state
-  useEffect(() => {
-    if (signInState === "2FA") {
-      navigate("/authentication");
-    } else if (signInState === "authorized") {
-      navigate("/");
-    }
-  }, [signInState, navigate]);
 
   return (
     signInState === "unauthorized" && (

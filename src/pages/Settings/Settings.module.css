@@ -9,17 +9,30 @@
   min-height: 100svh;
   padding: 1rem;
 
-  background: radial-gradient(circle at 10% 10%, rgba(239, 68, 68, 0.3) 0%, transparent 20%),
-    radial-gradient(circle at 90% 40%, rgba(239, 68, 68, 0.5) 0%, transparent 30%),
-    radial-gradient(circle at 20% 90%, rgba(239, 68, 68, 0.3) 0%, transparent 30%),
-    var(--theme-body-bg);
+  background: radial-gradient(circle at 10% 20%, rgba(74, 222, 128, 0.3) 0%, transparent 30%),
+    radial-gradient(circle at 90% 80%, rgba(239, 68, 68, 0.3) 0%, transparent 30%),
+    radial-gradient(circle at 10% 60%, rgba(56, 189, 248, 0.3) 0%, transparent 30%),
+    radial-gradient(circle at 60% 40%, rgba(250, 204, 21, 0.3) 0%, transparent 30%)
+      var(--theme-body-bg);
+
+  background-size: 150% 150%;
+
+  transition: background-color 0.3s ease-in-out;
+  animation: header-pulse 15s ease-in-out infinite;
+
+  will-change: background-position;
 }
 
-[data-theme="dark"] .edit-profile-page {
-  background: radial-gradient(circle at 10% 10%, rgba(239, 68, 68, 0.2) 0%, transparent 20%),
-    radial-gradient(circle at 90% 40%, rgba(239, 68, 68, 0.3) 0%, transparent 30%),
-    radial-gradient(circle at 20% 90%, rgba(239, 68, 68, 0.2) 0%, transparent 30%),
-    var(--theme-body-bg);
+@keyframes header-pulse {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 50% 100%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .header {

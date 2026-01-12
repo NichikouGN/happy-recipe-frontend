@@ -15,6 +15,7 @@ import type { FullPostStructure, PostStructure, ReactionType } from "../types/Po
 import { fetchDetailedPost, fetchPosts, confirmUserAction } from "../api/discover";
 import { useReactionMutation } from "../hooks/useReactionMutation";
 import { useBookMarkMutation } from "../hooks/useBookMarkMutation";
+import { no } from "zod/locales";
 
 //Create Post Context
 const PostContext = createContext<
@@ -60,6 +61,9 @@ export const PostProvider: FC<{ children: ReactNode }> = ({ children }) => {
       queryKey: ["detailedPost", postId],
       queryFn: fetchDetailedPost,
       enabled: !!postId,
+      retry: (failureCount) => {
+        return failureCount < 2;
+      },
     });
   };
 

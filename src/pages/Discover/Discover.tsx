@@ -14,10 +14,8 @@ const Discover = () => {
 
   //Top bar parallax
   useEffect(() => {
-    //Retrieve height of the top bar
     const topBarHeight = document.getElementsByClassName(styles.header)[0].clientHeight;
 
-    //Calculate parallax on scroll
     const handleScroll = () => {
       let currentScrollY = Math.max(0, window.scrollY);
       let delta = currentScrollY - lastScrollY;
@@ -33,7 +31,6 @@ const Discover = () => {
     };
   }, [lastScrollY]);
 
-  //Restore scroll position when navigating back to discover page
   useEffect(() => {
     window.scrollTo(0, discoverScrollY.current);
   }, []);

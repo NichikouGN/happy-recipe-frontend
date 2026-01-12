@@ -4,14 +4,16 @@ import { IoClose } from "react-icons/io5";
 import { Donut } from "../../utils/Post";
 import { useCallback, useRef, useState } from "react";
 import type { uploadPostStructure } from "./Upload";
+import type { userInformation } from "../../types/userType";
+import { FaCircleUser } from "react-icons/fa6";
 
 const Preview = ({
   uploadPost,
-  authorName,
+  userInformation,
   setShowPreview,
 }: {
   uploadPost: uploadPostStructure;
-  authorName: string;
+  userInformation: userInformation;
   setShowPreview: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const [isCollapsed, setIsCollapsed] = useState(Array(uploadPost.steps.length + 1).fill(false));
@@ -49,8 +51,15 @@ const Preview = ({
         <h1 className={postStyles["title"]}>{uploadPost.title}</h1>
 
         <section className={postStyles["author-group"]}>
-          <img />
-          <span className={postStyles["author-name"]}>{authorName}</span>
+          {userInformation.profileImageUrl ? (
+            <button
+              style={{ backgroundImage: `url('${userInformation.profileImageUrl}')` }}
+              className={postStyles["author-avatar"]}
+            />
+          ) : (
+            <FaCircleUser className={postStyles["author-avatar"]} />
+          )}
+          <span className={postStyles["author-name"]}>{userInformation.username}</span>
         </section>
 
         <section className={postStyles["info-panel"]}>
@@ -59,9 +68,11 @@ const Preview = ({
               size: 60,
               strokeWidth: 4,
               progress: Math.min((Number(uploadPost.cookTime) / 60) * 100, 100),
-              text: uploadPost.cookTime.toString(),
+              text: uploadPost.cookTime != null ? uploadPost.cookTime.toString() : "-",
             })}
-            <div className={postStyles["info"]}>Minute</div>
+            <div className={postStyles["info"]} style={{ fontSize: "1.1rem" }}>
+              Minute
+            </div>
           </div>
           <div className={postStyles["info"]}>
             {Donut({
@@ -75,16 +86,23 @@ const Preview = ({
                   : 100,
               text: uploadPost.difficulty[0].toUpperCase(),
             })}
-            <div className={postStyles["info"]}>Difficulty</div>
+            <div className={postStyles["info"]} style={{ fontSize: "1.1rem" }}>
+              Difficulty
+            </div>
           </div>
           <div className={postStyles["info"]}>
             {Donut({
               size: 60,
               strokeWidth: 4,
-              progress: Math.min((uploadPost.servings / 8) * 100, 100),
-              text: uploadPost.servings.toString(),
+              progress: Math.min(
+                ((uploadPost.servings != null ? uploadPost.servings : 0) / 8) * 100,
+                100
+              ),
+              text: uploadPost.servings != null ? uploadPost.servings.toString() : "-",
             })}
-            <div className={postStyles["info"]}>Servings</div>
+            <div className={postStyles["info"]} style={{ fontSize: "1.1rem" }}>
+              Servings
+            </div>
           </div>
         </section>
 

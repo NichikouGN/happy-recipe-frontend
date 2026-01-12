@@ -69,7 +69,6 @@ const Home = () => {
 
   return (
     <div className={styles["container"]}>
-      {/*Banner Image with parallax inline styling*/}
       <header className={styles["header"]} style={{ transform: `translateY(${translateVal}px)` }}>
         <h1 className={styles["header-title"]}>
           Bring&nbsp;
@@ -78,7 +77,6 @@ const Home = () => {
         </h1>
       </header>
 
-      {/* Main content - Popular Ingredients Section */}
       <main className={styles["content"]}>
         <div className={styles["content-wrapper"]}>
           <section className={styles["popular-dish-section"]}>
@@ -129,7 +127,6 @@ const Home = () => {
         </div>
       </main>
 
-      {/* Footer Section */}
       <footer className={styles["footer"]}>
         <section className={styles["contact-us"]}>
           <h2>Contacts</h2>

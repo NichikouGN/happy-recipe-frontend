@@ -1,7 +1,13 @@
 import { formatConsoleError } from "../consoleError";
 import { Toast } from "../stores/toastStore";
 
-export const Donut = ({ size = 120, strokeWidth = 10, progress = 30, text = "" }) => {
+export const Donut = ({
+  size = 120,
+  strokeWidth = 10,
+  progress = 30,
+  text = "",
+  fontSize = "1.5rem",
+}) => {
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (progress / 100) * circumference;
@@ -37,7 +43,7 @@ export const Donut = ({ size = 120, strokeWidth = 10, progress = 30, text = "" }
         y="50%"
         textAnchor="middle"
         dominantBaseline="middle"
-        fontSize="1.5rem"
+        fontSize={fontSize}
         fill="var(--theme-text-primary)"
         fontWeight="900"
       >

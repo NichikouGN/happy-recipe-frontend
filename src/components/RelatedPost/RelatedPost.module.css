@@ -94,13 +94,11 @@
   border: 1px solid rgba(var(--theme-text-primary-rgba), 0.08);
   border-radius: 12px;
   background: var(--theme-card-primary-bg);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 14px rgba(0, 0, 0, 0.06);
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 .card:hover {
   transform: translateY(-2px);
   border-color: rgba(var(--theme-button-secondary-bg-rgba), 0.25);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
 }
 
 @media (min-width: 640px) {

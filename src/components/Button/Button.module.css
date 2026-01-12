@@ -10,7 +10,7 @@
   outline: none;
   background: rgba(0, 0, 0, 0.2);
   cursor: pointer;
-  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.08), -2px -2px 4px rgba(255, 255, 255, 0.75);
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.08), -2px -2px 4px rgba(255, 255, 255, 0.6);
 
   color: var(--theme-text-primary);
   font-weight: 700;
@@ -40,6 +40,8 @@
 }
 
 .rounded {
+  background: rgba(var(--theme-button-secondary-bg-rgba), 0.4);
+  color: var(--theme-text-primary);
   border-radius: 50px;
 }
 

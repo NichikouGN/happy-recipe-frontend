@@ -13,8 +13,8 @@ import { AuthError } from "../../errors/AuthError";
 export interface uploadPostStructure {
   title: string;
   coverImgFile: File | null;
-  cookTime: number;
-  servings: number;
+  cookTime: number | null;
+  servings: number | null;
   difficulty: "easy" | "medium" | "hard";
   description: string;
   steps: {
@@ -24,6 +24,14 @@ export interface uploadPostStructure {
   }[];
 }
 
+const titleMaxLength = 100;
+const descriptionMaxLength = 1000;
+const stepDescMaxLength = 300;
+const durationMaxMins = 600;
+const servingsMax = 24;
+const imageMaxSizeMB = 5;
+const imageAllowedTypes = ["image/jpeg", "image/png", "image/jpg", "image/webp"];
+
 const Upload = () => {
   const userInformation = useUserStore((state) => state.userInformation);
   const signInState = useAuthStore((state) => state.signInState);
@@ -32,8 +40,8 @@ const Upload = () => {
   const [uploadPost, setUploadPost] = useState<uploadPostStructure>({
     title: "",
     coverImgFile: null,
-    cookTime: 0,
-    servings: 1,
+    cookTime: null,
+    servings: null,
     difficulty: "easy",
     description: "",
     steps: [{ stepNum: 1, stepDesc: "", stepImgFile: null }],
@@ -41,6 +49,42 @@ const Upload = () => {
 
   const [showPreview, setShowPreview] = useState<boolean>(false);
   const [isUploading, setIsUploading] = useState<boolean>(false);
+
+  const handleTitleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value.length > titleMaxLength) return;
+
+    setUploadPost((prev) => ({
+      ...prev,
+      title: e.target.value,
+    }));
+  }, []);
+
+  const handleDescriptionChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value.length > descriptionMaxLength) return;
+    setUploadPost((prev) => ({
+      ...prev,
+      description: e.target.value,
+    }));
+  }, []);
+
+  const handleCookTimeChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    const value = Number(e.target.value);
+    if (value < 0 || value > durationMaxMins || value % 1 !== 0) return;
+
+    setUploadPost((prev) => ({
+      ...prev,
+      cookTime: value,
+    }));
+  }, []);
+
+  const handleServingsChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    const value = Number(e.target.value);
+    if (value < 0 || value > servingsMax || value % 1 !== 0) return;
+    setUploadPost((prev) => ({
+      ...prev,
+      servings: value,
+    }));
+  }, []);
 
   // Add new step
   const addSteps = useCallback(() => {
@@ -65,10 +109,39 @@ const Upload = () => {
   }, []);
 
   // Handle step description change
-  const handleStepDescriptionChange = useCallback((index: number, value: string) => {
+  const handleStepDescriptionChange = useCallback(
+    (index: number, e: ChangeEvent<HTMLInputElement>) => {
+      if (e.target.value.length > stepDescMaxLength) return;
+
+      setUploadPost((prev) => {
+        const updatedSteps = [...prev.steps];
+        updatedSteps[index].stepDesc = e.target.value;
+        return {
+          ...prev,
+          steps: updatedSteps,
+        };
+      });
+    },
+    []
+  );
+
+  // Handle step image upload
+  const handleStepImage = useCallback((index: number, e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+
+    if (!file) {
+      e.target.value = "";
+      return;
+    }
+
+    if (imageFileValidation(file!) === false) {
+      e.target.value = "";
+      return;
+    }
+
     setUploadPost((prev) => {
       const updatedSteps = [...prev.steps];
-      updatedSteps[index].stepDesc = value;
+      updatedSteps[index].stepImgFile = file;
       return {
         ...prev,
         steps: updatedSteps,
@@ -76,30 +149,45 @@ const Upload = () => {
     });
   }, []);
 
-  // Handle step image upload
-  const handleStepImage = useCallback((index: number, e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setUploadPost((prev) => {
-        const updatedSteps = [...prev.steps];
-        updatedSteps[index].stepImgFile = file;
-        return {
-          ...prev,
-          steps: updatedSteps,
-        };
+  const imageFileValidation = (file: File): Boolean => {
+    if (file.size > imageMaxSizeMB * 1024 * 1024) {
+      Toast({
+        title: "File Too Large",
+        message: "Please upload an image smaller than 5MB.",
+        type: "error",
       });
+      return false;
     }
-  }, []);
+
+    if (!imageAllowedTypes.includes(file.type)) {
+      Toast({
+        title: "Invalid File Type",
+        message: "Please upload a JPEG, PNG, JPG, or WEBP image.",
+        type: "error",
+      });
+      return false;
+    }
+    return true;
+  };
 
   // Handle header image upload
   const handleHeaderImage = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      setUploadPost((prev) => ({
-        ...prev,
-        coverImgFile: file,
-      }));
+
+    if (!file) {
+      e.target.value = "";
+      return;
     }
+
+    if (imageFileValidation(file!) === false) {
+      e.target.value = "";
+      return;
+    }
+
+    setUploadPost((prev) => ({
+      ...prev,
+      coverImgFile: file,
+    }));
   }, []);
 
   // Handle upload
@@ -108,7 +196,9 @@ const Upload = () => {
       !uploadPost.title ||
       !uploadPost.description ||
       uploadPost.steps.length === 0 ||
-      !uploadPost.coverImgFile
+      !uploadPost.coverImgFile ||
+      uploadPost.cookTime === null ||
+      uploadPost.servings === null
     ) {
       Toast({
         title: "Missing Fields",
@@ -207,31 +297,28 @@ const Upload = () => {
         </section>
 
         <section className={styles["section"]}>
-          <div className={styles["section-title"]}>Title</div>
+          <div className={styles["section-title"]}>
+            Title ({titleMaxLength - uploadPost.title.length})
+          </div>
           <input
             className={styles["input"]}
             type="text"
             value={uploadPost.title}
             placeholder="Enter title here..."
-            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              setUploadPost((prev) => ({ ...prev, title: e.target.value }))
-            }
+            onChange={handleTitleChange}
           />
         </section>
 
         <section className={styles["section"]}>
-          <div className={styles["section-title"]}>Descripton</div>
+          <div className={styles["section-title"]}>
+            Description ({descriptionMaxLength - uploadPost.description.length})
+          </div>
           <input
             className={styles["input"]}
             type="text"
             value={uploadPost.description}
             placeholder="Enter title here..."
-            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              setUploadPost((prev) => ({
-                ...prev,
-                description: e.target.value,
-              }))
-            }
+            onChange={handleDescriptionChange}
           />
         </section>
 
@@ -245,14 +332,9 @@ const Upload = () => {
             <input
               className={styles["input"]}
               type="number"
-              value={uploadPost.cookTime}
-              placeholder="Enter title here..."
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                setUploadPost((prev) => ({
-                  ...prev,
-                  cookTime: Number(e.target.value),
-                }))
-              }
+              placeholder="(max 600 mins)"
+              value={uploadPost.cookTime ?? ""}
+              onChange={handleCookTimeChange}
             />
             <select
               className={styles["select"]}
@@ -270,15 +352,10 @@ const Upload = () => {
             </select>
             <input
               type="number"
-              value={uploadPost.servings}
+              value={uploadPost.servings ?? ""}
+              placeholder="(max 24 servings)"
               className={styles["input"]}
-              placeholder="Enter title here..."
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                setUploadPost((prev) => ({
-                  ...prev,
-                  servings: Number(e.target.value),
-                }))
-              }
+              onChange={handleServingsChange}
             />
           </div>
         </section>
@@ -288,14 +365,16 @@ const Upload = () => {
           {uploadPost.steps.map((step, index) => (
             <div className={styles["step"]} key={index}>
               <div className={styles["step-wrapper"]}>
-                <div className={styles["step-number"]}>Step {step.stepNum}</div>
+                <div className={styles["step-number"]}>
+                  Step {step.stepNum} ({stepDescMaxLength - step.stepDesc.length})
+                </div>
                 <input
                   value={step.stepDesc}
                   type="text"
                   className={styles["step-input"]}
                   placeholder="Enter title here..."
                   onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                    handleStepDescriptionChange(index, e.target.value);
+                    handleStepDescriptionChange(index, e);
                   }}
                 />
               </div>
@@ -366,7 +445,7 @@ const Upload = () => {
       {showPreview && (
         <Preview
           uploadPost={uploadPost}
-          authorName={userInformation.username}
+          userInformation={userInformation}
           setShowPreview={setShowPreview}
         />
       )}

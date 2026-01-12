@@ -43,45 +43,11 @@
   padding: 2rem 1rem;
   margin-top: -5svh;
 
+  background: var(--theme-body-bg);
   border-radius: 20px 20px 0 0 / 16px 16px 0 0;
 
-  mask-image: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 1) 0%,
-    rgba(0, 0, 0, 1) 95%,
-    rgba(0, 0, 0, 0) 100%
-  );
-
   overflow: hidden;
-  will-change: transform;
-  animation: content-animation 1s ease, background-animation 20s ease infinite;
-}
-
-[data-theme="light"] .content {
-  background: radial-gradient(circle at 10% 10%, rgba(239, 68, 68, 0.3) 0%, transparent 10%),
-    radial-gradient(circle at 90% 40%, rgba(239, 68, 68, 0.5) 0%, transparent 20%),
-    radial-gradient(circle at 20% 90%, rgba(239, 68, 68, 0.3) 0%, transparent 20%),
-    var(--theme-body-bg);
-  background-size: 125% 125%;
-}
-[data-theme="dark"] .content {
-  background: radial-gradient(circle at 10% 10%, rgba(239, 68, 68, 0.2) 0%, transparent 10%),
-    radial-gradient(circle at 90% 40%, rgba(239, 68, 68, 0.3) 0%, transparent 20%),
-    radial-gradient(circle at 20% 90%, rgba(239, 68, 68, 0.2) 0%, transparent 20%),
-    var(--theme-body-bg);
-  background-size: 125% 125%;
-}
-
-@keyframes background-animation {
-  0% {
-    background-position: 50% 50%;
-  }
-  50% {
-    background-position: 0% 100%;
-  }
-  100% {
-    background-position: 50% 50%;
-  }
+  animation: content-animation 1s ease;
 }
 
 .content-wrapper {
@@ -93,9 +59,7 @@
   width: 100%;
   padding: 1rem;
 
-  background: rgba(var(--theme-body-secondary-bg-rgba), 0.5);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: rgba(var(--theme-body-primary-bg-rgba), 0.5);
   border-radius: 1.5rem;
 
   border: 1px solid rgba(255, 255, 255, 0.2);

@@ -38,6 +38,22 @@ npm run dev
 
 # Version
 
+## v0.11.2 (2025-01-12)
+
+- Added the User Error for unknown user Id.
+- Added Post Skeleton to display when post is being loaded.
+- Added Post Error to display when post doesn't exist.
+- Changed some styles in certain pages.
+- Fixed user page not displaying posts.
+- Fixed upload page be able to upload files that are not images.
+- Added hard limits to fields like title, description, duration, servings and steps in the upload page.
+- Fixed abnormal routing on signup page.
+- Fixed not showing error when signing up with an already existing email.
+
+## v0.11.1 (2025-01-11)
+
+- Fixed the issue with discover page not trigger request new accesstoken when expired.
+
 ## v0.11.0 (2025-01-10)
 
 - Added ability to delete your own post.

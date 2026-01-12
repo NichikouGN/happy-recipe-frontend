@@ -28,13 +28,14 @@
   padding: 1rem;
 
   border-bottom: 1px solid var(--theme-border-color);
-  background: var(--theme-body-secondary-bg);
+  background-color: var(--theme-body-primary-bg);
 }
 
 .notifications-header h2 {
   margin: 0;
   font-size: 1.25rem;
-  color: white;
+
+  color: var(--theme-text-primary);
 }
 
 .notification-violation {

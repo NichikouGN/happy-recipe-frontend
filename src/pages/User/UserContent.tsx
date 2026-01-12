@@ -52,7 +52,7 @@ const UserContent = ({ userInformation }: { userInformation: userInformation }) 
   const fetchUserPosts = async () => {
     try {
       const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/user/${
+        `${import.meta.env.VITE_API_URL}/api/users/${
           userInformation.userId
         }/posts?page=${userPostsPage}`,
         {
@@ -63,13 +63,15 @@ const UserContent = ({ userInformation }: { userInformation: userInformation }) 
       );
 
       if (!res.ok) {
+        const error = await res.text();
+        console.error("Error fetching user posts:", error);
         throw new Error("Unable to fetch user posts");
       }
 
       const data: { userPosts: PostStructure[] } = await res.json();
       setUserPosts(data.userPosts);
-    } catch (error) {
-      Toast({ type: "error", title: "Error", message: "Unable to Fetch" });
+    } catch (error: any) {
+      Toast({ type: "error", title: "Error", message: error.message });
     }
   };
 
@@ -105,6 +107,11 @@ const UserContent = ({ userInformation }: { userInformation: userInformation }) 
         </section>
 
         <section className={styles["post-list"]}>
+          <div className={styles["post-list-toggle-container"]}>
+            <button className={`${styles["post-list-toggle"]} ${styles["current"]}`}>
+              <span>Posts</span>
+            </button>
+          </div>
           <div className={styles["post-list-content"]}>
             {userPosts && userPosts.length > 0 ? (
               userPosts.map((post, index) => (
@@ -126,6 +133,7 @@ const UserContent = ({ userInformation }: { userInformation: userInformation }) 
                     time={post.cookTime}
                     difficulty={post.difficulty}
                     serving={post.servings}
+                    rounded={true}
                   />
                   {index === userPosts.length - 4 ? (
                     <div ref={postTrigger} style={{ height: "0" }} />

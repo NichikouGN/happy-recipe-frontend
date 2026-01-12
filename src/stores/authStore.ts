@@ -237,15 +237,21 @@ export const useAuthStore = create<authStoreType>()(
             }),
           });
 
-          if (!res.ok) return false;
-
-          const data = await res.json();
-          get().setUpToken(data.accessToken, data.refreshToken);
+          if (!res.ok) {
+            throw get().throwAuthError(res.status);
+          }
           queryClient.invalidateQueries();
 
           return true;
         } catch (e) {
           formatConsoleError("authStore.ts", "signUp", e);
+          if (e instanceof AuthError && e.status === 409) {
+            Toast({
+              type: "error",
+              title: "Sign up failed",
+              message: "Email already in use. Please use a different email.",
+            });
+          }
           return false;
         }
       },

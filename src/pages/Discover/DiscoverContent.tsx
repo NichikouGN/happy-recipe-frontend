@@ -10,7 +10,6 @@ const DiscoverContent = () => {
   const fetchTrigger = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
 
-  //Intersection Observer to trigger additional fetch
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -21,7 +20,7 @@ const DiscoverContent = () => {
           fetchNextPage();
         }
       },
-      { threshold: 0.5 } //half of the reference is needed to trigger observer
+      { threshold: 0.5 }
     );
 
     if (fetchTrigger.current) observer.observe(fetchTrigger.current);

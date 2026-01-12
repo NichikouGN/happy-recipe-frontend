@@ -224,7 +224,7 @@
 
   height: 100%;
 
-  background: var(--theme-card-secondary-bg);
+  background-color: var(--theme-body-bg);
   padding: 0.5rem 0.5rem 1rem;
 }
 
@@ -235,7 +235,7 @@
   gap: 0.25rem;
 
   padding: 0.25rem 0.5rem;
-  background: var(--theme-card-secondary-bg);
+  background: var(--theme-card-primary-bg);
 
   color: var(--theme-text-secondary);
   font-size: clamp(0.9rem, 4svw, 1.2rem);

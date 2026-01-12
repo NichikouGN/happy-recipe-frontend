@@ -3,7 +3,6 @@ import type { FullPostStructure } from "../../types/PostType";
 import { useEffect, useState, useRef } from "react";
 import styles from "./RelatedPost.module.css";
 import { useNavigate } from "react-router-dom";
-import { MdAccessTime } from "react-icons/md";
 import { FaRegClock, FaRegUser } from "react-icons/fa";
 
 export const RelatedPost = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
