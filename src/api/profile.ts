@@ -27,7 +27,7 @@ export const fetchBookmarkedPosts = async (
     }
 
     const data: { bookmarkedPosts: PostStructure[] } = await res.json();
-    setBookmarkedPosts(data.bookmarkedPosts);
+    setBookmarkedPosts((prev) => [...prev, ...data.bookmarkedPosts]);
   } catch (error) {
     Toast({ type: "error", title: "Error", message: "Unable to Fetch" });
   }
@@ -59,7 +59,7 @@ export const fetchUserPosts = async (
     }
 
     const data: { userPosts: PostStructure[] } = await res.json();
-    setUserPosts(data.userPosts);
+    setUserPosts((prev) => [...prev, ...data.userPosts]);
   } catch (error) {
     Toast({ type: "error", title: "Error", message: "Unable to Fetch" });
   }

@@ -30,15 +30,19 @@ const ProfileContent = () => {
 
   // Initial fetch
   useEffect(() => {
-    if (!userInformation.userId) return;
+    const fetchData = async () => {
+      if (!userInformation.userId) return;
 
-    setUserPosts([]);
-    setUserPostsPage(1);
-    fetchUserPosts(userInformation.userId, userPostsPage, setUserPosts);
+      setUserPosts([]);
+      setUserPostsPage(1);
+      await fetchUserPosts(userInformation.userId, userPostsPage, setUserPosts);
 
-    setBookmarkedPosts([]);
-    setBookmarkedPage(1);
-    fetchBookmarkedPosts(userInformation.userId, bookmarkedPage, setBookmarkedPosts);
+      setBookmarkedPosts([]);
+      setBookmarkedPage(1);
+      await fetchBookmarkedPosts(userInformation.userId, bookmarkedPage, setBookmarkedPosts);
+    };
+
+    fetchData();
   }, [userInformation.userId]);
 
   useEffect(() => {
@@ -49,7 +53,7 @@ const ProfileContent = () => {
         if (target.isIntersecting) {
           postObserver.disconnect();
 
-          const nextPage = userPostsPage + 1; 
+          const nextPage = userPostsPage + 1;
           setUserPostsPage(nextPage);
           fetchUserPosts(userInformation.userId, nextPage, setUserPosts);
         }
@@ -165,8 +169,11 @@ const ProfileContent = () => {
                       serving={post.servings}
                       rounded={true}
                     />
-                    {index === userPosts.length - 4 && (
-                      <div ref={postTrigger} style={{ position: "absolute", visibility: "hidden" }} />
+                    {index === userPosts.length - 4 && userPosts.length >= 10 && (
+                      <div
+                        ref={postTrigger}
+                        style={{ position: "absolute", visibility: "hidden" }}
+                      />
                     )}
                   </Fragment>
                 ))
@@ -197,9 +204,12 @@ const ProfileContent = () => {
                     serving={post.servings}
                     rounded={true}
                   />
-                  {index === bookmarkedPosts.length - 4 && (
-                      <div ref={bookmarkTrigger} style={{ position: "absolute", visibility: "hidden" }} />
-                    )}
+                  {index === bookmarkedPosts.length - 4 && bookmarkedPosts.length >= 10 && (
+                    <div
+                      ref={bookmarkTrigger}
+                      style={{ position: "absolute", visibility: "hidden" }}
+                    />
+                  )}
                 </Fragment>
               ))
             ) : (
