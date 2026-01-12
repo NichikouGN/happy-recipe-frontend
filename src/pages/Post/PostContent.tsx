@@ -283,7 +283,7 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
         }}
       >
         <div className={styles["action-bar"]}>
-          <Button variant="rounded" size="medium" onClick={() => navigate(-1)}>
+          <Button variant="rounded" size="medium" onClick={() => navigate("/")}>
             <IoClose className={styles["btn-icon"]} />
           </Button>
 
