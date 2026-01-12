@@ -164,9 +164,9 @@ const ProfileContent = () => {
                       serving={post.servings}
                       rounded={true}
                     />
-                    {index === userPosts.length - 4 ? (
-                      <div ref={postTrigger} style={{ height: "0" }} />
-                    ) : undefined}
+                    {index === userPosts.length - 4 && (
+                      <div ref={postTrigger} style={{ position: "absolute", visibility: "hidden" }} />
+                    )}
                   </Fragment>
                 ))
               ) : (
@@ -196,9 +196,9 @@ const ProfileContent = () => {
                     serving={post.servings}
                     rounded={true}
                   />
-                  {index === userPosts.length - 4 ? (
-                    <div ref={bookmarkTrigger} style={{ height: "0" }} />
-                  ) : undefined}
+                  {index === userPosts.length - 4 && (
+                      <div ref={bookmarkTrigger} style={{ position: "absolute", visibility: "hidden" }} />
+                    )}
                 </Fragment>
               ))
             ) : (
