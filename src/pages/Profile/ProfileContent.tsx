@@ -39,7 +39,7 @@ const ProfileContent = () => {
     setBookmarkedPosts([]);
     setBookmarkedPage(1);
     fetchBookmarkedPosts(userInformation.userId, bookmarkedPage, setBookmarkedPosts);
-  }, [userInformation]);
+  }, [userInformation.userId]);
 
   useEffect(() => {
     const postObserver = new IntersectionObserver(
@@ -49,8 +49,9 @@ const ProfileContent = () => {
         if (target.isIntersecting) {
           postObserver.disconnect();
 
-          setUserPostsPage((prev) => prev + 1);
-          fetchUserPosts(userInformation.userId, userPostsPage, setUserPosts);
+          const nextPage = userPostsPage + 1; 
+          setUserPostsPage(nextPage);
+          fetchUserPosts(userInformation.userId, nextPage, setUserPosts);
         }
       },
       { threshold: 0.5 } //half of the reference is needed to trigger observer
@@ -196,7 +197,7 @@ const ProfileContent = () => {
                     serving={post.servings}
                     rounded={true}
                   />
-                  {index === userPosts.length - 4 && (
+                  {index === bookmarkedPosts.length - 4 && (
                       <div ref={bookmarkTrigger} style={{ position: "absolute", visibility: "hidden" }} />
                     )}
                 </Fragment>
