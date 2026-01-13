@@ -24,6 +24,9 @@ const ProfileContent = () => {
   const postTrigger = useRef<HTMLDivElement>(null);
   const bookmarkTrigger = useRef<HTMLDivElement>(null);
 
+  const isFetchingPostsRef = useRef(false);
+  const isFetchingBookmarksRef = useRef(false);
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -35,11 +38,16 @@ const ProfileContent = () => {
 
       setUserPosts([]);
       setUserPostsPage(1);
-      await fetchUserPosts(userInformation.userId, userPostsPage, setUserPosts);
+      await fetchUserPosts(userInformation.userId, 1, setUserPosts, isFetchingPostsRef);
 
       setBookmarkedPosts([]);
       setBookmarkedPage(1);
-      await fetchBookmarkedPosts(userInformation.userId, bookmarkedPage, setBookmarkedPosts);
+      await fetchBookmarkedPosts(
+        userInformation.userId,
+        1,
+        setBookmarkedPosts,
+        isFetchingBookmarksRef
+      );
     };
 
     fetchData();
@@ -55,7 +63,7 @@ const ProfileContent = () => {
 
           const nextPage = userPostsPage + 1;
           setUserPostsPage(nextPage);
-          fetchUserPosts(userInformation.userId, nextPage, setUserPosts);
+          fetchUserPosts(userInformation.userId, nextPage, setUserPosts, isFetchingPostsRef);
         }
       },
       { threshold: 0.5 } //half of the reference is needed to trigger observer
@@ -76,7 +84,12 @@ const ProfileContent = () => {
         if (target.isIntersecting) {
           bookmarkObserver.disconnect();
           setBookmarkedPage((prev) => prev + 1);
-          fetchBookmarkedPosts(userInformation.userId, bookmarkedPage, setBookmarkedPosts);
+          fetchBookmarkedPosts(
+            userInformation.userId,
+            bookmarkedPage,
+            setBookmarkedPosts,
+            isFetchingBookmarksRef
+          );
         }
       },
       { threshold: 0.5 }

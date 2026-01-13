@@ -10,8 +10,12 @@ import type { PostStructure } from "../types/PostType";
 export const fetchBookmarkedPosts = async (
   userId: string,
   bookmarkedPage: number,
-  setBookmarkedPosts: React.Dispatch<React.SetStateAction<PostStructure[]>>
+  setBookmarkedPosts: React.Dispatch<React.SetStateAction<PostStructure[]>>,
+  isFetchingBookmarks: React.MutableRefObject<boolean>
 ) => {
+  if (isFetchingBookmarks.current) return;
+
+  isFetchingBookmarks.current = true;
   try {
     const res = await fetch(
       `${import.meta.env.VITE_API_URL}/api/profile/${userId}/bookmarks?page=${bookmarkedPage}`,
@@ -30,6 +34,8 @@ export const fetchBookmarkedPosts = async (
     setBookmarkedPosts((prev) => [...prev, ...data.bookmarkedPosts]);
   } catch (error) {
     Toast({ type: "error", title: "Error", message: "Unable to Fetch" });
+  } finally {
+    isFetchingBookmarks.current = false;
   }
 };
 
@@ -42,9 +48,14 @@ export const fetchBookmarkedPosts = async (
 export const fetchUserPosts = async (
   userId: string,
   userPostsPage: number,
-  setUserPosts: React.Dispatch<React.SetStateAction<PostStructure[]>>
+  setUserPosts: React.Dispatch<React.SetStateAction<PostStructure[]>>,
+  isFetchingPosts: React.MutableRefObject<boolean>
 ) => {
+  if (isFetchingPosts.current) return;
+
+  isFetchingPosts.current = true;
   try {
+    console.log("Fetching user posts for page:", userPostsPage);
     const res = await fetch(
       `${import.meta.env.VITE_API_URL}/api/profile/${userId}/posts?page=${userPostsPage}`,
       {
@@ -62,5 +73,7 @@ export const fetchUserPosts = async (
     setUserPosts((prev) => [...prev, ...data.userPosts]);
   } catch (error) {
     Toast({ type: "error", title: "Error", message: "Unable to Fetch" });
+  } finally {
+    isFetchingPosts.current = false;
   }
 };
