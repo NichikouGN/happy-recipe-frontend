@@ -35,17 +35,19 @@ const ProfileContent = () => {
 
       setUserPosts([]);
       setUserPostsPage(1);
-      await fetchUserPosts(userInformation.userId, userPostsPage, setUserPosts);
+      await fetchUserPosts(userInformation.userId, 1, setUserPosts);
 
       setBookmarkedPosts([]);
       setBookmarkedPage(1);
-      await fetchBookmarkedPosts(userInformation.userId, bookmarkedPage, setBookmarkedPosts);
+      await fetchBookmarkedPosts(userInformation.userId, 1, setBookmarkedPosts);
     };
 
     fetchData();
   }, [userInformation.userId]);
 
   useEffect(() => {
+    if (postListType !== "posts" || userPostsPage === 1) return;
+
     const postObserver = new IntersectionObserver(
       (entries) => {
         const target = entries[0];
@@ -66,17 +68,20 @@ const ProfileContent = () => {
     return () => {
       if (postObserver) postObserver.disconnect();
     };
-  }, [postListType]);
+  }, [postListType, userPostsPage, userInformation.userId]);
 
   useEffect(() => {
+    if (postListType !== "bookmarks" || bookmarkedPage === 1) return;
+
     const bookmarkObserver = new IntersectionObserver(
       (entries) => {
         const target = entries[0];
 
         if (target.isIntersecting) {
           bookmarkObserver.disconnect();
-          setBookmarkedPage((prev) => prev + 1);
-          fetchBookmarkedPosts(userInformation.userId, bookmarkedPage, setBookmarkedPosts);
+          const nextPage = bookmarkedPage + 1;
+          setBookmarkedPage(nextPage);
+          fetchBookmarkedPosts(userInformation.userId, nextPage, setBookmarkedPosts);
         }
       },
       { threshold: 0.5 }
@@ -87,7 +92,7 @@ const ProfileContent = () => {
     return () => {
       if (bookmarkObserver) bookmarkObserver.disconnect();
     };
-  }, [postListType]);
+  }, [postListType, bookmarkedPage, userInformation.userId]);
 
   return (
     <>
