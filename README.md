@@ -41,6 +41,7 @@ npm run dev
 ## v1.0.0 (2026-01-13)
 
 - Added fetching guard for profile page.
+- Final Release.
 
 ## v1.0.0 - RC (2026-01-13)
 
