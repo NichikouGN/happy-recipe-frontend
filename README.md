@@ -38,6 +38,10 @@ npm run dev
 
 # Version
 
+## v1.0.0 (2026-01-13)
+
+- Added fetching guard for profile page.
+
 ## v1.0.0 - RC (2026-01-13)
 
 - Move some image files to public space for build version to access.

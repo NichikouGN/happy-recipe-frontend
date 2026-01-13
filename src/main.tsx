@@ -1,4 +1,4 @@
-import { StrictMode } from "react";
+//import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.tsx";
@@ -7,11 +7,11 @@ import { queryClient } from "./queryClient.ts";
 import { PostActionsProvider } from "./context/PostActionContext.tsx";
 
 createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <PostActionsProvider>
-        <App></App>
-      </PostActionsProvider>
-    </QueryClientProvider>
-  </StrictMode>
+  //<StrictMode>
+  <QueryClientProvider client={queryClient}>
+    <PostActionsProvider>
+      <App></App>
+    </PostActionsProvider>
+  </QueryClientProvider>
+  //</StrictMode>
 );

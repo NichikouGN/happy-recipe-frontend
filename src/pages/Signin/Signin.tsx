@@ -73,8 +73,8 @@ const Signin = () => {
                 <FaUser className={styles["input-icon"]} />
                 <input
                   type="text"
-                  placeholder="Enter your username"
-                  alt="Enter your username"
+                  placeholder="Enter your email"
+                  alt="Enter your email"
                   autoComplete="off"
                   className={styles["input-field"]}
                   {...register("email")}
