@@ -1,12 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import Card from "../../components/Card/Card";
 import { Fragment, useEffect, useRef } from "react";
-import { usePosts } from "../../context/PostContext";
 import { useUserStore } from "../../stores/userStore";
+import { useDiscover } from "../../context/DiscoverContext";
 
 const DiscoverContent = () => {
   const userInformation = useUserStore((state) => state.userInformation);
-  const { postList, fetchNextPage, discoverScrollY } = usePosts();
+  const { postList, fetchNextPage, isFetchingNextPage, discoverScrollY } = useDiscover();
   const fetchTrigger = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
 
@@ -15,7 +15,7 @@ const DiscoverContent = () => {
       (entries) => {
         const target = entries[0];
 
-        if (target.isIntersecting) {
+        if (target.isIntersecting && !isFetchingNextPage) {
           observer.disconnect();
           fetchNextPage();
         }
@@ -28,7 +28,7 @@ const DiscoverContent = () => {
     return () => {
       if (observer) observer.disconnect();
     };
-  }, [postList]);
+  }, [postList, isFetchingNextPage, fetchNextPage]);
 
   return postList.map(
     (
@@ -72,8 +72,8 @@ const DiscoverContent = () => {
             userActions={userActions}
           />
 
-          {/*Set the fetch trigger to the 3rd element from the bottom up */}
-          {index === postList.length - 4 ? (
+          {/*Set the fetch trigger to the 2nd element from the bottom up */}
+          {index === postList.length - 2 && postList.length >= 10 ? (
             <div ref={fetchTrigger} style={{ height: "0" }} />
           ) : undefined}
         </Fragment>

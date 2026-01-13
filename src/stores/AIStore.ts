@@ -55,8 +55,6 @@ export const useAIStore = create<AIStoreType>()((set, get) => ({
     const contextWindow = 10;
     const recentChats = chatList.slice(-contextWindow);
 
-    console.log({ chatList: [...recentChats, { role: "user", content: userInput }] });
-
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/ai/chat-gemini`, {
         method: "POST",
@@ -74,7 +72,6 @@ export const useAIStore = create<AIStoreType>()((set, get) => ({
       }
 
       const data = await response.json();
-      console.log("AI Response Data:", data);
       addChatContent({ role: "assistant", content: data.reply, redirect: data.redirect });
     } catch (error) {
       formatConsoleError("AiStore", "fetchAIResponse", error);

@@ -122,12 +122,6 @@ export const useAuthStore = create<authStoreType>()(
           const data = await res.json();
           get().setUpToken(data.accessToken, data.refreshToken);
 
-          Toast({
-            title: "Session Renewed",
-            message: "Your session has been renewed successfully.",
-            type: "success",
-          });
-
           return true;
         } catch (e) {
           get().clearToken();

@@ -20,6 +20,7 @@ import EditProfile from "./pages/EditProfile/EditProfile";
 import Settings from "./pages/Settings/Settings";
 import User from "./pages/User/User";
 import SearchResult from "./pages/SearchResult/SearchResult";
+import { DiscoverProvider } from "./context/DiscoverContext";
 
 const App = () => {
   // Store subscription to fetch user info upon authorization
@@ -46,14 +47,28 @@ const App = () => {
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/post/:postId" element={<Post />} />
+          <Route
+            path="/post/:postId"
+            element={
+              <DiscoverProvider>
+                <Post />
+              </DiscoverProvider>
+            }
+          />
           <Route path="/signin/2fa" element={<TwoFactorAuth />} />
           <Route path="/signin" element={<Signin />} />
           <Route path="/signup" element={<Signup />} />
 
           <Route element={<Layout />}>
             <Route path="/" element={<Home />} />
-            <Route path="/discover" element={<Discover />} />
+            <Route
+              path="/discover"
+              element={
+                <DiscoverProvider>
+                  <Discover />
+                </DiscoverProvider>
+              }
+            />
             <Route path="/search" element={<Search />} />
             <Route path="/search/results" element={<SearchResult />} />
 

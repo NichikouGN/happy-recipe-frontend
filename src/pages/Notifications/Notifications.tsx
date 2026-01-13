@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
-import { IoClose } from "react-icons/io5";
 import {
   fetchNotifications,
   markNotificationAsRead,
@@ -10,7 +9,6 @@ import styles from "./Notifications.module.css";
 import { FaUser } from "react-icons/fa6";
 
 const Notifications = () => {
-  const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState({
@@ -19,10 +17,6 @@ const Notifications = () => {
     total: 0,
     totalPages: 0,
   });
-
-  useEffect(() => {
-    console.log("Notifications open state:", notificationsOpen);
-  }, []);
 
   useEffect(() => {
     loadNotifications();
@@ -118,10 +112,6 @@ const Notifications = () => {
                 <Link
                   to={`/post/${notification.post.postId}`}
                   className={styles["notification-post-info"]}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setNotificationsOpen(false);
-                  }}
                 >
                   <img
                     src={notification.post.coverImageUrl}

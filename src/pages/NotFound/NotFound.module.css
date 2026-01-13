@@ -10,7 +10,7 @@
   align-items: center;
 
   background-image: radial-gradient(rgba(0, 0, 0, 0.25) 25%, rgba(0, 0, 0, 0.75) 100%),
-    url("/src/assets/search-menu.jpg");
+    url("/UI/search-menu.jpg");
   background-blend-mode: multiply;
   background-size: cover;
   background-repeat: no-repeat;

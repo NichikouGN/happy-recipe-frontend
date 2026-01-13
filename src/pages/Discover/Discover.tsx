@@ -4,10 +4,10 @@ import DiscoverSkeleton from "./DiscoverSkeleton";
 import DiscoverContent from "./DiscoverContent";
 import { Link } from "react-router-dom";
 import { FaArrowRotateRight } from "react-icons/fa6";
-import { usePosts } from "../../context/PostContext";
+import { useDiscover } from "../../context/DiscoverContext";
 
 const Discover = () => {
-  const { postList, isFetchingNextPage, discoverScrollY } = usePosts();
+  const { postList, isFetchingNextPage, discoverScrollY } = useDiscover();
 
   const [topBarPos, setTopBarPos] = useState<number>(0);
   const [lastScrollY, setLastScrollY] = useState<number>(0);

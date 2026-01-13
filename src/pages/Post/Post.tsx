@@ -1,25 +1,25 @@
 import { useParams } from "react-router-dom";
-import { usePosts } from "../../context/PostContext";
 
 import PostSkeleton from "./PostSkeleton";
 import PostContent from "./PostContent";
 import PostError from "./PostError";
 
+import { useDetailedPost } from "../../context/useDetailedPost";
+
 const Post = () => {
-  const { useDetailedPost } = usePosts();
   const { postId } = useParams();
 
   if (!postId) {
     return <>No Args</>;
   }
 
-  const { data: detailedPost, isFetching } = useDetailedPost(postId);
+  const { data: detailedPost, isLoading } = useDetailedPost(postId);
 
   return (
     <>
-      {isFetching && <PostSkeleton />}
-      {!isFetching && detailedPost && <PostContent detailedPost={detailedPost} />}
-      {!isFetching && !detailedPost && <PostError />}
+      {isLoading && <PostSkeleton />}
+      {!detailedPost && <PostError />}
+      {detailedPost && <PostContent detailedPost={detailedPost} />}
     </>
   );
 };

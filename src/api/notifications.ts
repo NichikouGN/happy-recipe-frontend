@@ -149,11 +149,9 @@ export const markNotificationAsRead = async (notificationId: string): Promise<bo
 
         return true;
       } catch (retryError) {
-        Toast({ type: "error", title: "Error", message: "Unable to mark notification as read" });
         return false;
       }
     }
-    Toast({ type: "error", title: "Error", message: "Unable to mark notification as read" });
     return false;
   }
 };

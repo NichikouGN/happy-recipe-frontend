@@ -30,12 +30,12 @@ export const RelatedPost = ({ detailedPost }: { detailedPost: FullPostStructure 
       );
 
       if (!res.ok) {
+        const data = await res.text();
+        console.error("Error response from related posts API:", data);
         throw new Error("Failed to fetch related posts");
       }
 
       const data = await res.json();
-      console.log("Related posts data:", data);
-      // The API may return { posts: [...] } or a bare array
       const posts = Array.isArray(data) ? data : data?.posts ?? [];
       setRelatedPosts(posts);
     } catch (err) {

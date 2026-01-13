@@ -9,12 +9,10 @@ import type {
 export const useReactionMutation = ({
   queryClient,
   confirmUserAction,
-  Toast,
   pendingMutation,
 }: {
   queryClient: QueryClient;
   confirmUserAction: (payload: ActionPayload) => Promise<void>;
-  Toast: any;
   pendingMutation: React.RefObject<Set<string>>;
 }) => {
   return useMutation<
@@ -112,13 +110,7 @@ export const useReactionMutation = ({
     },
 
     // If the mutation fails, rollback
-    onError: (err, variables, context) => {
-      Toast({
-        type: "error",
-        title: err.name,
-        message: err.message,
-      });
-
+    onError: (_, variables, context) => {
       if (context?.previousPosts) {
         queryClient.setQueryData(["discoverPosts"], context.previousPosts);
       }

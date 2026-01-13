@@ -10,6 +10,17 @@ interface popularIngredientsStructure {
   coverImg: string;
 }
 
+const popularIngredients: popularIngredientsStructure[] = [
+  { id: "01", title: "Chicken", coverImg: "/ingredients/Chicken.jpg" },
+  { id: "02", title: "Beef", coverImg: "/ingredients/Beef.jpg" },
+  { id: "03", title: "Pork", coverImg: "/ingredients/Pork.jpg" },
+  { id: "04", title: "Salmon", coverImg: "/ingredients/Salmon.jpg" },
+  { id: "05", title: "Tuna", coverImg: "/ingredients/Tuna.jpg" },
+  { id: "06", title: "Shrimp", coverImg: "/ingredients/Shrimp.jpg" },
+  { id: "07", title: "Broccoli", coverImg: "/ingredients/Broccoli.jpg" },
+  { id: "08", title: "Tomato", coverImg: "/ingredients/Tomato.jpg" },
+];
+
 const contacts = [
   {
     icon: FaSquareFacebook,
@@ -27,17 +38,6 @@ const contacts = [
     url: "https://github.com",
     title: "GitHub",
   },
-];
-
-const popularIngredients: popularIngredientsStructure[] = [
-  { id: "01", title: "Chicken", coverImg: "/src/assets/ingredients/Chicken.jpg" },
-  { id: "02", title: "Beef", coverImg: "/src/assets/ingredients/Beef.jpg" },
-  { id: "03", title: "Pork", coverImg: "/src/assets/ingredients/Pork.jpg" },
-  { id: "04", title: "Salmon", coverImg: "/src/assets/ingredients/Salmon.jpg" },
-  { id: "05", title: "Tuna", coverImg: "/src/assets/ingredients/Tuna.jpg" },
-  { id: "06", title: "Shrimp", coverImg: "/src/assets/ingredients/Shrimp.jpg" },
-  { id: "07", title: "Broccoli", coverImg: "/src/assets/ingredients/Broccoli.jpg" },
-  { id: "08", title: "Tomato", coverImg: "/src/assets/ingredients/Tomato.jpg" },
 ];
 
 const Home = () => {
@@ -59,10 +59,8 @@ const Home = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  //Transform translate value with hard limit tie to the header height
   const translateVal = useMemo(() => Math.min(headerHeight, scrollY / 4), [headerHeight, scrollY]);
 
-  //Set loaded state based on popularIngredients data
   useEffect(() => {
     popularIngredients.length !== 0 ? setLoaded(true) : setLoaded(false);
   }, [popularIngredients]);
@@ -150,7 +148,7 @@ const Home = () => {
         </section>
       </footer>
 
-      <img className={styles["footer-banner"]} src="/src/assets/Footer.jpg" />
+      <img className={styles["footer-banner"]} src="/UI/Footer.jpg" />
     </div>
   );
 };

@@ -13,7 +13,6 @@ const User = () => {
 
   useEffect(() => {
     const fetchUserInformation = async () => {
-      console.log("Fetching user information for userId:", userId);
       try {
         const res = await fetch(`${import.meta.env.VITE_API_URL}/api/users/${userId}`, {
           headers: {

@@ -1,6 +1,6 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import styles from "../Profile/Profile.module.css";
-import { FaHome, FaUser } from "react-icons/fa";
+import { FaHome } from "react-icons/fa";
 import { FaRegCircleQuestion } from "react-icons/fa6";
 
 const UserError = () => {

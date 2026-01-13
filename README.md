@@ -38,7 +38,14 @@ npm run dev
 
 # Version
 
-## v0.11.2 (2025-01-12)
+## v1.0.0 - RC (2026-01-13)
+
+- Move some image files to public space for build version to access.
+- Split Post context into individual components to prevent fetching of discovery outside of discover page.
+- Cleaned up the code base (removing console log, unneeded toast).
+- Added fetch guard to discover page to prevent duplicate fetching.
+
+## v0.11.2 (2026-01-12)
 
 - Added the User Error for unknown user Id.
 - Added Post Skeleton to display when post is being loaded.
@@ -50,17 +57,17 @@ npm run dev
 - Fixed abnormal routing on signup page.
 - Fixed not showing error when signing up with an already existing email.
 
-## v0.11.1 (2025-01-11)
+## v0.11.1 (2026-01-11)
 
 - Fixed the issue with discover page not trigger request new accesstoken when expired.
 
-## v0.11.0 (2025-01-10)
+## v0.11.0 (2026-01-10)
 
 - Added ability to delete your own post.
 - Added related posts to post details.
 - Added a new notifications page.
 
-## v0.10.2 (2025-01-08)
+## v0.10.2 (2026-01-08)
 
 - Fixed some error with search result for user category.
 - Decorate the search results for user.

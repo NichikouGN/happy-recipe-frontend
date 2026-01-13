@@ -67,7 +67,7 @@ const Signup = () => {
         </Link>
         <div className={styles["signin-container"]}>
           <div className={styles["title"]}>
-            <img src="/src/assets/happy-recipe-logo-text.png" className={styles["title-logo"]} />
+            <img src="/UI/happy-recipe-logo-text.png" className={styles["title-logo"]} />
             <div className={styles["title-text"]}>Happy Recipe</div>
           </div>
 

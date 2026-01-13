@@ -1,12 +1,6 @@
-import type { QueryFunction } from "@tanstack/react-query";
-import type {
-  ActionPayload,
-  FullPostStructure,
-  PostStructure,
-  ReactionType,
-} from "../types/PostType";
+import type { ActionPayload, PostStructure, ReactionType } from "../types/PostType";
 import { useAuthStore } from "../stores/authStore";
-import { Toast, useToastStore } from "../stores/toastStore";
+import { useToastStore } from "../stores/toastStore";
 
 /**
  * fetcher functions for tanstack useInfiniteQuery()
@@ -25,19 +19,22 @@ export const fetchPosts = async (pageParam: number) => {
     headers["authorization"] = `Bearer ${accessToken}`;
   }
 
-  const res = await fetch(`${import.meta.env.VITE_API_URL}/api/posts/discover?page=${pageParam}`, {
-    headers: headers,
-  });
+  const res = await fetch(
+    `${import.meta.env.VITE_API_URL}/api/posts/discover?page=${pageParam}&limit=10`,
+    {
+      headers: headers,
+    }
+  );
 
   if (!res.ok) throw new Error("Failed to fetch posts");
 
   const data = await res.json();
-  if (data.tokenState && data.tokenState === "expired") {
+  if (accessToken && data.tokenState && data.tokenState === "expired") {
     await useAuthStore.getState().requestNewAccessToken();
 
     try {
       const retryRes = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/posts/discover?page=${pageParam}`,
+        `${import.meta.env.VITE_API_URL}/api/posts/discover?page=${pageParam}&limit=10`,
         {
           headers: {
             ...headers,
@@ -52,54 +49,17 @@ export const fetchPosts = async (pageParam: number) => {
 
       return {
         posts: newPosts,
-        nextPage: pageParam + 1,
+        nextPage: newPosts.length < 10 ? undefined : pageParam + 1,
       };
     } catch (e) {
       //
     }
   }
   const newPosts: PostStructure[] = data.postList;
-
-  console.log("Fetched posts page:", newPosts);
-
   return {
     posts: newPosts,
-    nextPage: pageParam + 1,
+    nextPage: newPosts.length < 10 ? undefined : pageParam + 1,
   };
-};
-
-/**
- * Fetch detailed post function for tanstack useQuery()
- *
- * @param queryKey  The query key containing the post ID
- * @returns Detailed post data
- */
-export const fetchDetailedPost: QueryFunction<FullPostStructure, [string, string]> = async ({
-  queryKey,
-}) => {
-  const [, postId] = queryKey;
-  const { accessToken } = useAuthStore.getState();
-
-  const headers: Record<string, string> = {
-    "Content-Type": "application/json",
-    "ngrok-skip-browser-warning": "true",
-  };
-
-  if (accessToken) {
-    headers["authorization"] = `Bearer ${accessToken}`;
-  }
-
-  const res = await fetch(`${import.meta.env.VITE_API_URL}/api/posts/${postId}`, {
-    headers: headers,
-  });
-
-  if (!res.ok) throw new Error("Failed to fetch posts");
-
-  const data = await res.json();
-  const detailedPost: FullPostStructure = data.post;
-  console.log("Fetched detailed post:", data.post);
-
-  return detailedPost;
 };
 
 /**
@@ -120,8 +80,6 @@ export const uploadUserAction = async (
     newReaction,
     newBookmark,
   });
-
-  console.log("Uploading user action:", body);
 
   const res = await fetch(`${import.meta.env.VITE_API_URL}/api/user-action/user-action`, {
     method: "POST",
@@ -213,7 +171,6 @@ export const confirmUserAction = async ({
         newBookmark,
       });
     } catch (e) {
-      // Final error toast
       Toast({
         type: "error",
         title: "Action Failed",

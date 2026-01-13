@@ -9,4 +9,9 @@ export default defineConfig({
     allowedHosts: ["dauby-mikki-violably.ngrok-free.dev"],
     port: 5173,
   },
+  preview: {
+    host: true,
+    allowedHosts: ["dauby-mikki-violably.ngrok-free.dev"],
+    port: 4173,
+  },
 });

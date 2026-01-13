@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { usePosts } from "../../context/PostContext";
 import { IoClose } from "react-icons/io5";
 import { IoIosShareAlt } from "react-icons/io";
 import { useNavigate, useParams } from "react-router-dom";
@@ -18,10 +17,11 @@ import { IoSend } from "react-icons/io5";
 import { useAuthStore } from "../../stores/authStore";
 import { AuthError } from "../../errors/AuthError";
 import { RelatedPost } from "../../components/RelatedPost/RelatedPost";
+import { usePostActions } from "../../context/PostActionContext";
 
 const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
   const postID = useParams().postId;
-  const { handleUserBookmark, handleUserReaction } = usePosts();
+  const { handleUserBookmark, handleUserReaction } = usePostActions();
   const userInformation = useUserStore((state) => state.userInformation);
 
   const [commentPage, setCommentPage] = useState<number>(1);
@@ -65,7 +65,6 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
 
       // Append new comments to existing list
       const data = await res.json();
-      console.log("Fetched comments:", data.comments);
 
       setComments((prev) => [...prev, ...data.comments]);
       setCommentPage((prev) => prev + 1);
@@ -218,7 +217,6 @@ const PostContent = ({ detailedPost }: { detailedPost: FullPostStructure }) => {
       setCommentInput("");
     } catch (error) {
       if (error instanceof AuthError && error.status === 401) {
-        console.log("Access token expired, refreshing...");
         await useAuthStore.getState().requestNewAccessToken();
 
         try {

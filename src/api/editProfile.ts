@@ -23,15 +23,12 @@ export const uploadProfileChanges = async (profileData: {
 
   const formData = new FormData();
   if (profileData.displayName) {
-    console.log("Appending display name:", profileData.displayName);
     formData.append("displayName", profileData.displayName);
   }
   if (profileData.bio) {
-    console.log("Appending bio:", profileData.bio);
     formData.append("bio", profileData.bio);
   }
   if (profileData.profileImageFile) {
-    console.log("Appending profile image file:", profileData.profileImageFile.name);
     formData.append("avatar", profileData.profileImageFile);
   }
 

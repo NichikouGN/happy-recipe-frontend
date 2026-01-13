@@ -3,7 +3,6 @@ import { FaClock, FaFire, FaBookmark, FaRegBookmark } from "react-icons/fa";
 import { MdDinnerDining } from "react-icons/md";
 import { FaCircleUser } from "react-icons/fa6";
 import { LuText } from "react-icons/lu";
-import { usePosts } from "../../context/PostContext";
 import type { Reaction, UserActions } from "../../types/PostType";
 import { computeReactionState } from "../../api/discover";
 import { reactionType } from "../../types/PostType";
@@ -12,6 +11,7 @@ import { useUserStore } from "../../stores/userStore";
 import { useState } from "react";
 import { MdDeleteForever } from "react-icons/md";
 import PostDeleteConfirmation from "../PostDeleteConfirmation/PostDeleteConfirmation";
+import { usePostActions } from "../../context/PostActionContext";
 
 interface CardProps {
   postId: string;
@@ -61,7 +61,7 @@ const Card = ({
   excludeReactionSection = false,
   onClick,
 }: CardProps) => {
-  const { handleUserReaction, handleUserBookmark } = usePosts();
+  const { handleUserReaction, handleUserBookmark } = usePostActions();
   const [postSetting, setPostSetting] = useState<boolean>(false);
   const [deleteConfirmation, setDeleteConfirmation] = useState<boolean>(false);
 

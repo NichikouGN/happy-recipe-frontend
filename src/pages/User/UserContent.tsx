@@ -7,7 +7,6 @@ import Card from "../../components/Card/Card";
 import type { PostStructure } from "../../types/PostType";
 import { handleUIDShare } from "../../utils/Profile";
 import type { userInformation } from "../../types/userType";
-import { Toast } from "../../stores/toastStore";
 import { FaHome } from "react-icons/fa";
 
 const UserContent = ({ userInformation }: { userInformation: userInformation }) => {
@@ -71,7 +70,7 @@ const UserContent = ({ userInformation }: { userInformation: userInformation }) 
       const data: { userPosts: PostStructure[] } = await res.json();
       setUserPosts(data.userPosts);
     } catch (error: any) {
-      Toast({ type: "error", title: "Error", message: error.message });
+      //
     }
   };
 

@@ -58,7 +58,7 @@ const Signin = () => {
         </Link>
         <div className={styles["signin-container"]}>
           <div className={styles["title"]}>
-            <img src="/src/assets/happy-recipe-logo.png" className={styles["title-logo"]} />
+            <img src="/UI/happy-recipe-logo.png" className={styles["title-logo"]} />
             <h1 className={styles["title-text"]}>Happy Recipe</h1>
           </div>
 

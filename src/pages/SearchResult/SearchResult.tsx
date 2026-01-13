@@ -28,7 +28,6 @@ const SearchResult = () => {
 
   const fetchTrigger = React.useRef<HTMLDivElement | null>(null);
   const fetchResulsts = async () => {
-    console.log("Fetching search results for query:", searchQuery);
     try {
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/api/search/results?category=${encodeURIComponent(
@@ -44,15 +43,12 @@ const SearchResult = () => {
       if (!res.ok) throw new Error("Failed to fetch search results");
 
       const data = await res.json();
-      console.log("[DEBUG] Fetched data:", data.data);
 
       if (category === "post") {
-        console.log("Search post results:", data.data);
         setSearchPostResults(
           searchPage === 1 ? data.data || [] : [...searchPostResults, ...(data.results || [])]
         );
       } else if (category === "user") {
-        console.log("Search user results:", data.data);
         setSearchUserResults(
           searchPage === 1 ? data.data || [] : [...searchUserResults, ...(data.results || [])]
         );
@@ -66,7 +62,7 @@ const SearchResult = () => {
 
   useEffect(() => {
     fetchResulsts();
-  }, [searchQuery, category]); // End of
+  }, [searchQuery, category]);
 
   useEffect(() => {
     const postObserver = new IntersectionObserver(

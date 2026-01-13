@@ -101,7 +101,10 @@ const ProfileContent = () => {
       </header>
       <main className={styles["content"]}>
         {userInformation.profileImageUrl ? (
-          <img src={userInformation.profileImageUrl} alt="Avatar" className={styles["avatar"]} />
+          <div
+            style={{ backgroundImage: `url(${userInformation.profileImageUrl})` }}
+            className={styles["avatar"]}
+          />
         ) : (
           <FaUser className={styles["avatar"]} />
         )}
